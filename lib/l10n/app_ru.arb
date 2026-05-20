@@ -1,0 +1,9 @@
+{
+  "@@locale": "ru",
+  "appName": "Hero",
+  "splashTagline": "Твоя жизнь — это RPG",
+  "loadingGeneric": "Загрузка…",
+  "errorGeneric": "Что-то пошло не так. Попробуй ещё раз.",
+  "errorNoInternet": "Нет связи. Проверь интернет.",
+  "errorServerUnavailable": "Сервер недоступен. Попробуй позже."
+}

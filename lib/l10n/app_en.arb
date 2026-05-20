@@ -1,0 +1,20 @@
+{
+  "@@locale": "en",
+  "appName": "Hero",
+  "@appName": { "description": "App name in stores and splash" },
+
+  "splashTagline": "Your life is the RPG",
+  "@splashTagline": {},
+
+  "loadingGeneric": "Loading…",
+  "@loadingGeneric": {},
+
+  "errorGeneric": "Something went wrong. Try again.",
+  "@errorGeneric": {},
+
+  "errorNoInternet": "No connection. Check your internet.",
+  "@errorNoInternet": {},
+
+  "errorServerUnavailable": "Server is unavailable. Try later.",
+  "@errorServerUnavailable": {}
+}
