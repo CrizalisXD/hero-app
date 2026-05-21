@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../profile/data/profiles_repository_stub.dart';
+import '../../profile/data/supabase_profiles_repository.dart';
 
 class AuthRouteService {
   AuthRouteService(this._ref);
@@ -8,7 +8,7 @@ class AuthRouteService {
 
   Future<String> routeAfterAuth() async {
     final profile =
-        await _ref.read(profilesRepositoryStubProvider).getMyProfile();
+        await _ref.read(profilesRepositoryProvider).getMyProfile();
     return profile.onboardingDone ? '/home' : '/onboarding/life-change';
   }
 }
