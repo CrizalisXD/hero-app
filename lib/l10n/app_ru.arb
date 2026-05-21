@@ -2,8 +2,42 @@
   "@@locale": "ru",
   "appName": "Hero",
   "splashTagline": "Твоя жизнь — это RPG",
+  "splashLoading": "Загрузка…",
   "loadingGeneric": "Загрузка…",
   "errorGeneric": "Что-то пошло не так. Попробуй ещё раз.",
   "errorNoInternet": "Нет связи. Проверь интернет.",
-  "errorServerUnavailable": "Сервер недоступен. Попробуй позже."
+  "errorServerUnavailable": "Сервер недоступен. Попробуй позже.",
+
+  "welcomeTitle": "Твоя жизнь. Твой герой.",
+  "welcomeSubtitle": "Реальные действия. Реальный прогресс. Реальный ты.",
+  "welcomeContinueGuest": "Продолжить как гость",
+  "welcomeSignIn": "Войти",
+  "welcomeSignUp": "Создать аккаунт",
+  "welcomeGuestNote": "Позже можно превратить гостевой профиль в аккаунт.",
+
+  "signInTitle": "С возвращением",
+  "signInEmailLabel": "Email",
+  "signInPasswordLabel": "Пароль",
+  "signInButton": "Войти",
+  "signInNoAccount": "Ещё нет аккаунта?",
+  "signInGoToSignUp": "Создать",
+  "signInForgotPassword": "Забыл пароль?",
+
+  "signUpTitle": "Создай свой аккаунт",
+  "signUpEmailLabel": "Email",
+  "signUpPasswordLabel": "Пароль",
+  "signUpPasswordHint": "Минимум 8 символов",
+  "signUpButton": "Создать аккаунт",
+  "signUpHasAccount": "Уже есть аккаунт?",
+  "signUpGoToSignIn": "Войти",
+  "signUpEmailConfirmTitle": "Проверь почту",
+  "signUpEmailConfirmBody": "Мы отправили письмо со ссылкой на {email}. Открой её, чтобы завершить регистрацию.",
+
+  "authErrorInvalidCredentials": "Неверный email или пароль.",
+  "authErrorEmailNotConfirmed": "Подтверди email — проверь почту.",
+  "authErrorWeakPassword": "Пароль должен быть минимум 8 символов.",
+  "authErrorInvalidEmail": "Кажется, email указан неправильно.",
+  "authErrorRateLimited": "Слишком много попыток. Попробуй через минуту.",
+  "authErrorGuestDisabled": "Гостевой режим временно недоступен. Войди по email.",
+  "authErrorGeneric": "Не удалось войти. Попробуй ещё раз."
 }

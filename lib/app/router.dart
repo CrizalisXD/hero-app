@@ -1,39 +1,99 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../core/l10n/l10n.dart';
+
+import '../features/auth/application/auth_notifier.dart';
+import '../features/auth/domain/models/auth_session.dart';
+import '../features/auth/presentation/email_confirmation_screen.dart';
+import '../features/auth/presentation/sign_in_screen.dart';
+import '../features/auth/presentation/sign_up_screen.dart';
+import '../features/auth/presentation/splash_screen.dart';
+import '../features/auth/presentation/welcome_screen.dart';
+import '../features/home/presentation/home_stub_screen.dart';
+import '../features/onboarding/presentation/onboarding_stub_screen.dart';
+
+const _publicRoutes = <String>{
+  '/splash',
+  '/welcome',
+  '/auth/sign-in',
+  '/auth/sign-up',
+  '/auth/email-confirm',
+};
 
 final routerProvider = Provider<GoRouter>((ref) {
+  final notifier = _AuthRouterRefresh(ref);
+
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/splash',
+    refreshListenable: notifier,
+    redirect: (context, state) {
+      final session = ref.read(authSessionControllerProvider);
+      final loc = state.matchedLocation;
+      final isPublic = _publicRoutes.contains(loc);
+
+      if (loc == '/splash') return null;
+
+      if (session is Unauthenticated && !isPublic) {
+        return '/welcome';
+      }
+
+      if (session is! Unauthenticated &&
+          isPublic &&
+          loc != '/auth/email-confirm') {
+        return '/splash';
+      }
+
+      return null;
+    },
     routes: [
       GoRoute(
-        path: '/',
-        builder: (_, __) => const _SplashStub(),
+        path: '/splash',
+        builder: (_, __) => const SplashScreen(),
+      ),
+      GoRoute(
+        path: '/welcome',
+        builder: (_, __) => const WelcomeScreen(),
+      ),
+      GoRoute(
+        path: '/auth/sign-in',
+        builder: (_, __) => const SignInScreen(),
+      ),
+      GoRoute(
+        path: '/auth/sign-up',
+        builder: (_, __) => const SignUpScreen(),
+      ),
+      GoRoute(
+        path: '/auth/email-confirm',
+        builder: (ctx, state) {
+          final email = state.uri.queryParameters['email'] ?? '';
+          return EmailConfirmationScreen(email: email);
+        },
+      ),
+      GoRoute(
+        path: '/home',
+        builder: (_, __) => const HomeStubScreen(),
+      ),
+      GoRoute(
+        path: '/onboarding/life-change',
+        builder: (_, __) => const OnboardingStubScreen(),
       ),
     ],
   );
 });
 
-class _SplashStub extends StatelessWidget {
-  const _SplashStub();
+class _AuthRouterRefresh extends ChangeNotifier {
+  _AuthRouterRefresh(this._ref) {
+    _sub = _ref.listen<AuthSession>(
+      authSessionControllerProvider,
+      (_, __) => notifyListeners(),
+    );
+  }
+  final Ref _ref;
+  late final ProviderSubscription<AuthSession> _sub;
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(
-              context.l10n.appName,
-              style: const TextStyle(fontSize: 32, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 8),
-            Text(context.l10n.splashTagline),
-          ],
-        ),
-      ),
-    );
+  void dispose() {
+    _sub.close();
+    super.dispose();
   }
 }
