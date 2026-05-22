@@ -98,8 +98,13 @@ class _TodayTab extends ConsumerWidget {
               child: _TaskList(
                 tasks: tasks,
                 onComplete: (id) => _handleComplete(context, ref, id),
-                onDelete: (id) =>
-                    ref.read(tasksNotifierProvider.notifier).deleteTask(id),
+                onDelete: (id) {
+                  // Mirror into both notifiers so Today and All stay in sync.
+                  ref
+                      .read(todayTasksNotifierProvider.notifier)
+                      .deleteTask(id);
+                  ref.read(tasksNotifierProvider.notifier).deleteTask(id);
+                },
               ),
             ),
     );

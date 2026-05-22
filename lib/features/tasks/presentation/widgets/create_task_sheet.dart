@@ -1,4 +1,4 @@
-import 'dart:async';
+import 'dart:async' show Timer, unawaited;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -122,6 +122,8 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
     setState(() => _submitting = false);
 
     if (task != null) {
+      // Keep Today list in sync — fire-and-forget, we don't block on it.
+      unawaited(ref.read(todayTasksNotifierProvider.notifier).refresh());
       Navigator.of(context).pop(task);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

@@ -118,6 +118,14 @@ class TodayTasksNotifier extends AsyncNotifier<List<Task>> {
       return const TaskCompleteOutcome(result: null, rolledBack: true);
     }
   }
+
+  /// Optimistically removes the task from the Today list without calling
+  /// the server — the caller in TasksScreen is responsible for the actual
+  /// delete RPC via [TasksNotifier.deleteTask].
+  void deleteTask(String taskId) {
+    final current = state.valueOrNull ?? [];
+    state = AsyncData(current.where((t) => t.id != taskId).toList());
+  }
 }
 
 final todayTasksNotifierProvider =
