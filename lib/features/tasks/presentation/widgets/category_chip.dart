@@ -24,18 +24,25 @@ const _categoryIcons = {
 };
 
 class CategoryChip extends StatelessWidget {
-  const CategoryChip({super.key, required this.category, this.small = false});
+  const CategoryChip({
+    super.key,
+    required this.category,
+    this.small = false,
+    this.fontSize,
+  });
 
   final CategoryId category;
   final bool small;
+  /// Override font size. If null, uses [small] to pick 11 or 12.
+  final double? fontSize;
 
   @override
   Widget build(BuildContext context) {
     final color = _categoryColors[category] ?? const Color(0xFF7F77DD);
     final icon = _categoryIcons[category] ?? '❓';
     final label = _categoryLabel(context, category);
-    final fontSize = small ? 11.0 : 12.0;
-    final padding = small
+    final fs = fontSize ?? (small ? 11.0 : 12.0);
+    final padding = fs <= 11
         ? const EdgeInsets.symmetric(horizontal: 8, vertical: 3)
         : const EdgeInsets.symmetric(horizontal: 10, vertical: 5);
 
@@ -49,13 +56,13 @@ class CategoryChip extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(icon, style: TextStyle(fontSize: fontSize)),
+          Text(icon, style: TextStyle(fontSize: fs)),
           const SizedBox(width: 4),
           Text(
             label,
             style: TextStyle(
               color: color,
-              fontSize: fontSize,
+              fontSize: fs,
               fontWeight: FontWeight.w600,
             ),
           ),

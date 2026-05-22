@@ -124,6 +124,10 @@
   "taskCreateError": "Задача не сохранена. Попробуй ещё раз.",
   "taskCompleteError": "Не удалось отметить задачу. Попробуй ещё раз.",
   "createTask": "Создать задачу",
+  "createTaskCategoryUnclear": "Категория подберётся…",
+  "createTaskCategoryDetecting": "Определяю категорию…",
+  "createTaskDueDateLabel": "Дата и время",
+  "createTaskDueDateClear": "Сбросить",
 
   "categoryStrength": "Сила",
   "categoryMind": "Разум",

@@ -19,6 +19,7 @@ class Task {
     this.isRecurring = false,
     this.recurrence,
     this.dueDate,
+    this.dueAt,
     this.completedAt,
     required this.createdAt,
   });
@@ -39,6 +40,7 @@ class Task {
   final bool isRecurring;
   final String? recurrence;
   final DateTime? dueDate;
+  final DateTime? dueAt;
   final DateTime? completedAt;
   final DateTime createdAt;
 
@@ -69,6 +71,9 @@ class Task {
       dueDate: j['due_date'] == null
           ? null
           : DateTime.parse(j['due_date'] as String),
+      dueAt: j['due_at'] == null
+          ? null
+          : DateTime.parse(j['due_at'] as String),
       completedAt: j['completed_at'] == null
           ? null
           : DateTime.parse(j['completed_at'] as String),
@@ -93,6 +98,7 @@ class Task {
     bool? isRecurring,
     Object? recurrence = _sentinel,
     Object? dueDate = _sentinel,
+    Object? dueAt = _sentinel,
     Object? completedAt = _sentinel,
     DateTime? createdAt,
   }) {
@@ -115,6 +121,7 @@ class Task {
       recurrence:
           recurrence == _sentinel ? this.recurrence : recurrence as String?,
       dueDate: dueDate == _sentinel ? this.dueDate : dueDate as DateTime?,
+      dueAt: dueAt == _sentinel ? this.dueAt : dueAt as DateTime?,
       completedAt: completedAt == _sentinel
           ? this.completedAt
           : completedAt as DateTime?,

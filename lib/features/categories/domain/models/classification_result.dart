@@ -19,6 +19,12 @@ class ClassificationResult {
 
   /// Optional AI commentary — never shown in UI without translation.
   final String? aiReason;
+
+  /// True only when the category was actually determined by local classifier
+  /// or AI. [ClassificationSource.fallback] = mind default → false.
+  /// UI must NOT show a category chip when this is false.
+  bool get isConfident =>
+      source == ClassificationSource.local || source == ClassificationSource.ai;
 }
 
 enum ClassificationSource { local, ai, fallback }

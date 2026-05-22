@@ -1,3 +1,6 @@
+import 'dart:convert';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -15,17 +18,16 @@ class SupabaseTasksRepository implements TasksRepository {
 
   @override
   Future<List<Task>> getTodayTasks() async {
-    final today = DateTime.now().toIso8601String().split('T').first;
+    // Show tasks where due_at <= now (tasks without due_at go in All tab only).
+    final iso = DateTime.now().toUtc().toIso8601String();
     final rows = await _client
         .from('tasks')
         .select()
         .eq('user_id', _userId)
         .eq('is_done', false)
-        .or('due_date.is.null,due_date.lte.$today')
-        .order('created_at', ascending: false);
-    return (rows as List<dynamic>)
-        .map((r) => Task.fromJson(r as Map<String, dynamic>))
-        .toList();
+        .lte('due_at', iso)
+        .order('due_at', ascending: true);
+    return rows.map((r) => Task.fromJson(r)).toList();
   }
 
   @override
@@ -33,11 +35,8 @@ class SupabaseTasksRepository implements TasksRepository {
     var query = _client.from('tasks').select().eq('user_id', _userId);
     if (goalId != null) query = query.eq('goal_id', goalId);
     if (isDone != null) query = query.eq('is_done', isDone);
-    final rows =
-        await query.order('created_at', ascending: false);
-    return (rows as List<dynamic>)
-        .map((r) => Task.fromJson(r as Map<String, dynamic>))
-        .toList();
+    final rows = await query.order('created_at', ascending: false);
+    return rows.map((r) => Task.fromJson(r)).toList();
   }
 
   @override
@@ -53,12 +52,38 @@ class SupabaseTasksRepository implements TasksRepository {
 
   @override
   Future<TaskCompletionResult> completeTask(String taskId) async {
-    final dynamic result = await _client.rpc<dynamic>(
-      'complete_task',
-      params: {'p_task_id': taskId},
-    );
-    return TaskCompletionResult.fromRpc(
-        Map<String, dynamic>.from(result as Map),);
+    late final dynamic raw;
+    try {
+      raw = await _client.rpc<dynamic>(
+        'complete_task',
+        params: {'p_task_id': taskId},
+      );
+    } on PostgrestException catch (e) {
+      debugPrint(
+        'complete_task PostgrestException: ${e.code} | ${e.message} | ${e.details}',
+      );
+      rethrow;
+    }
+
+    debugPrint('=== complete_task RAW res: ${raw.runtimeType} :: $raw');
+
+    final Map<String, dynamic> map;
+    if (raw is Map) {
+      map = Map<String, dynamic>.from(raw);
+    } else if (raw is String) {
+      map = Map<String, dynamic>.from(jsonDecode(raw) as Map);
+    } else if (raw is List && raw.isNotEmpty && raw.first is Map) {
+      map = Map<String, dynamic>.from(raw.first as Map);
+    } else {
+      throw StateError(
+        'complete_task: unexpected payload type ${raw.runtimeType}: $raw',
+      );
+    }
+
+    if (map['ok'] != true) {
+      throw StateError('complete_task rejected: ${map['error'] ?? map}');
+    }
+    return TaskCompletionResult.fromRpc(map);
   }
 
   @override

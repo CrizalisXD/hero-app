@@ -18,6 +18,8 @@ class TaskListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final mutedColor =
+        theme.colorScheme.onSurface.withValues(alpha: 0.45);
 
     return Dismissible(
       key: ValueKey(task.id),
@@ -66,17 +68,40 @@ class TaskListItem extends StatelessWidget {
         ),
         subtitle: Padding(
           padding: const EdgeInsets.only(top: 4),
-          child: CategoryChip(category: task.mainCategory, small: true),
+          child: Row(
+            children: [
+              CategoryChip(category: task.mainCategory, small: true),
+              if (task.dueAt != null) ...[
+                const SizedBox(width: 8),
+                Icon(Icons.schedule, size: 12, color: mutedColor),
+                const SizedBox(width: 2),
+                Text(
+                  _shortDueAt(task.dueAt!),
+                  style: TextStyle(fontSize: 11, color: mutedColor),
+                ),
+              ],
+            ],
+          ),
         ),
         trailing: Text(
           '+${task.xpReward} XP',
           style: TextStyle(
-            color: const Color(0xFF7F77DD).withValues(alpha: task.isDone ? 0.4 : 0.9),
+            color: const Color(0xFF7F77DD)
+                .withValues(alpha: task.isDone ? 0.4 : 0.9),
             fontWeight: FontWeight.w600,
             fontSize: 12,
           ),
         ),
       ),
     );
+  }
+
+  static String _shortDueAt(DateTime d) {
+    String two(int v) => v.toString().padLeft(2, '0');
+    final now = DateTime.now();
+    if (d.year == now.year && d.month == now.month && d.day == now.day) {
+      return '${two(d.hour)}:${two(d.minute)}';
+    }
+    return '${two(d.day)}.${two(d.month)} ${two(d.hour)}:${two(d.minute)}';
   }
 }

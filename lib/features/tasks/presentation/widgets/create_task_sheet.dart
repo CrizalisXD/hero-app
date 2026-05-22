@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/l10n/l10n.dart';
+import '../../../../l10n/generated/app_localizations.dart';
 import '../../../categories/application/category_classifier_service.dart';
 import '../../../categories/application/xp_engine.dart';
 import '../../../categories/data/categories_assets_repository.dart';
@@ -26,10 +27,11 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
   final _focusNode = FocusNode();
   Timer? _debounce;
 
-  CategoryId _detectedCategory = CategoryId.mind;
+  // No initial category — chip is hidden until classifier is confident.
   EnrichedClassification? _classification;
   bool _classifying = false;
   bool _submitting = false;
+  DateTime? _dueAt;
 
   @override
   void initState() {
@@ -48,17 +50,24 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
     super.dispose();
   }
 
+  // ─── title change ──────────────────────────────────────────────────────────
+
   void _onTitleChanged() {
     _debounce?.cancel();
-    final text = _titleCtrl.text.trim();
-    if (text.length < 3) return;
-    _debounce = Timer(const Duration(milliseconds: 400), () => _classify(text));
+    if (_titleCtrl.text.trim().length < 3) {
+      setState(() {
+        _classification = null;
+        _classifying = false;
+      });
+      return;
+    }
+    _debounce = Timer(const Duration(milliseconds: 400), _classify);
   }
 
-  Future<void> _classify(String text) async {
+  Future<void> _classify() async {
+    final text = _titleCtrl.text.trim();
     final svc = ref.read(categoryClassifierServiceProvider).valueOrNull;
-    if (svc == null) return;
-    if (!mounted) return;
+    if (svc == null || !mounted) return;
 
     setState(() => _classifying = true);
 
@@ -71,10 +80,42 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
     if (!mounted) return;
     setState(() {
       _classification = result;
-      _detectedCategory = result.mainCategory;
       _classifying = false;
     });
   }
+
+  // ─── date-time picker ──────────────────────────────────────────────────────
+
+  Future<void> _pickDueAt() async {
+    final now = DateTime.now();
+    final date = await showDatePicker(
+      context: context,
+      initialDate: _dueAt ?? now,
+      firstDate: now.subtract(const Duration(days: 1)),
+      lastDate: now.add(const Duration(days: 365 * 5)),
+    );
+    if (date == null || !mounted) return;
+    final time = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(
+        _dueAt ?? now.add(const Duration(hours: 1)),
+      ),
+    );
+    if (time == null || !mounted) return;
+    setState(() {
+      _dueAt = DateTime(
+        date.year, date.month, date.day, time.hour, time.minute,
+      );
+    });
+  }
+
+  static String _formatDueAt(DateTime d) {
+    String two(int v) => v.toString().padLeft(2, '0');
+    return '${d.year}-${two(d.month)}-${two(d.day)} '
+        '${two(d.hour)}:${two(d.minute)}';
+  }
+
+  // ─── submit ────────────────────────────────────────────────────────────────
 
   Future<void> _submit() async {
     final title = _titleCtrl.text.trim();
@@ -85,14 +126,19 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
     final engine = ref.read(xpEngineProvider).valueOrNull;
     final cls = _classification;
 
+    // §15.1: category always auto; fallback = mind (server-side default only).
+    final mainCategory =
+        (cls != null && cls.isConfident) ? cls.mainCategory : CategoryId.mind;
+    final secondaries =
+        (cls != null && cls.isConfident) ? cls.secondaryCategories : <CategoryId>[];
+
     final difficulty = cls?.suggestedDifficulty ?? TaskDifficulty.normal;
     final duration = cls?.suggestedDuration ?? TaskDuration.medium;
     final importance = cls?.suggestedImportance ?? TaskImportance.normal;
     final disciplineXp = cls?.suggestedDisciplineXp ?? 0;
 
-    final rulesBundle =
-        ref.read(categoryRulesProvider).valueOrNull;
-    final int baseXp = rulesBundle?.rulesFor(_detectedCategory)?.baseXp ??
+    final rulesBundle = ref.read(categoryRulesProvider).valueOrNull;
+    final int baseXp = rulesBundle?.rulesFor(mainCategory)?.baseXp ??
         rulesBundle?.defaultBaseXp ??
         20;
 
@@ -106,13 +152,14 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
 
     final input = CreateTaskInput(
       title: title,
-      mainCategory: _detectedCategory,
-      secondaryCategories: cls?.secondaryCategories ?? [],
+      mainCategory: mainCategory,
+      secondaryCategories: secondaries,
       difficulty: difficulty,
       duration: duration,
       importance: importance,
       xpReward: xpReward,
       disciplineXpReward: disciplineXp,
+      dueAt: _dueAt,
     );
 
     final task =
@@ -122,15 +169,18 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
     setState(() => _submitting = false);
 
     if (task != null) {
-      // Keep Today list in sync — fire-and-forget, we don't block on it.
       unawaited(ref.read(todayTasksNotifierProvider.notifier).refresh());
-      Navigator.of(context).pop(task);
+      if (context.mounted) Navigator.of(context).pop(task);
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.taskCreateError)),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(context.l10n.taskCreateError)),
+        );
+      }
     }
   }
+
+  // ─── build ─────────────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -144,6 +194,7 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
+          // Header
           Row(
             children: [
               Expanded(
@@ -160,54 +211,119 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
             ],
           ),
           const SizedBox(height: 12),
+
+          // Title field
           TextField(
             controller: _titleCtrl,
             focusNode: _focusNode,
             decoration: InputDecoration(
               hintText: l.tasksCreateHint,
               border: const OutlineInputBorder(),
-              suffixIcon: _classifying
-                  ? const Padding(
-                      padding: EdgeInsets.all(12),
-                      child: SizedBox(
-                        width: 16,
-                        height: 16,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    )
-                  : null,
             ),
             textInputAction: TextInputAction.done,
             onSubmitted: (_) => _submit(),
           ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 200),
-                child: CategoryChip(
-                  key: ValueKey(_detectedCategory),
-                  category: _detectedCategory,
-                ),
-              ),
-              const Spacer(),
-              FilledButton(
-                onPressed: _submitting ? null : _submit,
-                child: _submitting
-                    ? const SizedBox(
-                        width: 18,
-                        height: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : Text(l.createTask),
-              ),
-            ],
+          const SizedBox(height: 10),
+
+          // Category row — placeholder / spinner / chip
+          _buildCategoryRow(l),
+          const SizedBox(height: 10),
+
+          // Due date row
+          _buildDueDateRow(l, theme),
+          const SizedBox(height: 14),
+
+          // Submit
+          FilledButton(
+            onPressed: _submitting ? null : _submit,
+            child: _submitting
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: Colors.white,
+                    ),
+                  )
+                : Text(l.createTask),
           ),
         ],
       ),
     );
   }
+
+  Widget _buildCategoryRow(AppLocalizations l) {
+    final text = _titleCtrl.text.trim();
+
+    // 1) Text too short
+    if (text.length < 3) {
+      return _hintText(l.createTaskCategoryUnclear);
+    }
+
+    // 2) Classifier running
+    if (_classifying) {
+      return Row(
+        children: [
+          const SizedBox(
+            width: 12,
+            height: 12,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
+          const SizedBox(width: 8),
+          _hintText(l.createTaskCategoryDetecting),
+        ],
+      );
+    }
+
+    final c = _classification;
+
+    // 3) Classifier ran but not confident (fallback) — no chip
+    if (c == null || !c.isConfident) {
+      return _hintText(l.createTaskCategoryUnclear);
+    }
+
+    // 4) Confident — show main + secondaries
+    return Row(
+      children: [
+        CategoryChip(category: c.mainCategory),
+        for (final s in c.secondaryCategories) ...[
+          const SizedBox(width: 6),
+          CategoryChip(category: s, fontSize: 11),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildDueDateRow(AppLocalizations l, ThemeData theme) {
+    return Row(
+      children: [
+        Icon(Icons.event, color: theme.hintColor, size: 18),
+        const SizedBox(width: 8),
+        Text(
+          l.createTaskDueDateLabel,
+          style: theme.textTheme.bodySmall,
+        ),
+        const Spacer(),
+        if (_dueAt != null)
+          TextButton(
+            onPressed: () => setState(() => _dueAt = null),
+            child: Text(l.createTaskDueDateClear),
+          ),
+        TextButton(
+          onPressed: _pickDueAt,
+          child: Text(
+            _dueAt == null ? '—' : _formatDueAt(_dueAt!),
+          ),
+        ),
+      ],
+    );
+  }
+
+  static Widget _hintText(String text) => Text(
+        text,
+        style: const TextStyle(
+          fontSize: 12,
+          color: Color(0x80FFFFFF),
+        ),
+      );
 }

@@ -14,6 +14,7 @@ class CreateTaskInput {
     required this.xpReward,
     this.disciplineXpReward = 0,
     this.dueDate,
+    this.dueAt,
     this.isRecurring = false,
   });
 
@@ -28,9 +29,14 @@ class CreateTaskInput {
   final int xpReward;
   final int disciplineXpReward;
   final DateTime? dueDate;
+  /// Precision due datetime (timestamptz). Takes priority over [dueDate].
+  final DateTime? dueAt;
   final bool isRecurring;
 
   Map<String, dynamic> toInsertBody({required String userId}) {
+    // dueAt is the canonical field; back-fill due_date (date) from it too.
+    final effectiveDueDate = dueAt?.toIso8601String().split('T').first
+        ?? dueDate?.toIso8601String().split('T').first;
     return {
       'user_id': userId,
       'title': title,
@@ -44,7 +50,8 @@ class CreateTaskInput {
       'importance': importance.wire,
       'xp_reward': xpReward,
       'discipline_xp_reward': disciplineXpReward,
-      'due_date': dueDate?.toIso8601String().split('T').first,
+      'due_date': effectiveDueDate,
+      'due_at': dueAt?.toUtc().toIso8601String(),
       'is_recurring': isRecurring,
       'recurrence': isRecurring ? 'daily' : null,
     };
