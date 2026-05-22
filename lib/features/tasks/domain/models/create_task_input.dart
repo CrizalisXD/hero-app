@@ -34,10 +34,7 @@ class CreateTaskInput {
   final bool isRecurring;
 
   Map<String, dynamic> toInsertBody({required String userId}) {
-    // dueAt is the canonical field; back-fill due_date (date) from it too.
-    final effectiveDueDate = dueAt?.toIso8601String().split('T').first
-        ?? dueDate?.toIso8601String().split('T').first;
-    return {
+    final body = <String, dynamic>{
       'user_id': userId,
       'title': title,
       'description': description,
@@ -50,10 +47,19 @@ class CreateTaskInput {
       'importance': importance.wire,
       'xp_reward': xpReward,
       'discipline_xp_reward': disciplineXpReward,
-      'due_date': effectiveDueDate,
-      'due_at': dueAt?.toUtc().toIso8601String(),
       'is_recurring': isRecurring,
       'recurrence': isRecurring ? 'daily' : null,
     };
+
+    // Only include date/time fields when set — avoids "column does not exist"
+    // errors if the migration hasn't been applied yet.
+    if (dueAt != null) {
+      body['due_at'] = dueAt!.toUtc().toIso8601String();
+      body['due_date'] = dueAt!.toIso8601String().split('T').first;
+    } else if (dueDate != null) {
+      body['due_date'] = dueDate!.toIso8601String().split('T').first;
+    }
+
+    return body;
   }
 }
