@@ -111,5 +111,38 @@
 
   "onboardingFirstMissionTitle": "Первая миссия",
   "onboardingFirstMissionBody": "Твой профиль настроен. Привычки выбраны. Одно нажатие — и твой Герой оживёт.",
-  "onboardingFirstMissionCta": "Войти в Hero"
+  "onboardingFirstMissionCta": "Войти в Hero",
+
+  "tasksTitle": "Задачи",
+  "tasksTabToday": "Сегодня",
+  "tasksTabAll": "Все",
+  "tasksCreateHint": "Добавить задачу...",
+  "tasksEmpty": "Задач пока нет",
+  "tasksEmptyToday": "Сегодня ничего нет",
+  "taskCompleted": "Задача выполнена!",
+  "taskDuplicate": "Уже выполнено",
+  "taskCreateError": "Задача не сохранена. Попробуй ещё раз.",
+  "taskCompleteError": "Не удалось отметить задачу. Попробуй ещё раз.",
+  "createTask": "Создать задачу",
+
+  "categoryStrength": "Сила",
+  "categoryMind": "Разум",
+  "categoryEndurance": "Выносливость",
+  "categoryHealth": "Здоровье",
+  "categorySocial": "Социальное",
+  "categoryFinance": "Финансы",
+  "categoryCreativity": "Творчество",
+
+  "difficultyEasy": "Легко",
+  "difficultyNormal": "Обычно",
+  "difficultyHard": "Сложно",
+  "difficultyEpic": "Эпик",
+
+  "durationShort": "Коротко",
+  "durationMedium": "Средне",
+  "durationLong": "Долго",
+
+  "importanceLow": "Низкая",
+  "importanceNormal": "Средняя",
+  "importanceHigh": "Высокая"
 }

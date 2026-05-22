@@ -1,3 +1,6 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../data/categories_assets_repository.dart';
 import '../domain/models/category_rules.dart';
 import '../domain/models/xp_inputs.dart';
 
@@ -26,3 +29,8 @@ class XpEngine {
   int disciplineXpForHabit() =>
       _bundle.metaStats.disciplineXp['complete_habit'] ?? 4;
 }
+
+final xpEngineProvider = FutureProvider<XpEngine>((ref) async {
+  final bundle = await ref.watch(categoryRulesProvider.future);
+  return XpEngine(bundle);
+});

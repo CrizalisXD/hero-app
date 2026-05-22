@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../auth/application/auth_notifier.dart';
 
@@ -16,6 +17,11 @@ class HomeStubScreen extends ConsumerWidget {
           children: [
             const Text('Phase 2 OK — you are signed in.'),
             const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: () => context.go('/tasks'),
+              child: const Text('Tasks →'),
+            ),
+            const SizedBox(height: 12),
             ElevatedButton(
               onPressed: () =>
                   ref.read(authActionsProvider.notifier).signOut(),

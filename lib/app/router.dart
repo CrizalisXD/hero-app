@@ -11,6 +11,7 @@ import '../features/auth/presentation/splash_screen.dart';
 import '../features/auth/presentation/welcome_screen.dart';
 import '../features/home/presentation/home_stub_screen.dart';
 import '../features/onboarding/presentation/avatar_intro_screen.dart';
+import '../features/tasks/presentation/screens/tasks_screen.dart';
 import '../features/onboarding/presentation/energy_level_screen.dart';
 import '../features/onboarding/presentation/failure_reason_screen.dart';
 import '../features/onboarding/presentation/first_mission_screen.dart';
@@ -117,6 +118,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/onboarding/first-mission',
         builder: (_, __) => const FirstMissionScreen(),
+      ),
+      GoRoute(
+        path: '/tasks',
+        builder: (_, __) => const TasksScreen(),
       ),
     ],
   );
