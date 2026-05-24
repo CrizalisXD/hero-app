@@ -1,0 +1,4 @@
+-- Hero — seed.sql
+-- Phase 1: intentionally empty.
+-- feature_flags and categories are seeded inside the initial migration.
+-- Add dev/test data here in later phases if needed.
