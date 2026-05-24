@@ -41,6 +41,17 @@
   "authErrorGuestDisabled": "Гостевой режим временно недоступен. Войди по email.",
   "authErrorGeneric": "Не удалось войти. Попробуй ещё раз.",
 
+  "guestUpgradeTitle": "Сохрани свой прогресс",
+  "guestUpgradeSubtitle": "Добавь email и пароль — герой, привычки и XP останутся с тобой.",
+  "guestUpgradeEmailLabel": "Email",
+  "guestUpgradePasswordLabel": "Пароль",
+  "guestUpgradeButton": "Привязать аккаунт",
+  "guestUpgradeSuccess": "Аккаунт привязан. Весь прогресс сохранён.",
+  "guestUpgradeSignOutWarningTitle": "Выйти?",
+  "guestUpgradeSignOutWarningBody": "Гостевой аккаунт хранится только на этом устройстве. Без привязки email прогресс может быть потерян.",
+  "guestUpgradeSignOutWarningCancel": "Остаться",
+  "guestUpgradeSignOutWarningConfirm": "Всё равно выйти",
+
   "onboardingContinue": "Продолжить",
   "onboardingBack": "Назад",
   "onboardingSkip": "Пропустить",

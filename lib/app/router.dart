@@ -6,6 +6,7 @@ import '../features/ai_chat/presentation/screens/ai_chat_screen.dart';
 import '../features/auth/application/auth_notifier.dart';
 import '../features/auth/domain/models/auth_session.dart';
 import '../features/auth/presentation/email_confirmation_screen.dart';
+import '../features/auth/presentation/guest_upgrade_screen.dart';
 import '../features/auth/presentation/sign_in_screen.dart';
 import '../features/auth/presentation/sign_up_screen.dart';
 import '../features/auth/presentation/splash_screen.dart';
@@ -91,6 +92,12 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, s) => EmailConfirmationScreen(
           email: s.uri.queryParameters['email'] ?? '',
         ),
+      ),
+      // Guest → Email upgrade. Authenticated (guest) route — NOT public.
+      GoRoute(
+        path: '/auth/guest-upgrade',
+        parentNavigatorKey: _rootNavigatorKey,
+        builder: (_, __) => const GuestUpgradeScreen(),
       ),
 
       // ── Onboarding (outside shell — no bottom nav) ──
