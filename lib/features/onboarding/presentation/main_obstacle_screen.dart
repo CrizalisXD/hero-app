@@ -28,12 +28,12 @@ class _MainObstacleScreenState extends ConsumerState<MainObstacleScreen> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final options = [
-      (key: 'no_discipline', label: l.onboardingObstacleNoDisc),
-      (key: 'no_time', label: l.onboardingObstacleNoTime),
-      (key: 'no_motivation', label: l.onboardingObstacleNoMotiv),
-      (key: 'no_energy', label: l.onboardingObstacleNoEnergy),
-      (key: 'no_plan', label: l.onboardingObstacleNoPlan),
-      (key: 'fear_failure', label: l.onboardingObstacleFear),
+      (value: 'no_discipline', label: l.onboardingObstacleNoDisc),
+      (value: 'no_time', label: l.onboardingObstacleNoTime),
+      (value: 'no_motivation', label: l.onboardingObstacleNoMotiv),
+      (value: 'no_energy', label: l.onboardingObstacleNoEnergy),
+      (value: 'no_plan', label: l.onboardingObstacleNoPlan),
+      (value: 'fear_failure', label: l.onboardingObstacleFear),
     ];
 
     return OnboardingShell(
@@ -49,10 +49,10 @@ class _MainObstacleScreenState extends ConsumerState<MainObstacleScreen> {
             .setMainObstacle(_selected);
         context.go('/onboarding/energy-level');
       },
-      content: ChoiceChipGrid(
+      content: ChoiceChipGrid<String>(
         options: options,
         selected: _selected.isEmpty ? {} : {_selected},
-        onToggle: (key) => setState(() => _selected = key),
+        onToggle: (value) => setState(() => _selected = value),
       ),
     );
   }

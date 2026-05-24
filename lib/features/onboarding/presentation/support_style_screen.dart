@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/l10n/l10n.dart';
 import '../application/onboarding_controller.dart';
+import '../domain/models/support_style.dart';
 import 'widgets/onboarding_shell.dart';
 
 class SupportStyleScreen extends ConsumerStatefulWidget {
@@ -16,7 +17,7 @@ class SupportStyleScreen extends ConsumerStatefulWidget {
 }
 
 class _SupportStyleScreenState extends ConsumerState<SupportStyleScreen> {
-  String _selected = '';
+  SupportStyle? _selected;
 
   @override
   void initState() {
@@ -28,10 +29,10 @@ class _SupportStyleScreenState extends ConsumerState<SupportStyleScreen> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final options = [
-      (key: 'direct', label: l.onboardingSupportDirect, desc: l.onboardingSupportDirectDesc),
-      (key: 'gentle', label: l.onboardingSupportGentle, desc: l.onboardingSupportGentleDesc),
-      (key: 'strict', label: l.onboardingSupportStrict, desc: l.onboardingSupportStrictDesc),
-      (key: 'analytical', label: l.onboardingSupportAnalytical, desc: l.onboardingSupportAnalyticalDesc),
+      (value: SupportStyle.direct, label: l.onboardingSupportDirect, desc: l.onboardingSupportDirectDesc),
+      (value: SupportStyle.gentle, label: l.onboardingSupportGentle, desc: l.onboardingSupportGentleDesc),
+      (value: SupportStyle.strict, label: l.onboardingSupportStrict, desc: l.onboardingSupportStrictDesc),
+      (value: SupportStyle.analytical, label: l.onboardingSupportAnalytical, desc: l.onboardingSupportAnalyticalDesc),
     ];
 
     return OnboardingShell(
@@ -39,19 +40,20 @@ class _SupportStyleScreenState extends ConsumerState<SupportStyleScreen> {
       totalSteps: 9,
       title: l.onboardingSupportTitle,
       subtitle: l.onboardingSupportSubtitle,
-      continueEnabled: _selected.isNotEmpty,
+      continueEnabled: _selected != null,
       onBack: () => context.go('/onboarding/failure-reason'),
       onContinue: () {
+        if (_selected == null) return;
         ref
             .read(onboardingControllerProvider.notifier)
-            .setSupportStyle(_selected);
+            .setSupportStyle(_selected!);
         context.go('/onboarding/habits');
       },
       content: Column(
         children: options.map((opt) {
-          final isSelected = _selected == opt.key;
+          final isSelected = _selected == opt.value;
           return GestureDetector(
-            onTap: () => setState(() => _selected = opt.key),
+            onTap: () => setState(() => _selected = opt.value),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 150),
               margin: const EdgeInsets.only(bottom: 12),

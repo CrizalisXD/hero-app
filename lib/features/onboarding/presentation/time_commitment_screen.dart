@@ -28,10 +28,10 @@ class _TimeCommitmentScreenState extends ConsumerState<TimeCommitmentScreen> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final options = [
-      (key: '5', label: l.onboardingTime5min),
-      (key: '15', label: l.onboardingTime15min),
-      (key: '30', label: l.onboardingTime30min),
-      (key: '60', label: l.onboardingTime60min),
+      (value: 5, label: l.onboardingTime5min),
+      (value: 15, label: l.onboardingTime15min),
+      (value: 30, label: l.onboardingTime30min),
+      (value: 60, label: l.onboardingTime60min),
     ];
 
     return OnboardingShell(
@@ -47,10 +47,10 @@ class _TimeCommitmentScreenState extends ConsumerState<TimeCommitmentScreen> {
             .setTimeCommitment(_minutes);
         context.go('/onboarding/failure-reason');
       },
-      content: ChoiceChipGrid(
+      content: ChoiceChipGrid<int>(
         options: options,
-        selected: _minutes > 0 ? {'$_minutes'} : {},
-        onToggle: (key) => setState(() => _minutes = int.parse(key)),
+        selected: _minutes > 0 ? {_minutes} : {},
+        onToggle: (value) => setState(() => _minutes = value),
       ),
     );
   }

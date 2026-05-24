@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n.dart';
 import '../application/onboarding_controller.dart';
+import '../domain/models/life_area.dart';
 import 'widgets/choice_chip_grid.dart';
 import 'widgets/onboarding_shell.dart';
 
@@ -15,28 +16,28 @@ class LifeChangeScreen extends ConsumerStatefulWidget {
 }
 
 class _LifeChangeScreenState extends ConsumerState<LifeChangeScreen> {
-  final Set<String> _selected = {};
+  final Set<LifeArea> _selected = {};
 
   @override
   void initState() {
     super.initState();
-    final existing =
-        ref.read(onboardingControllerProvider).lifeChangeAreas;
-    _selected.addAll(existing);
+    _selected.addAll(
+      ref.read(onboardingControllerProvider).lifeChangeAreas,
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
     final options = [
-      (key: 'health', label: l.onboardingAreaHealth),
-      (key: 'finance', label: l.onboardingAreaFinance),
-      (key: 'mind', label: l.onboardingAreaMind),
-      (key: 'endurance', label: l.onboardingAreaEndurance),
-      (key: 'social', label: l.onboardingAreaSocial),
-      (key: 'creativity', label: l.onboardingAreaCreativity),
-      (key: 'strength', label: l.onboardingAreaStrength),
-      (key: 'discipline', label: l.onboardingAreaDiscipline),
+      (value: LifeArea.health, label: l.onboardingAreaHealth),
+      (value: LifeArea.finance, label: l.onboardingAreaFinance),
+      (value: LifeArea.mind, label: l.onboardingAreaMind),
+      (value: LifeArea.endurance, label: l.onboardingAreaEndurance),
+      (value: LifeArea.social, label: l.onboardingAreaSocial),
+      (value: LifeArea.creativity, label: l.onboardingAreaCreativity),
+      (value: LifeArea.strength, label: l.onboardingAreaStrength),
+      (value: LifeArea.discipline, label: l.onboardingAreaDiscipline),
     ];
 
     return OnboardingShell(
@@ -48,18 +49,18 @@ class _LifeChangeScreenState extends ConsumerState<LifeChangeScreen> {
       onContinue: () {
         ref
             .read(onboardingControllerProvider.notifier)
-            .setLifeChangeAreas(_selected.toList());
+            .setLifeChangeAreas(_selected);
         context.go('/onboarding/main-obstacle');
       },
-      content: ChoiceChipGrid(
+      content: ChoiceChipGrid<LifeArea>(
         options: options,
         selected: _selected,
         multiSelect: true,
-        onToggle: (key) => setState(() {
-          if (_selected.contains(key)) {
-            _selected.remove(key);
+        onToggle: (area) => setState(() {
+          if (_selected.contains(area)) {
+            _selected.remove(area);
           } else {
-            _selected.add(key);
+            _selected.add(area);
           }
         }),
       ),

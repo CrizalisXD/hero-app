@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/l10n/l10n.dart';
 import '../application/onboarding_controller.dart';
+import '../domain/models/starter_habit_key.dart';
 import 'widgets/onboarding_shell.dart';
 
 class HabitsScreen extends ConsumerStatefulWidget {
@@ -15,12 +16,14 @@ class HabitsScreen extends ConsumerStatefulWidget {
 }
 
 class _HabitsScreenState extends ConsumerState<HabitsScreen> {
-  final Set<String> _selected = {};
+  final Set<StarterHabitKey> _selected = {};
 
   @override
   void initState() {
     super.initState();
-    _selected.addAll(ref.read(onboardingControllerProvider).starterHabits);
+    _selected.addAll(
+      ref.read(onboardingControllerProvider).starterHabits,
+    );
   }
 
   @override
@@ -28,19 +31,19 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
     final l = context.l10n;
     final habits = [
       (
-        key: 'drink_water',
+        value: StarterHabitKey.drinkWater,
         label: l.onboardingHabitDrinkWater,
         icon: Icons.water_drop_outlined,
         color: AppColors.health,
       ),
       (
-        key: 'read_10_pages',
+        value: StarterHabitKey.read10Pages,
         label: l.onboardingHabitRead10,
         icon: Icons.menu_book_outlined,
         color: AppColors.mind,
       ),
       (
-        key: 'walk_10_min',
+        value: StarterHabitKey.walk10Min,
         label: l.onboardingHabitWalk10,
         icon: Icons.directions_walk_outlined,
         color: AppColors.endurance,
@@ -56,18 +59,18 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
       onContinue: () {
         ref
             .read(onboardingControllerProvider.notifier)
-            .setStarterHabits(_selected.toList());
+            .setStarterHabits(_selected);
         context.go('/onboarding/avatar-intro');
       },
       content: Column(
         children: habits.map((h) {
-          final isSelected = _selected.contains(h.key);
+          final isSelected = _selected.contains(h.value);
           return GestureDetector(
             onTap: () => setState(() {
-              if (_selected.contains(h.key)) {
-                _selected.remove(h.key);
+              if (_selected.contains(h.value)) {
+                _selected.remove(h.value);
               } else {
-                _selected.add(h.key);
+                _selected.add(h.value);
               }
             }),
             child: AnimatedContainer(
