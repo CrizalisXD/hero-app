@@ -31,11 +31,11 @@ class _FailureReasonScreenState extends ConsumerState<FailureReasonScreen> {
     final l = context.l10n;
     final options = [
       (key: 'lose_motivation', label: l.onboardingFailureLoseMotiv),
-      (key: 'get_busy', label: l.onboardingFailureBusy),
-      (key: 'forget', label: l.onboardingFailureForget),
+      (key: 'no_time', label: l.onboardingFailureNoTime),
+      (key: 'no_structure', label: l.onboardingFailureNoStructure),
       (key: 'too_hard', label: l.onboardingFailureTooHard),
-      (key: 'no_support', label: l.onboardingFailureNoSupport),
-      (key: 'other', label: l.onboardingFailureOther),
+      (key: 'boredom', label: l.onboardingFailureBoredom),
+      (key: 'perfectionism', label: l.onboardingFailurePerfectionism),
     ];
 
     return OnboardingShell(

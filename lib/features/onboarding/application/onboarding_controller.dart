@@ -53,9 +53,9 @@ class OnboardingBootstrapController extends AsyncNotifier<void> {
     try {
       final draft = ref.read(onboardingControllerProvider);
       final result = await _repo.bootstrap(draft);
-      if (!result.ok) {
+      if (!result.ok || !result.onboardingDone) {
         state = AsyncError(
-          Exception('bootstrap returned ok=false'),
+          Exception('server did not confirm onboarding_done'),
           StackTrace.current,
         );
         return false;

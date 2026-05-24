@@ -70,7 +70,7 @@ class OnboardingShell extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Text(
-                    '$step/$totalSteps',
+                    l.onboardingProgress(step, totalSteps),
                     style: const TextStyle(
                       fontSize: 12,
                       color: AppColors.textMuted,

@@ -46,6 +46,14 @@
   "onboardingSkip": "Пропустить",
   "onboardingSaveError": "Не удалось сохранить профиль. Попробуй ещё раз.",
 
+  "onboardingProgress": "{current}/{total}",
+  "@onboardingProgress": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
   "onboardingLifeChangeTitle": "Что ты хочешь изменить?",
   "onboardingLifeChangeSubtitle": "Выбери одно или несколько направлений",
   "onboardingAreaHealth": "Здоровье",
@@ -54,6 +62,8 @@
   "onboardingAreaEndurance": "Выносливость",
   "onboardingAreaSocial": "Общение",
   "onboardingAreaCreativity": "Творчество",
+  "onboardingAreaStrength": "Сила",
+  "onboardingAreaDiscipline": "Дисциплина",
 
   "onboardingObstacleTitle": "Что тебе мешает?",
   "onboardingObstacleSubtitle": "Выбери главное препятствие",
@@ -82,11 +92,11 @@
   "onboardingFailureTitle": "Почему ты обычно срываешься?",
   "onboardingFailureSubtitle": "Отметь всё, что подходит",
   "onboardingFailureLoseMotiv": "Быстро теряю мотивацию",
-  "onboardingFailureBusy": "Становлюсь слишком занятым",
-  "onboardingFailureForget": "Просто забываю",
+  "onboardingFailureNoTime": "Нет времени",
+  "onboardingFailureNoStructure": "Нет системы",
   "onboardingFailureTooHard": "Слишком сложно",
-  "onboardingFailureNoSupport": "Нет поддержки",
-  "onboardingFailureOther": "Что-то другое",
+  "onboardingFailureBoredom": "Становится скучно",
+  "onboardingFailurePerfectionism": "Жду идеальных условий",
 
   "onboardingSupportTitle": "Как Hero должен тебя поддерживать?",
   "onboardingSupportSubtitle": "Выбери стиль коучинга",
@@ -94,10 +104,10 @@
   "onboardingSupportDirectDesc": "Без лишних слов, по делу",
   "onboardingSupportGentle": "Мягко",
   "onboardingSupportGentleDesc": "Спокойно и с поддержкой",
-  "onboardingSupportHumorous": "С юмором",
-  "onboardingSupportHumorousDesc": "Легко и с огоньком",
-  "onboardingSupportNeutral": "Нейтрально",
-  "onboardingSupportNeutralDesc": "Только факты, без лишнего",
+  "onboardingSupportStrict": "Строго",
+  "onboardingSupportStrictDesc": "Без послаблений, всегда вперёд",
+  "onboardingSupportAnalytical": "Аналитически",
+  "onboardingSupportAnalyticalDesc": "Данные, прогресс, факты — без воды",
 
   "onboardingHabitsTitle": "Выбери стартовые привычки",
   "onboardingHabitsSubtitle": "Это будут твои первые квесты",
