@@ -1,6 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../data/supabase_onboarding_repository.dart';
+import '../domain/models/failure_reason.dart';
+import '../domain/models/life_area.dart';
+import '../domain/models/starter_habit_key.dart';
+import '../domain/models/support_style.dart';
 import '../domain/onboarding_draft.dart';
 import '../domain/onboarding_repository.dart';
 
@@ -8,7 +12,7 @@ class OnboardingController extends Notifier<OnboardingDraft> {
   @override
   OnboardingDraft build() => const OnboardingDraft();
 
-  void setLifeChangeAreas(List<String> areas) {
+  void setLifeChangeAreas(Set<LifeArea> areas) {
     state = state.copyWith(lifeChangeAreas: areas);
   }
 
@@ -24,15 +28,15 @@ class OnboardingController extends Notifier<OnboardingDraft> {
     state = state.copyWith(timeCommitmentMinutes: minutes);
   }
 
-  void setFailureReasons(List<String> reasons) {
+  void setFailureReasons(Set<FailureReason> reasons) {
     state = state.copyWith(failureReasons: reasons);
   }
 
-  void setSupportStyle(String style) {
+  void setSupportStyle(SupportStyle style) {
     state = state.copyWith(supportStyle: style);
   }
 
-  void setStarterHabits(List<String> habits) {
+  void setStarterHabits(Set<StarterHabitKey> habits) {
     state = state.copyWith(starterHabits: habits);
   }
 }
@@ -53,6 +57,7 @@ class OnboardingBootstrapController extends AsyncNotifier<void> {
     try {
       final draft = ref.read(onboardingControllerProvider);
       final result = await _repo.bootstrap(draft);
+
       if (!result.ok || !result.onboardingDone) {
         state = AsyncError(
           Exception('server did not confirm onboarding_done'),
@@ -60,6 +65,7 @@ class OnboardingBootstrapController extends AsyncNotifier<void> {
         );
         return false;
       }
+
       state = const AsyncData(null);
       return true;
     } catch (e, st) {

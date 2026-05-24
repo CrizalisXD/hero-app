@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n.dart';
 import '../application/onboarding_controller.dart';
+import '../domain/models/failure_reason.dart';
 import 'widgets/choice_chip_grid.dart';
 import 'widgets/onboarding_shell.dart';
 
@@ -16,7 +17,7 @@ class FailureReasonScreen extends ConsumerStatefulWidget {
 }
 
 class _FailureReasonScreenState extends ConsumerState<FailureReasonScreen> {
-  final Set<String> _selected = {};
+  final Set<FailureReason> _selected = {};
 
   @override
   void initState() {
@@ -30,12 +31,12 @@ class _FailureReasonScreenState extends ConsumerState<FailureReasonScreen> {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final options = [
-      (key: 'lose_motivation', label: l.onboardingFailureLoseMotiv),
-      (key: 'no_time', label: l.onboardingFailureNoTime),
-      (key: 'no_structure', label: l.onboardingFailureNoStructure),
-      (key: 'too_hard', label: l.onboardingFailureTooHard),
-      (key: 'boredom', label: l.onboardingFailureBoredom),
-      (key: 'perfectionism', label: l.onboardingFailurePerfectionism),
+      (value: FailureReason.loseMotivation, label: l.onboardingFailureLoseMotiv),
+      (value: FailureReason.noTime, label: l.onboardingFailureNoTime),
+      (value: FailureReason.noStructure, label: l.onboardingFailureNoStructure),
+      (value: FailureReason.tooHard, label: l.onboardingFailureTooHard),
+      (value: FailureReason.boredom, label: l.onboardingFailureBoredom),
+      (value: FailureReason.perfectionism, label: l.onboardingFailurePerfectionism),
     ];
 
     return OnboardingShell(
@@ -48,18 +49,18 @@ class _FailureReasonScreenState extends ConsumerState<FailureReasonScreen> {
       onContinue: () {
         ref
             .read(onboardingControllerProvider.notifier)
-            .setFailureReasons(_selected.toList());
+            .setFailureReasons(_selected);
         context.go('/onboarding/support-style');
       },
-      content: ChoiceChipGrid(
+      content: ChoiceChipGrid<FailureReason>(
         options: options,
         selected: _selected,
         multiSelect: true,
-        onToggle: (key) => setState(() {
-          if (_selected.contains(key)) {
-            _selected.remove(key);
+        onToggle: (reason) => setState(() {
+          if (_selected.contains(reason)) {
+            _selected.remove(reason);
           } else {
-            _selected.add(key);
+            _selected.add(reason);
           }
         }),
       ),
