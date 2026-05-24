@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../features/ai_chat/presentation/screens/ai_chat_screen.dart';
 import '../features/auth/application/auth_notifier.dart';
 import '../features/auth/domain/models/auth_session.dart';
 import '../features/auth/presentation/email_confirmation_screen.dart';
@@ -9,6 +10,7 @@ import '../features/auth/presentation/sign_in_screen.dart';
 import '../features/auth/presentation/sign_up_screen.dart';
 import '../features/auth/presentation/splash_screen.dart';
 import '../features/auth/presentation/welcome_screen.dart';
+import '../features/avatar/presentation/screens/avatar_screen.dart';
 import '../features/goals/presentation/screens/goal_create_screen.dart';
 import '../features/goals/presentation/screens/goal_detail_screen.dart';
 import '../features/goals/presentation/screens/goal_plan_review_screen.dart';
@@ -16,7 +18,6 @@ import '../features/goals/presentation/screens/goals_screen.dart';
 import '../features/habits/presentation/screens/habits_screen.dart'
     as habits_feature;
 import '../features/home/presentation/screens/home_screen.dart';
-import '../features/ai_chat/presentation/screens/ai_chat_screen.dart';
 import '../features/home/presentation/screens/home_shell.dart';
 import '../features/onboarding/presentation/avatar_intro_screen.dart';
 import '../features/onboarding/presentation/energy_level_screen.dart';
@@ -159,6 +160,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
 
       // ── Modal / secondary screens (above shell) ──
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/avatar',
+        builder: (_, __) => const AvatarScreen(),
+      ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: '/goals/new',

@@ -330,5 +330,14 @@
   "aiSuggestionTaskBadge": "Предлагаемая задача",
   "aiSuggestionHabitBadge": "Предлагаемая привычка",
   "aiSuggestionAdd": "Добавить",
-  "aiSuggestionDismiss": "Пропустить"
+  "aiSuggestionDismiss": "Пропустить",
+
+  "avatarScreenTitle": "Твой герой",
+  "avatarColorPickerTitle": "Выбери цвет",
+  "avatarSave": "Сохранить",
+  "avatarSaveError": "Не удалось сохранить. Попробуй ещё раз.",
+  "avatarSaveSuccess": "Обновлено.",
+
+  "featureLockedTitle": "Пока недоступно",
+  "featureLockedBody": "Эта возможность готовится. Скоро откроем."
 }

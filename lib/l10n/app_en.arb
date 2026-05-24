@@ -563,5 +563,21 @@
   "aiSuggestionAdd": "Add",
   "@aiSuggestionAdd": {},
   "aiSuggestionDismiss": "Skip",
-  "@aiSuggestionDismiss": {}
+  "@aiSuggestionDismiss": {},
+
+  "avatarScreenTitle": "Your hero",
+  "@avatarScreenTitle": {},
+  "avatarColorPickerTitle": "Pick your color",
+  "@avatarColorPickerTitle": {},
+  "avatarSave": "Save",
+  "@avatarSave": {},
+  "avatarSaveError": "Couldn't save. Try again.",
+  "@avatarSaveError": {},
+  "avatarSaveSuccess": "Updated.",
+  "@avatarSaveSuccess": {},
+
+  "featureLockedTitle": "Not available yet",
+  "@featureLockedTitle": {},
+  "featureLockedBody": "This feature is being prepared. We'll let you know.",
+  "@featureLockedBody": {}
 }
