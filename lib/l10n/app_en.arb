@@ -579,5 +579,14 @@
   "featureLockedTitle": "Not available yet",
   "@featureLockedTitle": {},
   "featureLockedBody": "This feature is being prepared. We'll let you know.",
-  "@featureLockedBody": {}
+  "@featureLockedBody": {},
+
+  "signOut": "Sign out",
+  "@signOut": {},
+
+  "onboardingStubTitle": "Onboarding",
+  "@onboardingStubTitle": {},
+
+  "onboardingStubBody": "Onboarding will live here.",
+  "@onboardingStubBody": {}
 }

@@ -3,9 +3,7 @@ import '../../app/theme/app_colors.dart';
 
 /// Horizontal progress bar with label + numeric value.
 ///
-/// Used for category XP, energy and any 0..max gauges. Despite the historic
-/// "stat" name, this is purely a progress widget — it never references the
-/// deprecated stat_tag / intellect / discipline / balance vocabulary.
+/// Used for category XP, energy and any 0..max gauges.
 class StatBar extends StatelessWidget {
   final String label;
   final int value;

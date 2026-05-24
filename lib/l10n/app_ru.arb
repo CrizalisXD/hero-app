@@ -339,5 +339,11 @@
   "avatarSaveSuccess": "Обновлено.",
 
   "featureLockedTitle": "Пока недоступно",
-  "featureLockedBody": "Эта возможность готовится. Скоро откроем."
+  "featureLockedBody": "Эта возможность готовится. Скоро откроем.",
+
+  "signOut": "Выйти",
+
+  "onboardingStubTitle": "Онбординг",
+
+  "onboardingStubBody": "Здесь будет онбординг."
 }

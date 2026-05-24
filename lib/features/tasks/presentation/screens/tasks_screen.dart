@@ -299,7 +299,7 @@ class _ErrorView extends StatelessWidget {
           const SizedBox(height: 8),
           Text(message),
           const SizedBox(height: 16),
-          ElevatedButton(onPressed: onRetry, child: const Text('Retry')),
+          ElevatedButton(onPressed: onRetry, child: Text(context.l10n.homeRetry)),
         ],
       ),
     );
