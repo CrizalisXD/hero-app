@@ -30,8 +30,8 @@ class _SupportStyleScreenState extends ConsumerState<SupportStyleScreen> {
     final options = [
       (key: 'direct', label: l.onboardingSupportDirect, desc: l.onboardingSupportDirectDesc),
       (key: 'gentle', label: l.onboardingSupportGentle, desc: l.onboardingSupportGentleDesc),
-      (key: 'humorous', label: l.onboardingSupportHumorous, desc: l.onboardingSupportHumorousDesc),
-      (key: 'neutral', label: l.onboardingSupportNeutral, desc: l.onboardingSupportNeutralDesc),
+      (key: 'strict', label: l.onboardingSupportStrict, desc: l.onboardingSupportStrictDesc),
+      (key: 'analytical', label: l.onboardingSupportAnalytical, desc: l.onboardingSupportAnalyticalDesc),
     ];
 
     return OnboardingShell(

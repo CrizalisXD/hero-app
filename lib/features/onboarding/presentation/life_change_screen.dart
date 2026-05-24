@@ -35,6 +35,8 @@ class _LifeChangeScreenState extends ConsumerState<LifeChangeScreen> {
       (key: 'endurance', label: l.onboardingAreaEndurance),
       (key: 'social', label: l.onboardingAreaSocial),
       (key: 'creativity', label: l.onboardingAreaCreativity),
+      (key: 'strength', label: l.onboardingAreaStrength),
+      (key: 'discipline', label: l.onboardingAreaDiscipline),
     ];
 
     return OnboardingShell(
