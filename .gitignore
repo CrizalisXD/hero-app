@@ -51,6 +51,7 @@ ios/Runner.xcworkspace
 
 # Android
 android/.gradle/
+android/local.properties
 
 # VS Code
 .vscode/settings.json
