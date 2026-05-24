@@ -18,6 +18,18 @@ abstract class AuthRepository {
 
   Future<GuestSession> signInAsGuest();
 
+  /// Upgrades the current anonymous session to an email/password account,
+  /// PRESERVING the same auth.users.id. All game progress stays attached.
+  ///
+  /// MUST use auth.updateUser({email, password}) — NEVER auth.signUp(),
+  /// which would create a fresh user_id and orphan the guest's data.
+  ///
+  /// Throws [AuthFailureException] if current session is not a guest.
+  Future<EmailSession> upgradeGuestToEmail({
+    required String email,
+    required String password,
+  });
+
   Future<void> signOut();
 
   Future<void> ensureBootstrap();

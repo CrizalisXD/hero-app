@@ -1,13 +1,21 @@
 import 'dart:async';
 
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../data/supabase_auth_repository.dart';
 import '../domain/auth_repository.dart';
 import '../domain/models/auth_session.dart';
 import '../domain/models/sign_up_result.dart';
 
-class AuthSessionController extends Notifier<AuthSession> {
+part 'auth_notifier.g.dart';
+
+/// Reactive stream of the current AuthSession.
+///
+/// keepAlive: true — must survive even when no widget temporarily listens
+/// (e.g. between route transitions), since GoRouter's redirect reads it
+/// every navigation.
+@Riverpod(keepAlive: true)
+class AuthSessionController extends _$AuthSessionController {
   StreamSubscription<AuthSession>? _sub;
 
   @override
@@ -21,12 +29,9 @@ class AuthSessionController extends Notifier<AuthSession> {
   }
 }
 
-final authSessionControllerProvider =
-    NotifierProvider<AuthSessionController, AuthSession>(
-  AuthSessionController.new,
-);
-
-class AuthActions extends AsyncNotifier<void> {
+/// Imperative auth actions. Throws [AuthFailureException] on failure.
+@riverpod
+class AuthActions extends _$AuthActions {
   @override
   Future<void> build() async {}
 
@@ -54,7 +59,8 @@ class AuthActions extends AsyncNotifier<void> {
   }) async {
     state = const AsyncLoading();
     try {
-      final res = await _repo.signUpWithEmail(email: email, password: password);
+      final res =
+          await _repo.signUpWithEmail(email: email, password: password);
       if (res is SignUpConfirmed) {
         await _repo.ensureBootstrap();
       }
@@ -79,6 +85,26 @@ class AuthActions extends AsyncNotifier<void> {
     }
   }
 
+  /// Upgrades the current anonymous guest user to an email/password account.
+  /// CRITICAL: keeps the same auth.users.id — all game data stays attached.
+  Future<EmailSession> upgradeGuestToEmail({
+    required String email,
+    required String password,
+  }) async {
+    state = const AsyncLoading();
+    try {
+      final s = await _repo.upgradeGuestToEmail(
+        email: email,
+        password: password,
+      );
+      state = const AsyncData(null);
+      return s;
+    } catch (e, st) {
+      state = AsyncError(e, st);
+      rethrow;
+    }
+  }
+
   Future<void> signOut() async {
     state = const AsyncLoading();
     try {
@@ -90,6 +116,3 @@ class AuthActions extends AsyncNotifier<void> {
     }
   }
 }
-
-final authActionsProvider =
-    AsyncNotifierProvider<AuthActions, void>(AuthActions.new);

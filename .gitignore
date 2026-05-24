@@ -40,6 +40,10 @@ migrate_working_dir/
 **/*.freezed.dart
 lib/l10n/generated/
 
+# Exception: hand-written .g.dart kept in tree because the local
+# analyzer_plugin 0.12.0 ↔ analyzer 7.x conflict blocks build_runner.
+!lib/features/auth/application/auth_notifier.g.dart
+
 # Secrets
 .env
 .env.local
