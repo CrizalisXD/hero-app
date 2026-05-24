@@ -148,5 +148,187 @@
 
   "importanceLow": "Низкая",
   "importanceNormal": "Средняя",
-  "importanceHigh": "Высокая"
+  "importanceHigh": "Высокая",
+
+  "habitsTitle": "Привычки",
+  "habitsEmpty": "Привычек пока нет. Добавь маленькую.",
+  "habitsLoadError": "Не удалось загрузить привычки. Попробуй ещё раз.",
+
+  "habitsFabCreate": "Добавить",
+  "createHabitSheetTitle": "Новая привычка",
+  "createHabitTitleLabel": "Какая привычка?",
+  "createHabitTitleHint": "Пить воду / 10 страниц / Прогулка 10 минут",
+  "createHabitDescriptionLabel": "Заметка (опц.)",
+  "createHabitSubmit": "Добавить",
+  "createHabitCreateError": "Не удалось сохранить. Попробуй ещё раз.",
+
+  "habitCheckinAction": "Отметить",
+  "habitCheckedToday": "Сегодня сделано",
+  "habitStreakDays": "{count, plural, =0{нет серии} =1{1 день} few{{count} дня} many{{count} дней} other{{count} дней}}",
+  "@habitStreakDays": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "habitCheckinSuccessSnack": "+{xp} XP · {streak}",
+  "@habitCheckinSuccessSnack": {
+    "placeholders": {
+      "xp":     { "type": "int" },
+      "streak": { "type": "String" }
+    }
+  },
+  "habitCheckinErrorSnack": "Не удалось отметить. Попробуй ещё раз.",
+
+  "habitDeleteAction": "Удалить",
+  "habitDeleteConfirmTitle": "Удалить привычку?",
+  "habitDeleteConfirmBody": "Все отметки пропадут.",
+  "habitDeleteCancel": "Отмена",
+
+  "goalsTitle": "Цели",
+  "goalsEmpty": "Целей ещё нет. Запусти квест.",
+  "goalsLoadError": "Не удалось загрузить. Попробуй ещё раз.",
+  "goalsFabCreate": "Новая цель",
+
+  "goalCreateTitle": "Новая цель",
+  "goalCreateTitleLabel": "Какая цель?",
+  "goalCreateTitleHint": "Начать бегать / Выучить испанский / Накопить на отпуск",
+  "goalCreateDescriptionLabel": "Почему это важно?",
+  "goalCreateDeadlineLabel": "К какому сроку",
+  "goalCreateDeadlineWeek": "1 неделя",
+  "goalCreateDeadlineMonth": "1 месяц",
+  "goalCreateDeadlineThreeMonths": "3 месяца",
+  "goalCreateDeadlineCustom": "Своя дата",
+  "goalCreateTimePerDayLabel": "Времени в день",
+  "goalCreateTimePerDay": "{min} мин",
+  "@goalCreateTimePerDay": {
+    "placeholders": { "min": { "type": "int" } }
+  },
+  "goalCreateCurrentLevelLabel": "С чего стартуешь",
+  "goalCreateCurrentLevelBeginner": "С нуля",
+  "goalCreateCurrentLevelIntermediate": "Есть опыт",
+  "goalCreateCurrentLevelAdvanced": "Уже умею",
+  "goalCreateMaterialsLabel": "Есть всё что нужно?",
+  "goalCreateMaterialsYes": "Да",
+  "goalCreateMaterialsNo": "Нет, разберусь",
+  "goalCreateContinue": "Сделать план",
+
+  "goalPlanReviewTitle": "Твой план",
+  "goalPlanReviewSummary": "Кратко",
+  "goalPlanReviewSteps": "Шаги",
+  "goalPlanReviewEstimated": "Срок: {weeks} нед.",
+  "@goalPlanReviewEstimated": {
+    "placeholders": { "weeks": { "type": "int" } }
+  },
+  "goalPlanStepTask": "Задача",
+  "goalPlanStepHabit": "Привычка",
+  "goalPlanStepMilestone": "Веха",
+  "goalPlanReviewConfirm": "Поехали",
+  "goalPlanReviewRegenerate": "Перегенерировать",
+  "goalPlanReviewBack": "Поправить ответы",
+
+  "goalAnalyzing": "Анализирую цель…",
+  "goalAnalyzeError": "Не получилось построить план. Попробуй ещё раз.",
+  "goalConfirming": "Создаю всё…",
+  "goalConfirmError": "Не удалось сохранить план. Попробуй ещё раз.",
+
+  "goalDetailTitle": "Цель",
+  "goalDetailProgressTasks": "Задачи: {done}/{total}",
+  "@goalDetailProgressTasks": {
+    "placeholders": {
+      "done":  { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "goalDetailProgressMilestones": "Вехи: {done}/{total}",
+  "@goalDetailProgressMilestones": {
+    "placeholders": {
+      "done":  { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "goalDetailRelatedTasks": "Задачи",
+  "goalDetailRelatedHabits": "Привычки",
+  "goalDetailRelatedMilestones": "Вехи",
+
+  "goalStatusActive": "Активная",
+  "goalStatusCompleted": "Готово",
+  "goalStatusPaused": "На паузе",
+  "goalStatusAbandoned": "Заброшена",
+
+  "homeTitle": "Главная",
+  "homeGreetingMorning": "Доброе утро, {name}",
+  "@homeGreetingMorning": { "placeholders": { "name": { "type": "String" } } },
+  "homeGreetingDay": "Привет, {name}",
+  "@homeGreetingDay": { "placeholders": { "name": { "type": "String" } } },
+  "homeGreetingEvening": "Добрый вечер, {name}",
+  "@homeGreetingEvening": { "placeholders": { "name": { "type": "String" } } },
+  "homeGreetingNight": "Поздний час, {name}",
+  "@homeGreetingNight": { "placeholders": { "name": { "type": "String" } } },
+
+  "homeLevel": "Уровень {level}",
+  "@homeLevel": { "placeholders": { "level": { "type": "int" } } },
+  "homeXpProgress": "{current}/{toNext} XP",
+  "@homeXpProgress": {
+    "placeholders": {
+      "current": { "type": "int" },
+      "toNext":  { "type": "int" }
+    }
+  },
+  "homeEnergy": "Энергия",
+  "homeEnergyValue": "{cur}/{max}",
+  "@homeEnergyValue": {
+    "placeholders": {
+      "cur": { "type": "int" },
+      "max": { "type": "int" }
+    }
+  },
+
+  "homeFocusTitle": "Фокус на сегодня",
+  "homeFocusEmpty": "На сегодня пусто. Добавь задачу или отметь привычку.",
+  "homeFocusAddTask": "Добавить",
+
+  "homeBubbleTasks": "Задачи",
+  "homeBubbleHabits": "Привычки",
+  "homeBubbleGoals": "Цели",
+  "homeBubbleCoach": "Тренер",
+
+  "homeActiveGoal": "Главная цель",
+  "homeActiveGoalNone": "Активных целей пока нет.",
+  "homeActiveGoalStart": "Создать",
+  "homeActiveGoalProgress": "{done}/{total}",
+  "@homeActiveGoalProgress": {
+    "placeholders": {
+      "done":  { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+
+  "homePreviewMore": "Все →",
+
+  "homeError": "Не удалось загрузить данные. Проверь связь.",
+  "homeRetry": "Попробовать снова",
+
+  "levelUpTitle": "Новый уровень!",
+  "levelUpSubtitle": "Теперь уровень {level}",
+  "@levelUpSubtitle": { "placeholders": { "level": { "type": "int" } } },
+  "levelUpClose": "Класс",
+
+  "navHome": "Главная",
+  "navTasks": "Задачи",
+  "navHabits": "Привычки",
+  "navGoals": "Цели",
+  "navCoach": "Тренер",
+
+  "aiChatTitle": "Тренер",
+  "aiChatEmptyTitle": "Поговори с тренером",
+  "aiChatEmptyBody": "Расскажи что трудно, что хочешь изменить или что мешает. Я помню всё.",
+  "aiChatInputHint": "Напиши сообщение…",
+  "aiChatSend": "Отправить",
+  "aiChatThinking": "Думаю…",
+  "aiChatLoadError": "Не удалось загрузить чат. Попробуй ещё раз.",
+  "aiChatSendError": "Не удалось отправить. Попробуй ещё раз.",
+  "aiChatLimitReached": "Лимит сообщений на сегодня исчерпан. Возвращайся завтра.",
+
+  "aiSuggestionTaskBadge": "Предлагаемая задача",
+  "aiSuggestionHabitBadge": "Предлагаемая привычка",
+  "aiSuggestionAdd": "Добавить",
+  "aiSuggestionDismiss": "Пропустить"
 }

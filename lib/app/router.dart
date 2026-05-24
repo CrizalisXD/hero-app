@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -9,17 +9,26 @@ import '../features/auth/presentation/sign_in_screen.dart';
 import '../features/auth/presentation/sign_up_screen.dart';
 import '../features/auth/presentation/splash_screen.dart';
 import '../features/auth/presentation/welcome_screen.dart';
-import '../features/home/presentation/home_stub_screen.dart';
+import '../features/goals/presentation/screens/goal_create_screen.dart';
+import '../features/goals/presentation/screens/goal_detail_screen.dart';
+import '../features/goals/presentation/screens/goal_plan_review_screen.dart';
+import '../features/goals/presentation/screens/goals_screen.dart';
+import '../features/habits/presentation/screens/habits_screen.dart'
+    as habits_feature;
+import '../features/home/presentation/screens/home_screen.dart';
+import '../features/ai_chat/presentation/screens/ai_chat_screen.dart';
+import '../features/home/presentation/screens/home_shell.dart';
 import '../features/onboarding/presentation/avatar_intro_screen.dart';
-import '../features/tasks/presentation/screens/tasks_screen.dart';
 import '../features/onboarding/presentation/energy_level_screen.dart';
 import '../features/onboarding/presentation/failure_reason_screen.dart';
 import '../features/onboarding/presentation/first_mission_screen.dart';
-import '../features/onboarding/presentation/habits_screen.dart';
+import '../features/onboarding/presentation/habits_screen.dart'
+    as onboarding_habits;
 import '../features/onboarding/presentation/life_change_screen.dart';
 import '../features/onboarding/presentation/main_obstacle_screen.dart';
 import '../features/onboarding/presentation/support_style_screen.dart';
 import '../features/onboarding/presentation/time_commitment_screen.dart';
+import '../features/tasks/presentation/screens/tasks_screen.dart';
 
 const _publicRoutes = <String>{
   '/splash',
@@ -29,12 +38,15 @@ const _publicRoutes = <String>{
   '/auth/email-confirm',
 };
 
+final _shellNavigatorKey = GlobalKey<NavigatorState>();
+final _rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final routerProvider = Provider<GoRouter>((ref) {
   final notifier = _AuthRouterRefresh(ref);
 
   return GoRouter(
     initialLocation: '/splash',
+    navigatorKey: _rootNavigatorKey,
     refreshListenable: notifier,
     redirect: (context, state) {
       final session = ref.read(authSessionControllerProvider);
@@ -56,6 +68,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
+      // ── Public / Auth ──
       GoRoute(
         path: '/splash',
         builder: (_, __) => const SplashScreen(),
@@ -74,15 +87,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/auth/email-confirm',
-        builder: (ctx, state) {
-          final email = state.uri.queryParameters['email'] ?? '';
-          return EmailConfirmationScreen(email: email);
-        },
+        builder: (_, s) => EmailConfirmationScreen(
+          email: s.uri.queryParameters['email'] ?? '',
+        ),
       ),
-      GoRoute(
-        path: '/home',
-        builder: (_, __) => const HomeStubScreen(),
-      ),
+
+      // ── Onboarding (outside shell — no bottom nav) ──
       GoRoute(
         path: '/onboarding/life-change',
         builder: (_, __) => const LifeChangeScreen(),
@@ -109,7 +119,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/onboarding/habits',
-        builder: (_, __) => const HabitsScreen(),
+        builder: (_, __) => const onboarding_habits.HabitsScreen(),
       ),
       GoRoute(
         path: '/onboarding/avatar-intro',
@@ -119,9 +129,51 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/onboarding/first-mission',
         builder: (_, __) => const FirstMissionScreen(),
       ),
+
+      // ── Main tabs with bottom nav ──
+      ShellRoute(
+        navigatorKey: _shellNavigatorKey,
+        builder: (context, state, child) => HomeShell(child: child),
+        routes: [
+          GoRoute(
+            path: '/home',
+            builder: (_, __) => const HomeScreen(),
+          ),
+          GoRoute(
+            path: '/tasks',
+            builder: (_, __) => const TasksScreen(),
+          ),
+          GoRoute(
+            path: '/habits',
+            builder: (_, __) => const habits_feature.HabitsScreen(),
+          ),
+          GoRoute(
+            path: '/goals',
+            builder: (_, __) => const GoalsScreen(),
+          ),
+          GoRoute(
+            path: '/coach',
+            builder: (_, __) => const AiChatScreen(),
+          ),
+        ],
+      ),
+
+      // ── Modal / secondary screens (above shell) ──
       GoRoute(
-        path: '/tasks',
-        builder: (_, __) => const TasksScreen(),
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/goals/new',
+        builder: (_, __) => const GoalCreateScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/goals/review',
+        builder: (_, __) => const GoalPlanReviewScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/goals/:id',
+        builder: (_, s) =>
+            GoalDetailScreen(goalId: s.pathParameters['id']!),
       ),
     ],
   );

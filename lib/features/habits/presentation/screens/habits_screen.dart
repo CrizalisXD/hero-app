@@ -1,0 +1,129 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../../core/l10n/l10n.dart';
+import '../../application/habits_notifier.dart';
+import '../../domain/models/habit.dart';
+import '../widgets/create_habit_sheet.dart';
+import '../widgets/habit_list_item.dart';
+
+class HabitsScreen extends ConsumerWidget {
+  const HabitsScreen({super.key});
+
+  // ─── check-in ──────────────────────────────────────────────────────────────
+
+  Future<void> _checkin(
+    BuildContext context,
+    WidgetRef ref,
+    Habit h,
+  ) async {
+    try {
+      final res =
+          await ref.read(habitsNotifierProvider.notifier).checkin(h.id);
+      if (!context.mounted || res == null || res.duplicate) return;
+      final l = context.l10n;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          duration: const Duration(seconds: 2),
+          content: Text(
+            l.habitCheckinSuccessSnack(
+              res.totalXp,
+              l.habitStreakDays(res.currentStreak),
+            ),
+          ),
+        ),
+      );
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(context.l10n.habitCheckinErrorSnack)),
+      );
+    }
+  }
+
+  // ─── delete ────────────────────────────────────────────────────────────────
+
+  Future<void> _delete(
+    BuildContext context,
+    WidgetRef ref,
+    Habit h,
+  ) async {
+    final l = context.l10n;
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (_) => AlertDialog(
+        title: Text(l.habitDeleteConfirmTitle),
+        content: Text(l.habitDeleteConfirmBody),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text(l.habitDeleteCancel),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context, true),
+            child: Text(l.habitDeleteAction),
+          ),
+        ],
+      ),
+    );
+    if (ok == true && context.mounted) {
+      await ref.read(habitsNotifierProvider.notifier).delete(h.id);
+    }
+  }
+
+  // ─── build ─────────────────────────────────────────────────────────────────
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final state = ref.watch(habitsNotifierProvider);
+
+    return Scaffold(
+      appBar: AppBar(title: Text(l.habitsTitle)),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: () => CreateHabitSheet.show(context),
+        icon: const Icon(Icons.add),
+        label: Text(l.habitsFabCreate),
+      ),
+      body: state.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text(l.habitsLoadError, textAlign: TextAlign.center),
+          ),
+        ),
+        data: (view) {
+          if (view.habits.isEmpty) {
+            return Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  l.habitsEmpty,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+          return RefreshIndicator(
+            onRefresh: () =>
+                ref.read(habitsNotifierProvider.notifier).refresh(),
+            child: ListView.separated(
+              itemCount: view.habits.length,
+              separatorBuilder: (_, __) => const Divider(height: 1),
+              itemBuilder: (_, i) {
+                final h = view.habits[i];
+                return HabitListItem(
+                  habit: h,
+                  checkedToday: view.checkedToday.contains(h.id),
+                  onCheckin: () => _checkin(context, ref, h),
+                  onLongPress: () => _delete(context, ref, h),
+                );
+              },
+            ),
+          );
+        },
+      ),
+    );
+  }
+}

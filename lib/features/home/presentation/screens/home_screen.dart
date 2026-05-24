@@ -1,0 +1,59 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../application/home_notifier.dart';
+import '../widgets/active_goal_panel.dart';
+import '../widgets/bubble_actions_panel.dart';
+import '../widgets/daily_tasks_preview.dart';
+import '../widgets/hero_avatar_panel.dart';
+import '../widgets/hero_progress_header.dart';
+import '../widgets/home_error_state.dart';
+import '../widgets/home_skeleton.dart';
+import '../widgets/today_focus_panel.dart';
+
+class HomeScreen extends ConsumerWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(homeNotifierProvider);
+
+    return state.when(
+      loading: () => const HomeSkeleton(),
+      error: (_, __) => HomeErrorState(
+        onRetry: () => ref.read(homeNotifierProvider.notifier).refresh(),
+      ),
+      data: (data) => RefreshIndicator(
+        onRefresh: () => ref.read(homeNotifierProvider.notifier).refresh(),
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
+          children: [
+            HeroAvatarPanel(
+              avatar: data.avatar,
+              level: data.character.level,
+            ),
+            const SizedBox(height: 20),
+            HeroProgressHeader(
+              displayName: data.displayName,
+              character: data.character,
+            ),
+            const SizedBox(height: 24),
+            const BubbleActionsPanel(),
+            const SizedBox(height: 20),
+            TodayFocusPanel(tasks: data.todayTasks),
+            const SizedBox(height: 12),
+            ActiveGoalPanel(
+              goal: data.activeGoal,
+              progress: data.activeGoalProgress,
+            ),
+            const SizedBox(height: 12),
+            DailyTasksPreview(
+              habits: data.activeHabits,
+              checkedToday: data.habitsCheckedToday,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}

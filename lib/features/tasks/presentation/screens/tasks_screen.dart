@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/l10n/l10n.dart';
+import '../../../home/application/home_notifier.dart';
+import '../../../home/presentation/widgets/level_up_overlay.dart';
 import '../../application/tasks_notifier.dart';
 import '../../domain/models/task.dart';
 import '../widgets/create_task_sheet.dart';
@@ -144,6 +146,10 @@ class _TodayTab extends ConsumerWidget {
           ),
         ),
       );
+      if (result.levelsGained > 0 && context.mounted) {
+        await LevelUpOverlay.show(context, newLevel: result.levelAfter);
+        ref.invalidate(homeNotifierProvider);
+      }
     }
   }
 }
@@ -212,6 +218,10 @@ class _AllTab extends ConsumerWidget {
           content: Text('${l.taskCompleted} +${result.categoryXp} XP'),
         ),
       );
+      if (result.levelsGained > 0 && context.mounted) {
+        await LevelUpOverlay.show(context, newLevel: result.levelAfter);
+        ref.invalidate(homeNotifierProvider);
+      }
     }
   }
 }
