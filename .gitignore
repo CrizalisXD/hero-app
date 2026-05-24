@@ -44,6 +44,7 @@ lib/l10n/generated/
 .env
 .env.local
 secrets/
+dart_defines.local.json
 
 # iOS
 ios/Pods/
