@@ -6,6 +6,7 @@ import '../data/supabase_auth_repository.dart';
 import '../domain/auth_repository.dart';
 import '../domain/models/auth_session.dart';
 import '../domain/models/sign_up_result.dart';
+import 'failure_mappers.dart';
 
 part 'auth_notifier.g.dart';
 
@@ -105,7 +106,20 @@ class AuthActions extends _$AuthActions {
     }
   }
 
-  Future<void> signOut() async {
+  /// Signs the user out.
+  ///
+  /// For [GuestSession]s, callers MUST pass [acknowledgeGuestDataLoss] = true.
+  /// Without acknowledgement we throw `guestSignOutNeedsConfirmation` so the
+  /// UI is forced to show a warning ("guest progress lives only on this
+  /// device") before destroying the only key to the account.
+  Future<void> signOut({bool acknowledgeGuestDataLoss = false}) async {
+    final session = _repo.currentSession;
+    if (session is GuestSession && !acknowledgeGuestDataLoss) {
+      throw const AuthFailureException(
+        AuthFailureKind.guestSignOutNeedsConfirmation,
+      );
+    }
+
     state = const AsyncLoading();
     try {
       await _repo.signOut();

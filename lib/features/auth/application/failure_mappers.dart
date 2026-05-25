@@ -7,6 +7,7 @@ enum AuthFailureKind {
   invalidEmail,
   rateLimited,
   guestDisabled,
+  guestSignOutNeedsConfirmation,
   generic,
 }
 

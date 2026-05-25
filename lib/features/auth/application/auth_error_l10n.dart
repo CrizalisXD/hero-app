@@ -12,6 +12,8 @@ extension AuthFailureL10n on AuthFailureKind {
       AuthFailureKind.invalidEmail => l.authErrorInvalidEmail,
       AuthFailureKind.rateLimited => l.authErrorRateLimited,
       AuthFailureKind.guestDisabled => l.authErrorGuestDisabled,
+      AuthFailureKind.guestSignOutNeedsConfirmation =>
+        l.guestUpgradeSignOutWarningBody,
       AuthFailureKind.generic => l.authErrorGeneric,
     };
   }

@@ -6,10 +6,12 @@ import '../application/failure_mappers.dart';
 import '../domain/auth_repository.dart';
 import '../domain/models/auth_session.dart';
 import '../domain/models/sign_up_result.dart';
+import 'guest_account_local_store.dart';
 
 class SupabaseAuthRepository implements AuthRepository {
-  SupabaseAuthRepository(this._client);
+  SupabaseAuthRepository(this._client, {required this.guestStore});
   final SupabaseClient _client;
+  final GuestAccountLocalStore guestStore;
 
   @override
   AuthSession get currentSession =>
@@ -85,11 +87,14 @@ class SupabaseAuthRepository implements AuthRepository {
     final current = _client.auth.currentSession;
 
     if (current != null && _isAnonymous(current.user)) {
+      // Already a guest — mirror to secure storage in case it was missing.
+      await guestStore.saveGuest(current.user.id);
       return GuestSession(userId: current.user.id);
     }
 
     if (current != null && !_isAnonymous(current.user)) {
       await _client.auth.signOut();
+      await guestStore.clearGuest();
     }
 
     try {
@@ -98,6 +103,7 @@ class SupabaseAuthRepository implements AuthRepository {
       if (user == null) {
         throw const AuthFailureException(AuthFailureKind.generic);
       }
+      await guestStore.saveGuest(user.id);
       return GuestSession(userId: user.id);
     } on AuthException catch (e) {
       throw mapSupabaseAuthException(e);
@@ -143,7 +149,10 @@ class SupabaseAuthRepository implements AuthRepository {
         UserAttributes(email: trimmedEmail, password: password),
       );
 
-      // (2) Update profile metadata. RLS policy p_profiles_own allows
+      // (2) Make sure bootstrap rows exist (idempotent — was guest before).
+      await ensureBootstrap();
+
+      // (3) Update profile metadata. RLS policy p_profiles_own allows
       //     the user to update their own row.
       await _client.from('profiles').update({
         'is_guest': false,
@@ -151,10 +160,13 @@ class SupabaseAuthRepository implements AuthRepository {
         'email': trimmedEmail,
       }).eq('id', userId);
 
-      // (3) Mirror onto public.users.email for joins / display.
+      // (4) Mirror onto public.users.email for joins / display.
       await _client.from('users').update({
         'email': trimmedEmail,
       }).eq('id', userId);
+
+      // (5) No longer a guest — clear local guest flags.
+      await guestStore.clearGuest();
 
       return EmailSession(userId: userId, email: trimmedEmail);
     } on AuthException catch (e) {
@@ -170,7 +182,10 @@ class SupabaseAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<void> signOut() => _client.auth.signOut();
+  Future<void> signOut() async {
+    await _client.auth.signOut();
+    await guestStore.clearGuest();
+  }
 
   @override
   Future<void> ensureBootstrap() async {
@@ -187,5 +202,6 @@ class SupabaseAuthRepository implements AuthRepository {
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   final client = ref.watch(supabaseClientProvider);
-  return SupabaseAuthRepository(client);
+  final store = ref.watch(guestAccountLocalStoreProvider);
+  return SupabaseAuthRepository(client, guestStore: store);
 });
