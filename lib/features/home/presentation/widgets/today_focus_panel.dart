@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../core/l10n/l10n.dart';
+import '../../../rewards/application/achievements_notifier.dart';
+import '../../../rewards/presentation/widgets/achievement_unlocked_sheet.dart';
 import '../../../tasks/application/tasks_notifier.dart';
 import '../../../tasks/domain/models/task.dart';
 import '../../../tasks/presentation/widgets/category_chip.dart';
@@ -29,6 +31,13 @@ class TodayFocusPanel extends ConsumerWidget {
       if (res.levelsGained > 0 && context.mounted) {
         await LevelUpOverlay.show(context, newLevel: res.levelAfter);
         ref.invalidate(homeNotifierProvider);
+      }
+      if (res.unlockedAchievements.isNotEmpty && context.mounted) {
+        await AchievementUnlockedSheet.showAll(
+          context,
+          res.unlockedAchievements,
+        );
+        ref.invalidate(achievementsNotifierProvider);
       }
     } catch (_) {
       if (!context.mounted) return;

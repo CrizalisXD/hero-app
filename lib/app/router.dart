@@ -21,6 +21,7 @@ import '../features/habits/presentation/screens/habits_screen.dart'
 import '../features/home/presentation/screens/home_screen.dart';
 import '../features/home/presentation/screens/home_shell.dart';
 import '../features/onboarding/presentation/avatar_intro_screen.dart';
+import '../features/rewards/presentation/screens/rewards_screen.dart';
 import '../features/settings/presentation/screens/about_screen.dart';
 import '../features/settings/presentation/screens/account_settings_screen.dart';
 import '../features/settings/presentation/screens/ai_memory_settings_screen.dart';
@@ -148,6 +149,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         path: '/settings/about',
         builder: (_, __) => const AboutScreen(),
+      ),
+
+      // ── Rewards (Phase 12) ──
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/rewards',
+        builder: (_, __) => const RewardsScreen(),
       ),
 
       // ── Onboarding (outside shell — no bottom nav) ──

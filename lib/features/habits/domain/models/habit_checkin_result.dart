@@ -1,3 +1,5 @@
+import '../../../rewards/domain/models/unlocked_achievement.dart';
+
 class HabitCheckinResult {
   const HabitCheckinResult({
     required this.habitId,
@@ -8,6 +10,7 @@ class HabitCheckinResult {
     required this.levelBefore,
     required this.levelAfter,
     required this.levelsGained,
+    this.unlockedAchievements = const [],
   });
 
   final String habitId;
@@ -18,6 +21,7 @@ class HabitCheckinResult {
   final int levelBefore;
   final int levelAfter;
   final int levelsGained;
+  final List<UnlockedAchievement> unlockedAchievements;
 
   int get totalXp => xpGained + disciplineXp;
 
@@ -33,6 +37,8 @@ class HabitCheckinResult {
       levelBefore: (char['level_before'] as num?)?.toInt() ?? 0,
       levelAfter: (char['level_after'] as num?)?.toInt() ?? 0,
       levelsGained: (char['levels_gained'] as num?)?.toInt() ?? 0,
+      unlockedAchievements:
+          UnlockedAchievement.listFromJson(json['unlocked_achievements']),
     );
   }
 }
