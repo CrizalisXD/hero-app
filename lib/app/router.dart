@@ -22,6 +22,9 @@ import '../features/home/presentation/screens/home_screen.dart';
 import '../features/home/presentation/screens/home_shell.dart';
 import '../features/onboarding/presentation/avatar_intro_screen.dart';
 import '../features/rewards/presentation/screens/rewards_screen.dart';
+import '../features/social/presentation/screens/friend_search_screen.dart';
+import '../features/social/presentation/screens/public_profile_screen.dart';
+import '../features/social/presentation/screens/social_screen.dart';
 import '../features/settings/presentation/screens/about_screen.dart';
 import '../features/settings/presentation/screens/account_settings_screen.dart';
 import '../features/settings/presentation/screens/ai_memory_settings_screen.dart';
@@ -158,6 +161,19 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, __) => const RewardsScreen(),
       ),
 
+      // ── Social modals (Phase 13) ──
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/social/search',
+        builder: (_, __) => const FriendSearchScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/social/profile/:id',
+        builder: (_, s) =>
+            PublicProfileScreen(userId: s.pathParameters['id']!),
+      ),
+
       // ── Onboarding (outside shell — no bottom nav) ──
       GoRoute(
         path: '/onboarding/life-change',
@@ -216,6 +232,10 @@ final routerProvider = Provider<GoRouter>((ref) {
           GoRoute(
             path: '/goals',
             builder: (_, __) => const GoalsScreen(),
+          ),
+          GoRoute(
+            path: '/social',
+            builder: (_, __) => const SocialScreen(),
           ),
           GoRoute(
             path: '/coach',
