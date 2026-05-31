@@ -44,6 +44,7 @@ lib/l10n/generated/
 # analyzer_plugin 0.12.0 ↔ analyzer 7.x conflict blocks build_runner.
 !lib/features/auth/application/auth_notifier.g.dart
 !lib/features/avatar/application/avatar_notifier.g.dart
+!lib/core/l10n/locale_notifier.g.dart
 
 # Secrets
 .env

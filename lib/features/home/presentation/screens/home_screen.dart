@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../application/home_notifier.dart';
 import '../widgets/active_goal_panel.dart';
@@ -23,7 +24,21 @@ class HomeScreen extends ConsumerWidget {
       error: (_, __) => HomeErrorState(
         onRetry: () => ref.read(homeNotifierProvider.notifier).refresh(),
       ),
-      data: (data) => RefreshIndicator(
+      data: (data) => Scaffold(
+        // Transparent AppBar so it sits over Home content. Only purpose:
+        // expose the Settings entry point per Phase 11 §11.8.
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          actions: [
+            IconButton(
+              icon: const Icon(Icons.settings_outlined),
+              onPressed: () => context.push('/settings'),
+            ),
+          ],
+        ),
+        extendBodyBehindAppBar: true,
+        body: RefreshIndicator(
         onRefresh: () => ref.read(homeNotifierProvider.notifier).refresh(),
         child: ListView(
           padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
@@ -52,6 +67,7 @@ class HomeScreen extends ConsumerWidget {
               checkedToday: data.habitsCheckedToday,
             ),
           ],
+        ),
         ),
       ),
     );

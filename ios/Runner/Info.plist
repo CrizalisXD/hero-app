@@ -52,5 +52,7 @@
 		<string>_dartobservatory._tcp</string>
 		<string>_dart._tcp</string>
 	</array>
+	<key>NSUserNotificationUsageDescription</key>
+	<string>Hero sends reminders for your tasks and habits.</string>
 </dict>
 </plist>
