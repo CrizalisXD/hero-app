@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../home/application/home_notifier.dart';
 import '../../../home/presentation/widgets/level_up_overlay.dart';
+import '../../../rewards/application/achievements_notifier.dart';
+import '../../../rewards/presentation/widgets/achievement_unlocked_sheet.dart';
 import '../../application/tasks_notifier.dart';
 import '../../domain/models/task.dart';
 import '../widgets/create_task_sheet.dart';
@@ -150,6 +152,13 @@ class _TodayTab extends ConsumerWidget {
         await LevelUpOverlay.show(context, newLevel: result.levelAfter);
         ref.invalidate(homeNotifierProvider);
       }
+      if (result.unlockedAchievements.isNotEmpty && context.mounted) {
+        await AchievementUnlockedSheet.showAll(
+          context,
+          result.unlockedAchievements,
+        );
+        ref.invalidate(achievementsNotifierProvider);
+      }
     }
   }
 }
@@ -221,6 +230,13 @@ class _AllTab extends ConsumerWidget {
       if (result.levelsGained > 0 && context.mounted) {
         await LevelUpOverlay.show(context, newLevel: result.levelAfter);
         ref.invalidate(homeNotifierProvider);
+      }
+      if (result.unlockedAchievements.isNotEmpty && context.mounted) {
+        await AchievementUnlockedSheet.showAll(
+          context,
+          result.unlockedAchievements,
+        );
+        ref.invalidate(achievementsNotifierProvider);
       }
     }
   }

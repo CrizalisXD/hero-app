@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/l10n/l10n.dart';
+import '../../../rewards/application/achievements_notifier.dart';
+import '../../../rewards/presentation/widgets/achievement_unlocked_sheet.dart';
 import '../../application/habits_notifier.dart';
 import '../../domain/models/habit.dart';
 import '../widgets/create_habit_sheet.dart';
@@ -33,6 +35,13 @@ class HabitsScreen extends ConsumerWidget {
           ),
         ),
       );
+      if (res.unlockedAchievements.isNotEmpty && context.mounted) {
+        await AchievementUnlockedSheet.showAll(
+          context,
+          res.unlockedAchievements,
+        );
+        ref.invalidate(achievementsNotifierProvider);
+      }
     } catch (_) {
       if (!context.mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

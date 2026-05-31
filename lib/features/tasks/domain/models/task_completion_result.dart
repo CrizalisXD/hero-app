@@ -1,3 +1,5 @@
+import '../../../rewards/domain/models/unlocked_achievement.dart';
+
 class TaskCompletionResult {
   const TaskCompletionResult({
     required this.ok,
@@ -8,6 +10,7 @@ class TaskCompletionResult {
     required this.levelBefore,
     required this.levelAfter,
     required this.levelsGained,
+    this.unlockedAchievements = const [],
   });
 
   final bool ok;
@@ -18,6 +21,7 @@ class TaskCompletionResult {
   final int levelBefore;
   final int levelAfter;
   final int levelsGained;
+  final List<UnlockedAchievement> unlockedAchievements;
 
   factory TaskCompletionResult.fromRpc(Map<String, dynamic> j) {
     final character =
@@ -31,6 +35,8 @@ class TaskCompletionResult {
       levelBefore: (character['level_before'] as num?)?.toInt() ?? 0,
       levelAfter: (character['level_after'] as num?)?.toInt() ?? 0,
       levelsGained: (character['levels_gained'] as num?)?.toInt() ?? 0,
+      unlockedAchievements:
+          UnlockedAchievement.listFromJson(j['unlocked_achievements']),
     );
   }
 }

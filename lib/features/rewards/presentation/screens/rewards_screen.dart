@@ -1,0 +1,161 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../../../app/theme/app_colors.dart';
+import '../../../../core/l10n/l10n.dart';
+import '../../application/achievement_l10n.dart';
+import '../../application/achievements_notifier.dart';
+import '../../domain/models/achievement.dart';
+
+class RewardsScreen extends ConsumerStatefulWidget {
+  const RewardsScreen({super.key});
+
+  @override
+  ConsumerState<RewardsScreen> createState() => _RewardsScreenState();
+}
+
+class _RewardsScreenState extends ConsumerState<RewardsScreen>
+    with SingleTickerProviderStateMixin {
+  late final TabController _tab;
+
+  @override
+  void initState() {
+    super.initState();
+    _tab = TabController(length: 3, vsync: this);
+  }
+
+  @override
+  void dispose() {
+    _tab.dispose();
+    super.dispose();
+  }
+
+  Color _rarityColor(AchievementRarity r) => switch (r) {
+        AchievementRarity.legendary => AppColors.rarityLegendary,
+        AchievementRarity.epic => AppColors.rarityEpic,
+        AchievementRarity.rare => AppColors.rarityRare,
+        AchievementRarity.common => AppColors.rarityCommon,
+      };
+
+  Widget _tile(BuildContext c, Achievement a, bool unlocked) {
+    final color = _rarityColor(a.rarity);
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: Container(
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: AppColors.bgCard,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            color: unlocked ? color.withValues(alpha: 0.5) : AppColors.border,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              height: 44,
+              width: 44,
+              decoration: BoxDecoration(
+                color: unlocked
+                    ? color.withValues(alpha: 0.2)
+                    : AppColors.bgElevated,
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                unlocked ? achievementIcon(a.iconKey) : Icons.lock_outline,
+                color: unlocked ? color : AppColors.textMuted,
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10nAchievementTitle(c, a.titleKey),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: unlocked
+                          ? AppColors.textPrimary
+                          : AppColors.textSecondary,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    l10nAchievementBody(c, a.descriptionKey),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: Color(0xB3FFFFFF),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              '+${a.rewardXp}',
+              style: TextStyle(
+                fontWeight: FontWeight.w600,
+                color: unlocked ? color : AppColors.textMuted,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final state = ref.watch(achievementsNotifierProvider);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(l.rewardsTitle),
+        bottom: TabBar(
+          controller: _tab,
+          tabs: [
+            Tab(text: l.rewardsTabAll),
+            Tab(text: l.rewardsTabUnlocked),
+            Tab(text: l.rewardsTabLocked),
+          ],
+        ),
+      ),
+      body: state.when(
+        loading: () => const Center(child: CircularProgressIndicator()),
+        error: (e, _) => Center(child: Text('$e')),
+        data: (view) {
+          List<Achievement> filter(int tab) {
+            final list = view.all;
+            return switch (tab) {
+              1 => list.where((a) => view.isUnlocked(a.id)).toList(),
+              2 => list.where((a) => !view.isUnlocked(a.id)).toList(),
+              _ => list,
+            };
+          }
+
+          Widget tabView(int i) {
+            final items = filter(i);
+            if (items.isEmpty) return Center(child: Text(l.rewardsEmpty));
+            return RefreshIndicator(
+              onRefresh: () =>
+                  ref.read(achievementsNotifierProvider.notifier).refresh(),
+              child: ListView.builder(
+                itemCount: items.length,
+                itemBuilder: (c, idx) =>
+                    _tile(c, items[idx], view.isUnlocked(items[idx].id)),
+              ),
+            );
+          }
+
+          return TabBarView(
+            controller: _tab,
+            children: [tabView(0), tabView(1), tabView(2)],
+          );
+        },
+      ),
+    );
+  }
+}

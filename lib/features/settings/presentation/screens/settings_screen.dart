@@ -51,6 +51,12 @@ class SettingsScreen extends StatelessWidget {
           ),
           _row(
             context,
+            icon: Icons.emoji_events_outlined,
+            label: l.rewardsTitle,
+            to: '/rewards',
+          ),
+          _row(
+            context,
             icon: Icons.info_outline,
             label: l.settingsSectionAbout,
             to: '/settings/about',

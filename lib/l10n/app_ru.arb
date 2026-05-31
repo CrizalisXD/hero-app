@@ -443,5 +443,58 @@
   "@aboutVersion": { "placeholders": { "version": { "type": "String" } } },
   "aboutPrivacyPolicy": "Политика конфиденциальности",
   "aboutTermsOfService": "Условия использования",
-  "aboutOpenSourceLicenses": "Open source лицензии"
+  "aboutOpenSourceLicenses": "Open source лицензии",
+
+  "rewardsTitle": "Награды",
+  "rewardsTabAll": "Все",
+  "rewardsTabUnlocked": "Полученные",
+  "rewardsTabLocked": "Заблокированные",
+  "rewardsEmpty": "Получи первую награду, закрыв задачу.",
+
+  "rarityCommon": "Обычная",
+  "rarityRare": "Редкая",
+  "rarityEpic": "Эпическая",
+  "rarityLegendary": "Легендарная",
+
+  "achievementUnlockedTitle": "Достижение открыто",
+  "achievementRewardXp": "+{xp} XP",
+  "@achievementRewardXp": { "placeholders": { "xp": { "type": "int" } } },
+  "achievementClose": "Класс",
+
+  "achievementStreak3Title": "Искра пути",
+  "achievementStreak3Body": "3 дня подряд",
+  "achievementStreak5Title": "Пламя первых дней",
+  "achievementStreak5Body": "5 дней подряд",
+  "achievementStreak7Title": "Неделя героя",
+  "achievementStreak7Body": "7 дней подряд",
+  "achievementStreak21Title": "Закалка привычки",
+  "achievementStreak21Body": "21 день регулярности",
+
+  "achievementLevel5Title": "Новичок пути",
+  "achievementLevel5Body": "Достичь 5 уровня",
+  "achievementLevel10Title": "Искатель роста",
+  "achievementLevel10Body": "Достичь 10 уровня",
+  "achievementLevel30Title": "Ветеран пути",
+  "achievementLevel30Body": "Достичь 30 уровня",
+
+  "achievementFirstGoalTitle": "Первый квест",
+  "achievementFirstGoalBody": "Создай первую цель",
+  "achievementFirstGoalDoneTitle": "Квест завершён",
+  "achievementFirstGoalDoneBody": "Заверши цель",
+
+  "achievementHabit7Title": "Ритм недели",
+  "achievementHabit7Body": "Держи привычку 7 дней",
+  "achievementHabit21Title": "Новая часть тебя",
+  "achievementHabit21Body": "Держи привычку 21 день",
+
+  "achievementTask100Title": "Сто шагов",
+  "achievementTask100Body": "Закрой 100 задач",
+
+  "achievementSocialFirstFriendTitle": "Союзник найден",
+  "achievementSocialFirstFriendBody": "Добавь первого друга",
+
+  "achievementChallengeFirstTitle": "Вызов принят",
+  "achievementChallengeFirstBody": "Вступи в челлендж",
+  "achievementChallengeCompleteTitle": "Победитель вызова",
+  "achievementChallengeCompleteBody": "Заверши челлендж"
 }
