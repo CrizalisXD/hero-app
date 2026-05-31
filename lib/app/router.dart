@@ -21,6 +21,14 @@ import '../features/habits/presentation/screens/habits_screen.dart'
 import '../features/home/presentation/screens/home_screen.dart';
 import '../features/home/presentation/screens/home_shell.dart';
 import '../features/onboarding/presentation/avatar_intro_screen.dart';
+import '../features/settings/presentation/screens/about_screen.dart';
+import '../features/settings/presentation/screens/account_settings_screen.dart';
+import '../features/settings/presentation/screens/ai_memory_settings_screen.dart';
+import '../features/settings/presentation/screens/data_settings_screen.dart';
+import '../features/settings/presentation/screens/language_settings_screen.dart';
+import '../features/settings/presentation/screens/notification_settings_screen.dart';
+import '../features/settings/presentation/screens/privacy_settings_screen.dart';
+import '../features/settings/presentation/screens/settings_screen.dart';
 import '../features/onboarding/presentation/energy_level_screen.dart';
 import '../features/onboarding/presentation/failure_reason_screen.dart';
 import '../features/onboarding/presentation/first_mission_screen.dart';
@@ -98,6 +106,48 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/auth/guest-upgrade',
         parentNavigatorKey: _rootNavigatorKey,
         builder: (_, __) => const GuestUpgradeScreen(),
+      ),
+
+      // ── Settings (root-navigator, opens above shell) ──
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/settings',
+        builder: (_, __) => const SettingsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/settings/account',
+        builder: (_, __) => const AccountSettingsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/settings/language',
+        builder: (_, __) => const LanguageSettingsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/settings/notifications',
+        builder: (_, __) => const NotificationSettingsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/settings/privacy',
+        builder: (_, __) => const PrivacySettingsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/settings/ai-memory',
+        builder: (_, __) => const AiMemorySettingsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/settings/data',
+        builder: (_, __) => const DataSettingsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/settings/about',
+        builder: (_, __) => const AboutScreen(),
       ),
 
       // ── Onboarding (outside shell — no bottom nav) ──

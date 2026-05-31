@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/l10n/l10n.dart';
-import '../../../../../l10n/generated/app_localizations.dart';
 import '../../../categories/application/category_classifier_service.dart';
 import '../../../categories/application/xp_engine.dart';
 import '../../../categories/data/categories_assets_repository.dart';
