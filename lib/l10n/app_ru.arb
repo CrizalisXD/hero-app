@@ -496,5 +496,67 @@
   "achievementChallengeFirstTitle": "Вызов принят",
   "achievementChallengeFirstBody": "Вступи в челлендж",
   "achievementChallengeCompleteTitle": "Победитель вызова",
-  "achievementChallengeCompleteBody": "Заверши челлендж"
+  "achievementChallengeCompleteBody": "Заверши челлендж",
+
+  "socialTitle": "Социальное",
+  "navSocial": "Соц",
+  "socialTabFriends": "Друзья",
+  "socialTabRequests": "Заявки",
+  "socialTabFeed": "Лента",
+  "socialEmptyFriends": "Друзей пока нет. Добавь по нику.",
+  "socialEmptyRequests": "Заявок нет.",
+  "socialEmptyFeed": "Моменты твоих друзей будут здесь.",
+  "socialAddFriend": "Добавить друга",
+  "socialSearch": "Поиск по нику",
+  "socialSearchHint": "@ник или имя",
+  "socialSearchEmpty": "Никого не нашли.",
+
+  "friendActionSend": "Отправить",
+  "friendActionAccept": "Принять",
+  "friendActionDecline": "Отклонить",
+  "friendActionCancel": "Отменить",
+  "friendActionRemove": "Удалить",
+  "friendActionBlock": "Заблокировать",
+  "friendActionReport": "Пожаловаться",
+  "friendRequestSent": "Заявка отправлена.",
+  "friendRequestAccepted": "Теперь вы друзья.",
+  "friendRequestRateLimited": "Слишком много заявок за день. Попробуй завтра.",
+  "friendRequestExists": "Заявка уже отправлена.",
+  "friendActionError": "Не получилось. Попробуй ещё раз.",
+
+  "publicProfileTitle": "Профиль",
+  "publicProfileLevel": "Уровень {level}",
+  "@publicProfileLevel": { "placeholders": { "level": { "type": "int" } } },
+  "publicProfileStreak": "Серия {days} дней",
+  "@publicProfileStreak": { "placeholders": { "days": { "type": "int" } } },
+  "publicProfileAchievementsCount": "Достижений: {count}",
+  "@publicProfileAchievementsCount": { "placeholders": { "count": { "type": "int" } } },
+
+  "feedAchievementUnlocked": "{name} получил «{title}»",
+  "@feedAchievementUnlocked": {
+    "placeholders": { "name": { "type": "String" }, "title": { "type": "String" } }
+  },
+  "feedLevelUp": "{name} достиг {level} уровня",
+  "@feedLevelUp": {
+    "placeholders": { "name": { "type": "String" }, "level": { "type": "int" } }
+  },
+
+  "reportTitle": "Пожаловаться",
+  "reportReason": "Причина",
+  "reportReasonSpam": "Спам",
+  "reportReasonHarassment": "Травля",
+  "reportReasonInappropriate": "Неприемлемый контент",
+  "reportReasonOther": "Другое",
+  "reportDetailsLabel": "Детали (опц.)",
+  "reportSubmit": "Отправить",
+  "reportSent": "Принято. Спасибо.",
+  "reportRateLimited": "Слишком много жалоб за день.",
+
+  "blockConfirmTitle": "Заблокировать {name}?",
+  "@blockConfirmTitle": { "placeholders": { "name": { "type": "String" } } },
+  "blockConfirmBody": "Он не увидит профиль и не сможет найти тебя.",
+  "blockConfirm": "Заблокировать",
+  "blockCancel": "Отмена",
+
+  "consentSocialShowStreak": "Показывать серию друзьям"
 }
