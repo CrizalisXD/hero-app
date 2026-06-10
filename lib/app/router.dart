@@ -25,6 +25,7 @@ import '../features/challenges/presentation/screens/challenge_detail_screen.dart
 import '../features/challenges/presentation/screens/challenges_list_screen.dart';
 import '../features/integrations/calendar/presentation/screens/calendar_screen.dart';
 import '../features/integrations/health/presentation/screens/health_screen.dart';
+import '../features/siri/presentation/screens/siri_settings_screen.dart';
 import '../features/rewards/presentation/screens/rewards_screen.dart';
 import '../features/social/presentation/screens/friend_search_screen.dart';
 import '../features/social/presentation/screens/public_profile_screen.dart';
@@ -58,6 +59,10 @@ const _publicRoutes = <String>{
 
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
+
+/// Public alias so non-router code (Siri lifecycle handler, deep-link
+/// receivers, etc.) can fish out a BuildContext from the root navigator.
+final rootNavigatorKey = _rootNavigatorKey;
 
 final routerProvider = Provider<GoRouter>((ref) {
   final notifier = _AuthRouterRefresh(ref);
@@ -166,6 +171,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         path: '/settings/integrations/calendar',
         builder: (_, __) => const CalendarScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/settings/voice',
+        builder: (_, __) => const SiriSettingsScreen(),
       ),
 
       // ── Rewards (Phase 12) ──

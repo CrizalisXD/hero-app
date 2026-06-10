@@ -621,5 +621,33 @@
   "calendarTodayEventsTitle": "События сегодня",
   "calendarTodayEventsEmpty": "Событий нет.",
   "calendarStatusConnected": "Подключено",
-  "calendarStatusNotConnected": "Не подключено"
+  "calendarStatusNotConnected": "Не подключено",
+
+  "siriScreenTitle": "Голосовые команды",
+  "siriIosOnlyNotice": "Голосовые команды работают через Siri на iOS.",
+  "siriAndroidComingSoon": "Скоро на Android.",
+  "siriExampleAddTask": "«Привет, Siri, добавь задачу в Hero — выпить воду»",
+  "siriExampleCompleteTask": "«Привет, Siri, отметь задачу в Hero — пробежка»",
+  "siriExampleAskCoach": "«Привет, Siri, спроси тренера Hero»",
+  "siriExampleShowToday": "«Привет, Siri, покажи задачи на сегодня в Hero»",
+  "siriExampleCreateHabit": "«Привет, Siri, создай привычку в Hero — читать 10 страниц»",
+
+  "siriSettingsHowTitle": "Как использовать",
+  "siriSettingsHowBody": "Скажи «Привет, Siri» и одну из фраз ниже. При первом использовании Siri может попросить произнести фразу образцом.",
+  "siriSettingsOpenSystem": "Открыть системные настройки",
+  "siriCommandSuccess": "Готово.",
+  "siriCommandError": "Не получилось.",
+  "siriCommandAuthRequired": "Сначала войди в Hero.",
+
+  "siriIntentCreateTaskTitle": "Добавить задачу",
+  "siriIntentCreateTaskDescription": "Добавляет задачу в список Hero.",
+  "siriIntentCreateTaskParamTitle": "Какая задача?",
+  "siriIntentCreateHabitTitle": "Создать привычку",
+  "siriIntentCreateHabitDescription": "Создаёт новую привычку в Hero.",
+  "siriIntentCompleteTaskTitle": "Завершить задачу",
+  "siriIntentCompleteTaskDescription": "Отмечает ближайшую совпадающую задачу выполненной.",
+  "siriIntentAskCoachTitle": "Спросить тренера",
+  "siriIntentAskCoachDescription": "Открывает чат тренера Hero.",
+  "siriIntentShowTodayTitle": "Показать сегодня",
+  "siriIntentShowTodayDescription": "Открывает задачи на сегодня."
 }

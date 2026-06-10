@@ -51,6 +51,12 @@ class SettingsScreen extends StatelessWidget {
           ),
           _row(
             context,
+            icon: Icons.mic_none_outlined,
+            label: l.siriScreenTitle,
+            to: '/settings/voice',
+          ),
+          _row(
+            context,
             icon: Icons.psychology_outlined,
             label: l.settingsSectionAiMemory,
             to: '/settings/ai-memory',
