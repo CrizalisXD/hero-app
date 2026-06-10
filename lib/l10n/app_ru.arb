@@ -558,5 +558,37 @@
   "blockConfirm": "Заблокировать",
   "blockCancel": "Отмена",
 
-  "consentSocialShowStreak": "Показывать серию друзьям"
+  "consentSocialShowStreak": "Показывать серию друзьям",
+
+  "challengesTitle": "Челленджи",
+  "challengesAllTab": "Все",
+  "challengesMineTab": "Мои",
+  "challengesEmpty": "Челленджей пока нет.",
+  "challengesEmptyMine": "Присоединись к челленджу, чтобы начать.",
+  "challengesJoin": "Войти",
+  "challengesLeave": "Выйти",
+  "challengesLeaveConfirm": "Выйти из челленджа?",
+  "challengesLeaveBody": "Прогресс сохранится, но больше не будет учитываться.",
+  "challengesCompletedBadge": "Завершён",
+  "challengesFailedBadge": "Не получилось",
+  "challengesProgressLabel": "{cur}/{target}",
+  "@challengesProgressLabel": {
+    "placeholders": {
+      "cur": { "type": "String" },
+      "target": { "type": "String" }
+    }
+  },
+  "challengesDaysLeft": "Осталось {days} дн.",
+  "@challengesDaysLeft": { "placeholders": { "days": { "type": "int" } } },
+  "challengesDaysEnded": "Завершён",
+  "challengesActionError": "Не получилось. Попробуй ещё раз.",
+  "challengesRewardCompleted": "Награда: +{xp} XP",
+  "@challengesRewardCompleted": { "placeholders": { "xp": { "type": "int" } } },
+
+  "challengeSevenDaysActivityTitle": "Семь дней действия",
+  "challengeSevenDaysActivityBody": "Выполни хотя бы 1 задачу каждый день 7 дней подряд.",
+  "challengeMonthlyStepsTitle": "Месячный забег",
+  "challengeMonthlyStepsBody": "Пройди или пробеги 30 км за месяц.",
+
+  "navChallenges": "Квесты"
 }
