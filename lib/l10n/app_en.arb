@@ -963,5 +963,55 @@
   "@blockCancel": {},
 
   "consentSocialShowStreak": "Show streak to friends",
-  "@consentSocialShowStreak": {}
+  "@consentSocialShowStreak": {},
+
+  "challengesTitle": "Challenges",
+  "@challengesTitle": {},
+  "challengesAllTab": "All",
+  "@challengesAllTab": {},
+  "challengesMineTab": "Joined",
+  "@challengesMineTab": {},
+  "challengesEmpty": "No challenges yet.",
+  "@challengesEmpty": {},
+  "challengesEmptyMine": "Join a challenge to get going.",
+  "@challengesEmptyMine": {},
+  "challengesJoin": "Join",
+  "@challengesJoin": {},
+  "challengesLeave": "Leave",
+  "@challengesLeave": {},
+  "challengesLeaveConfirm": "Leave this challenge?",
+  "@challengesLeaveConfirm": {},
+  "challengesLeaveBody": "Your progress will be saved but won't count anymore.",
+  "@challengesLeaveBody": {},
+  "challengesCompletedBadge": "Completed",
+  "@challengesCompletedBadge": {},
+  "challengesFailedBadge": "Failed",
+  "@challengesFailedBadge": {},
+  "challengesProgressLabel": "{cur}/{target}",
+  "@challengesProgressLabel": {
+    "placeholders": {
+      "cur": { "type": "String" },
+      "target": { "type": "String" }
+    }
+  },
+  "challengesDaysLeft": "{days} days left",
+  "@challengesDaysLeft": { "placeholders": { "days": { "type": "int" } } },
+  "challengesDaysEnded": "Ended",
+  "@challengesDaysEnded": {},
+  "challengesActionError": "Couldn't do that. Try again.",
+  "@challengesActionError": {},
+  "challengesRewardCompleted": "Reward: +{xp} XP",
+  "@challengesRewardCompleted": { "placeholders": { "xp": { "type": "int" } } },
+
+  "challengeSevenDaysActivityTitle": "Seven days of action",
+  "@challengeSevenDaysActivityTitle": {},
+  "challengeSevenDaysActivityBody": "Complete at least 1 task each day for 7 days in a row.",
+  "@challengeSevenDaysActivityBody": {},
+  "challengeMonthlyStepsTitle": "Monthly run",
+  "@challengeMonthlyStepsTitle": {},
+  "challengeMonthlyStepsBody": "Walk or run 30 km in one month.",
+  "@challengeMonthlyStepsBody": {},
+
+  "navChallenges": "Quests",
+  "@navChallenges": {}
 }

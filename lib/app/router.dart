@@ -21,6 +21,8 @@ import '../features/habits/presentation/screens/habits_screen.dart'
 import '../features/home/presentation/screens/home_screen.dart';
 import '../features/home/presentation/screens/home_shell.dart';
 import '../features/onboarding/presentation/avatar_intro_screen.dart';
+import '../features/challenges/presentation/screens/challenge_detail_screen.dart';
+import '../features/challenges/presentation/screens/challenges_list_screen.dart';
 import '../features/rewards/presentation/screens/rewards_screen.dart';
 import '../features/social/presentation/screens/friend_search_screen.dart';
 import '../features/social/presentation/screens/public_profile_screen.dart';
@@ -172,6 +174,19 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/social/profile/:id',
         builder: (_, s) =>
             PublicProfileScreen(userId: s.pathParameters['id']!),
+      ),
+
+      // ── Challenges (Phase 14, root navigator) ──
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/challenges',
+        builder: (_, __) => const ChallengesListScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/challenges/:id',
+        builder: (_, s) =>
+            ChallengeDetailScreen(challengeId: s.pathParameters['id']!),
       ),
 
       // ── Onboarding (outside shell — no bottom nav) ──

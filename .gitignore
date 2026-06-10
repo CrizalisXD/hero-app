@@ -47,6 +47,7 @@ lib/l10n/generated/
 !lib/core/l10n/locale_notifier.g.dart
 !lib/features/rewards/application/achievements_notifier.g.dart
 !lib/features/social/application/social_notifiers.g.dart
+!lib/features/challenges/application/challenges_notifier.g.dart
 
 # Secrets
 .env

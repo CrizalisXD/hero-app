@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/feature_flags/feature_flag_keys.dart';
+import '../../../../core/feature_flags/feature_flag_providers.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../application/social_notifiers.dart';
 import '../widgets/feed_tile.dart';
@@ -38,10 +40,20 @@ class _SocialScreenState extends ConsumerState<SocialScreen>
     final reqs = ref.watch(friendRequestsNotifierProvider);
     final feed = ref.watch(friendsFeedNotifierProvider);
 
+    final challengesOn = ref
+        .watch(featureFlagResolverOrFallbackProvider)
+        .isEnabled(FeatureFlagKey.challengesEnabled);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l.socialTitle),
         actions: [
+          if (challengesOn)
+            IconButton(
+              icon: const Icon(Icons.emoji_events_outlined),
+              tooltip: l.challengesTitle,
+              onPressed: () => context.push('/challenges'),
+            ),
           IconButton(
             icon: const Icon(Icons.person_add_alt_outlined),
             tooltip: l.socialAddFriend,
