@@ -39,6 +39,18 @@ class SettingsScreen extends StatelessWidget {
           ),
           _row(
             context,
+            icon: Icons.favorite_outline,
+            label: l.healthScreenTitle,
+            to: '/settings/integrations/health',
+          ),
+          _row(
+            context,
+            icon: Icons.event_outlined,
+            label: l.calendarScreenTitle,
+            to: '/settings/integrations/calendar',
+          ),
+          _row(
+            context,
             icon: Icons.psychology_outlined,
             label: l.settingsSectionAiMemory,
             to: '/settings/ai-memory',

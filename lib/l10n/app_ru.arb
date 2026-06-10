@@ -590,5 +590,36 @@
   "challengeMonthlyStepsTitle": "Месячный забег",
   "challengeMonthlyStepsBody": "Пройди или пробеги 30 км за месяц.",
 
-  "navChallenges": "Квесты"
+  "navChallenges": "Квесты",
+
+  "healthScreenTitle": "Здоровье",
+  "healthConnectTitle": "Подключить Apple Health / Health Connect",
+  "healthConnectBody": "Hero прочитает шаги и тренировки для прогресса и челленджей.",
+  "healthConnectButton": "Подключить",
+  "healthDisconnectButton": "Отключить",
+  "healthSyncNow": "Синхронизировать",
+  "healthSyncSuccess": "Готово.",
+  "healthSyncError": "Не удалось. Попробуй ещё раз.",
+  "healthPermissionDenied": "Доступ запрещён. Открой системные настройки.",
+  "healthStatusConnected": "Подключено",
+  "healthStatusNotConnected": "Не подключено",
+  "healthTodaySteps": "{steps} шагов сегодня",
+  "@healthTodaySteps": { "placeholders": { "steps": { "type": "int" } } },
+  "healthTodayDistance": "{km} км сегодня",
+  "@healthTodayDistance": { "placeholders": { "km": { "type": "String" } } },
+  "healthLastSync": "Последняя синхронизация: {when}",
+  "@healthLastSync": { "placeholders": { "when": { "type": "String" } } },
+  "healthAndroidNeedsHealthConnect": "Нужно приложение Health Connect. Открыть Play Store?",
+  "healthOpenPlayStore": "Открыть",
+
+  "calendarScreenTitle": "Календарь",
+  "calendarConnectButton": "Подключить календарь",
+  "calendarDisconnectButton": "Отключить",
+  "calendarPickPrimary": "Календарь по умолчанию",
+  "calendarSyncTasksToggle": "Добавлять задачи в календарь",
+  "calendarPermissionDenied": "Доступ к календарю запрещён.",
+  "calendarTodayEventsTitle": "События сегодня",
+  "calendarTodayEventsEmpty": "Событий нет.",
+  "calendarStatusConnected": "Подключено",
+  "calendarStatusNotConnected": "Не подключено"
 }

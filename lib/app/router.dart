@@ -23,6 +23,8 @@ import '../features/home/presentation/screens/home_shell.dart';
 import '../features/onboarding/presentation/avatar_intro_screen.dart';
 import '../features/challenges/presentation/screens/challenge_detail_screen.dart';
 import '../features/challenges/presentation/screens/challenges_list_screen.dart';
+import '../features/integrations/calendar/presentation/screens/calendar_screen.dart';
+import '../features/integrations/health/presentation/screens/health_screen.dart';
 import '../features/rewards/presentation/screens/rewards_screen.dart';
 import '../features/social/presentation/screens/friend_search_screen.dart';
 import '../features/social/presentation/screens/public_profile_screen.dart';
@@ -154,6 +156,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         path: '/settings/about',
         builder: (_, __) => const AboutScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/settings/integrations/health',
+        builder: (_, __) => const HealthScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/settings/integrations/calendar',
+        builder: (_, __) => const CalendarScreen(),
       ),
 
       // ── Rewards (Phase 12) ──

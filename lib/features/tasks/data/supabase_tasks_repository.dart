@@ -1,9 +1,12 @@
+import 'dart:async' show unawaited;
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../integrations/calendar/data/device_calendar_service.dart';
 import '../domain/models/create_task_input.dart';
 import '../domain/models/task.dart';
 import '../domain/models/task_completion_result.dart';
@@ -47,7 +50,40 @@ class SupabaseTasksRepository implements TasksRepository {
         .insert(body)
         .select()
         .single();
-    return Task.fromJson(row);
+    final task = Task.fromJson(row);
+
+    // Phase 15: best-effort calendar mirror when the user opted into it.
+    // Never blocks task creation — _maybeMirrorToCalendar swallows errors.
+    if (task.dueAt != null) {
+      unawaited(_maybeMirrorToCalendar(task));
+    }
+    return task;
+  }
+
+  Future<void> _maybeMirrorToCalendar(Task task) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final sync = prefs.getBool('cal_sync_tasks') ?? false;
+      final calId = prefs.getString('cal_default_id');
+      if (!sync || calId == null) return;
+
+      // Consent gate — never write to calendar without explicit opt-in.
+      final consent = await _client
+          .from('user_consents')
+          .select('granted')
+          .eq('consent_key', 'integration_calendar_write')
+          .maybeSingle();
+      if ((consent?['granted'] as bool?) != true) return;
+
+      await DeviceCalendarService.instance.createEventForTask(
+        calendarId: calId,
+        title: task.title,
+        notes: task.description,
+        startAt: task.dueAt!,
+      );
+    } catch (e) {
+      debugPrint('createEventForTask mirror skipped: $e');
+    }
   }
 
   @override
