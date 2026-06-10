@@ -62,5 +62,7 @@
 	<string>Hero shows your events and can add tasks to your calendar.</string>
 	<key>NSCalendarsFullAccessUsageDescription</key>
 	<string>Hero shows your events and can add tasks to your calendar.</string>
+	<key>NSSiriUsageDescription</key>
+	<string>Hero uses Siri to quickly add tasks, habits and ask your coach.</string>
 </dict>
 </plist>
