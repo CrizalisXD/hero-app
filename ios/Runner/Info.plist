@@ -54,5 +54,13 @@
 	</array>
 	<key>NSUserNotificationUsageDescription</key>
 	<string>Hero sends reminders for your tasks and habits.</string>
+	<key>NSHealthShareUsageDescription</key>
+	<string>Hero uses your step count and workouts to power challenges and track progress.</string>
+	<key>NSHealthUpdateUsageDescription</key>
+	<string>Hero does not write to Health.</string>
+	<key>NSCalendarsUsageDescription</key>
+	<string>Hero shows your events and can add tasks to your calendar.</string>
+	<key>NSCalendarsFullAccessUsageDescription</key>
+	<string>Hero shows your events and can add tasks to your calendar.</string>
 </dict>
 </plist>
