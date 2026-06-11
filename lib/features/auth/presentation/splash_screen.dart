@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -29,22 +31,48 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     _decided = true;
 
     final session = ref.read(authSessionControllerProvider);
+    debugPrint('[splash] session type=${session.runtimeType}');
 
     if (session is Unauthenticated) {
       if (!mounted) return;
+      debugPrint('[splash] → /welcome (unauthenticated)');
       context.go('/welcome');
       return;
     }
 
+    // 30s watchdog — if ensureBootstrap / routeAfterAuth never returns,
+    // we'd otherwise be stuck on the splash forever.
+    final watchdog = Future<String>.delayed(
+      const Duration(seconds: 30),
+      () {
+        debugPrint('[splash] watchdog fired — forcing /welcome');
+        return '/welcome';
+      },
+    );
+
+    String next;
     try {
-      await ref.read(authRepositoryProvider).ensureBootstrap();
-      final next = await ref.read(authRouteServiceProvider).routeAfterAuth();
-      if (!mounted) return;
-      context.go(next);
-    } catch (_) {
-      if (!mounted) return;
-      context.go('/welcome');
+      debugPrint('[splash] calling ensureBootstrap…');
+      await Future.any([
+        ref.read(authRepositoryProvider).ensureBootstrap(),
+        watchdog.then((_) => throw TimeoutException('bootstrap')),
+      ]);
+      debugPrint('[splash] ensureBootstrap done');
+
+      debugPrint('[splash] calling routeAfterAuth…');
+      next = await Future.any([
+        ref.read(authRouteServiceProvider).routeAfterAuth(),
+        watchdog,
+      ]);
+      debugPrint('[splash] routeAfterAuth returned: $next');
+    } catch (e, st) {
+      debugPrint('[splash] error: $e\n$st');
+      next = '/welcome';
     }
+
+    if (!mounted) return;
+    debugPrint('[splash] context.go($next)');
+    context.go(next);
   }
 
   @override
