@@ -1281,5 +1281,8 @@
   "challengeCreateInvalid": "Fill in the title and a positive target.",
   "@challengeCreateInvalid": {},
   "challengeCreateError": "Couldn't create the challenge",
-  "@challengeCreateError": {}
+  "@challengeCreateError": {},
+
+  "goalDetailNoSteps": "No steps yet. Try regenerating the AI plan.",
+  "@goalDetailNoSteps": {}
 }

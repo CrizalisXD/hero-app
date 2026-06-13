@@ -17,14 +17,31 @@ class GoalPlanReviewScreen extends ConsumerWidget {
     final l = context.l10n;
     final state = ref.watch(goalCreationProvider);
 
-    // Resolve the plan regardless of whether we're in Review or Confirming.
-    // Both states carry the plan; Confirming shows a loading overlay.
-    if (state is GoalCreationIdle || state is GoalCreationAnalyzing) {
-      // Navigated here without going through create screen — go back.
+    // Idle here means the user opened /goals/review without first
+    // filling in the form — bounce them back. Analyzing, on the other
+    // hand, is what we want to show *on this screen* when the user hits
+    // "Regenerate" — keep them in place with a loading overlay instead
+    // of yanking them back to the form.
+    if (state is GoalCreationIdle) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (context.mounted) context.go('/goals/new');
       });
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+    if (state is GoalCreationAnalyzing) {
+      return Scaffold(
+        appBar: AppBar(title: Text(l.goalPlanReviewTitle)),
+        body: Center(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(l.goalAnalyzing),
+            ],
+          ),
+        ),
+      );
     }
 
     if (state is GoalCreationError) {
@@ -50,12 +67,16 @@ class GoalPlanReviewScreen extends ConsumerWidget {
     }
 
     if (state is GoalCreationDone) {
-      // Confirmed — navigate to goals list.
+      // Confirmed — navigate to THIS goal's detail screen, not the
+      // generic list. The list refresh happens before navigation so
+      // the detail screen finds the new goal in the cache. We also
+      // reset the creation state machine so future `/goals/new` starts
+      // fresh.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (context.mounted) {
           ref.read(goalsNotifierProvider.notifier).onGoalCreated();
           ref.read(goalCreationProvider.notifier).reset();
-          context.go('/goals');
+          context.go('/goals/${state.result.goalId}');
         }
       });
       return const Scaffold(body: Center(child: CircularProgressIndicator()));

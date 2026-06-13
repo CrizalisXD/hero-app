@@ -729,5 +729,7 @@
   "challengeCreateEndAtLabel": "Дедлайн",
   "challengeCreateSubmit": "Создать",
   "challengeCreateInvalid": "Заполни название и положительную цель.",
-  "challengeCreateError": "Не удалось создать челлендж"
+  "challengeCreateError": "Не удалось создать челлендж",
+
+  "goalDetailNoSteps": "Шагов нет. Попробуй перегенерировать план."
 }
