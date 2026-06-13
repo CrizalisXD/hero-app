@@ -699,5 +699,8 @@
   "profileCategoriesSectionTitle": "Категории",
   "profileChangeAvatarColor": "Сменить цвет аватара",
   "profileEditDisplayName": "Изменить имя",
-  "profileDisplayNameLabel": "Имя"
+  "profileDisplayNameLabel": "Имя",
+
+  "energyNotEnoughTitle": "Недостаточно энергии",
+  "energyNotEnoughBody": "У тебя {have}, нужно {needed}. Заверши задачи, отметь привычки или подожди — энергия восполняется каждый час, плюс бонус каждое утро."
 }

@@ -1219,5 +1219,15 @@
   "profileEditDisplayName": "Edit display name",
   "@profileEditDisplayName": {},
   "profileDisplayNameLabel": "Name",
-  "@profileDisplayNameLabel": {}
+  "@profileDisplayNameLabel": {},
+
+  "energyNotEnoughTitle": "Not enough energy",
+  "@energyNotEnoughTitle": {},
+  "energyNotEnoughBody": "You have {have}, this needs {needed}. Finish today's tasks, check in habits, or wait — energy refills hourly and a fresh bonus comes with each new day.",
+  "@energyNotEnoughBody": {
+    "placeholders": {
+      "have": { "type": "int" },
+      "needed": { "type": "int" }
+    }
+  }
 }

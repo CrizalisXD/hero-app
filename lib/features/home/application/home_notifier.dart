@@ -6,6 +6,7 @@ import '../../goals/data/supabase_goals_repository.dart';
 import '../../goals/domain/models/goal.dart';
 import '../../goals/domain/models/goal_progress.dart';
 import '../../habits/data/supabase_habits_repository.dart';
+import '../../energy/data/energy_service.dart';
 import '../../tasks/data/supabase_tasks_repository.dart';
 import '../data/avatar_repository.dart';
 import '../data/character_stats_repository.dart';
@@ -22,6 +23,11 @@ class HomeNotifier extends AsyncNotifier<HomeData> {
     final goalsRepo = ref.read(goalsRepositoryProvider);
     final charRepo = ref.read(characterStatsRepositoryProvider);
     final avatarRepo = ref.read(avatarRepositoryProvider);
+
+    // Apply passive energy regen + daily login bonus before fetching
+    // character_stats so the displayed bar is already up-to-date.
+    // Idempotent within the hour; safe to call on every Home load.
+    await ref.read(energyServiceProvider).regen();
 
     // Parallel fetch of independent data sources
     final results = await Future.wait<dynamic>([

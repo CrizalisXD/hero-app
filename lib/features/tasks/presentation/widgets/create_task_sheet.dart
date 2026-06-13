@@ -10,6 +10,8 @@ import '../../../categories/application/xp_engine.dart';
 import '../../../categories/data/categories_assets_repository.dart';
 import '../../../categories/domain/models/category_id.dart';
 import '../../../categories/domain/models/xp_inputs.dart';
+import '../../../energy/data/energy_service.dart';
+import '../../../energy/presentation/energy_guard.dart';
 import '../../application/tasks_notifier.dart';
 import '../../domain/models/create_task_input.dart';
 import 'category_chip.dart';
@@ -124,8 +126,6 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
     final title = _titleCtrl.text.trim();
     if (title.isEmpty || _submitting) return;
 
-    setState(() => _submitting = true);
-
     final engine = ref.read(xpEngineProvider).valueOrNull;
     final cls = _classification;
 
@@ -152,6 +152,15 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
           importance: importance,
         ) ??
         baseXp;
+
+    // Energy gate — spend BEFORE we set _submitting=true so the user
+    // can keep editing if they don't have enough.
+    final cost = EnergyCosts.forTaskDifficulty(difficulty.wire);
+    final paid = await EnergyGuard.spendOrBlock(context, ref, cost);
+    if (!paid) return;
+    if (!mounted) return;
+
+    setState(() => _submitting = true);
 
     final input = CreateTaskInput(
       title: title,

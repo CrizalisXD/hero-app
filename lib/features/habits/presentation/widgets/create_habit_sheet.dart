@@ -11,6 +11,8 @@ import '../../../categories/data/categories_assets_repository.dart';
 import '../../../categories/domain/models/category_id.dart';
 import '../../../categories/domain/models/category_rules.dart';
 import '../../../categories/domain/models/xp_inputs.dart';
+import '../../../energy/data/energy_service.dart';
+import '../../../energy/presentation/energy_guard.dart';
 import '../../../tasks/presentation/widgets/category_chip.dart';
 import '../../application/habits_notifier.dart';
 import '../../domain/models/create_habit_input.dart';
@@ -107,6 +109,14 @@ class _CreateHabitSheetState extends ConsumerState<CreateHabitSheet> {
   Future<void> _submit() async {
     final title = _titleCtrl.text.trim();
     if (title.isEmpty || _submitting) return;
+
+    // Energy gate. Good habits cost more (longer commitment), bad
+    // habits a bit less.
+    final cost =
+        _type == HabitType.bad ? EnergyCosts.habitBad : EnergyCosts.habitGood;
+    final paid = await EnergyGuard.spendOrBlock(context, ref, cost);
+    if (!paid) return;
+    if (!mounted) return;
 
     setState(() => _submitting = true);
 

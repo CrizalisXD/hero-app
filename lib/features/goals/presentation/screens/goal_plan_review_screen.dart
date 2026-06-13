@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/l10n/l10n.dart';
+import '../../../energy/data/energy_service.dart';
+import '../../../energy/presentation/energy_guard.dart';
 import '../../application/goal_creation_notifier.dart';
 import '../../application/goals_notifier.dart';
 import '../../domain/models/ai_plan_step.dart';
@@ -119,8 +121,21 @@ class GoalPlanReviewScreen extends ConsumerWidget {
               FilledButton(
                 onPressed: isConfirming
                     ? null
-                    : () =>
-                        ref.read(goalCreationProvider.notifier).confirm(),
+                    : () async {
+                        // Energy gate before we materialise the plan
+                        // server-side. Cost is fixed at the goal tier;
+                        // the AI-generated sub-tasks and habits don't
+                        // each charge separately (would double-bill).
+                        final paid = await EnergyGuard.spendOrBlock(
+                          context,
+                          ref,
+                          EnergyCosts.goal,
+                        );
+                        if (!paid || !context.mounted) return;
+                        await ref
+                            .read(goalCreationProvider.notifier)
+                            .confirm();
+                      },
                 child: isConfirming
                     ? const SizedBox.square(
                         dimension: 20,
