@@ -702,5 +702,32 @@
   "profileDisplayNameLabel": "Имя",
 
   "energyNotEnoughTitle": "Недостаточно энергии",
-  "energyNotEnoughBody": "У тебя {have}, нужно {needed}. Заверши задачи, отметь привычки или подожди — энергия восполняется каждый час, плюс бонус каждое утро."
+  "energyNotEnoughBody": "У тебя {have}, нужно {needed}. Заверши задачи, отметь привычки или подожди — энергия восполняется каждый час, плюс бонус каждое утро.",
+
+  "challengesFilterAll": "Все",
+  "challengesFilterWeekly": "Недельные",
+  "challengesFilterSeasonal": "Сезонные",
+  "challengesFilterSystem": "Постоянные",
+  "challengesCreateButton": "Создать",
+  "challengeWeeklyTasksTitle": "Активная неделя",
+  "challengeWeeklyTasksBody": "Выполни 10 задач до воскресенья.",
+  "challengeWeeklyActiveDaysTitle": "Пять активных дней",
+  "challengeWeeklyActiveDaysBody": "Будь активен 5 дней из 7.",
+  "challengeSummer2026Title": "Лето 2026",
+  "challengeSummer2026Body": "Выполни 100 задач до сентября.",
+
+  "challengeCreateTitle": "Новый челлендж",
+  "challengeCreateTitleLabel": "Название",
+  "challengeCreateTitleHint": "Пробежать 100км / Прочитать 5 книг / 30 дней без сладкого",
+  "challengeCreateDescriptionLabel": "Описание (опц.)",
+  "challengeCreateMetricLabel": "Что считать",
+  "challengeMetricCount": "Выполненные задачи",
+  "challengeMetricActivityDay": "Активные дни",
+  "challengeMetricStreak": "Серия привычки",
+  "challengeMetricXp": "Заработанный XP",
+  "challengeCreateTargetLabel": "Цель (число)",
+  "challengeCreateEndAtLabel": "Дедлайн",
+  "challengeCreateSubmit": "Создать",
+  "challengeCreateInvalid": "Заполни название и положительную цель.",
+  "challengeCreateError": "Не удалось создать челлендж"
 }

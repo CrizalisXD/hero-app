@@ -35,9 +35,9 @@ class HomeScreen extends ConsumerWidget {
           toolbarHeight: 44,
           actions: [
             IconButton(
-              icon: const Icon(Icons.emoji_events_outlined),
-              tooltip: 'Rewards',
-              onPressed: () => context.push('/rewards'),
+              icon: const Icon(Icons.sports_score_outlined),
+              tooltip: 'Challenges',
+              onPressed: () => context.push('/challenges'),
             ),
             IconButton(
               icon: const Icon(Icons.settings_outlined),

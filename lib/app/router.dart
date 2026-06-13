@@ -24,6 +24,7 @@ import '../features/home/presentation/screens/home_shell.dart';
 import '../features/onboarding/presentation/avatar_intro_screen.dart';
 import '../features/challenges/presentation/screens/challenge_detail_screen.dart';
 import '../features/challenges/presentation/screens/challenges_list_screen.dart';
+import '../features/challenges/presentation/screens/create_challenge_screen.dart';
 import '../features/integrations/calendar/presentation/screens/calendar_screen.dart';
 import '../features/integrations/health/presentation/screens/health_screen.dart';
 import '../features/notes/presentation/screens/note_editor_screen.dart';
@@ -226,6 +227,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         path: '/challenges',
         builder: (_, __) => const ChallengesListScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/challenges/new',
+        builder: (_, __) => const CreateChallengeScreen(),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
