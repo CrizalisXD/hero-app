@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../../challenges/presentation/widgets/active_challenges_block.dart';
 import '../../application/home_notifier.dart';
 import '../widgets/active_goal_panel.dart';
-import '../widgets/bubble_actions_panel.dart';
 import '../widgets/daily_tasks_preview.dart';
 import '../widgets/hero_avatar_panel.dart';
 import '../widgets/hero_progress_header.dart';
@@ -36,6 +35,11 @@ class HomeScreen extends ConsumerWidget {
           toolbarHeight: 44,
           actions: [
             IconButton(
+              icon: const Icon(Icons.emoji_events_outlined),
+              tooltip: 'Rewards',
+              onPressed: () => context.push('/rewards'),
+            ),
+            IconButton(
               icon: const Icon(Icons.settings_outlined),
               onPressed: () => context.push('/settings'),
             ),
@@ -64,9 +68,7 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 20),
-              const BubbleActionsPanel(),
-              const SizedBox(height: 20),
+              const SizedBox(height: 24),
               TodayFocusPanel(tasks: data.todayTasks),
               const SizedBox(height: 12),
               ActiveGoalPanel(

@@ -1190,5 +1190,34 @@
     "placeholders": { "count": { "type": "int" } }
   },
   "habitSlipSnack": "Recorded. Tomorrow you start over.",
-  "@habitSlipSnack": {}
+  "@habitSlipSnack": {},
+
+  "profileTitle": "Profile",
+  "@profileTitle": {},
+  "profileXpTotal": "{xp} XP total",
+  "@profileXpTotal": {
+    "placeholders": { "xp": { "type": "int" } }
+  },
+  "profileStatsSectionTitle": "Stats",
+  "@profileStatsSectionTitle": {},
+  "profileStatDiscipline": "Discipline XP",
+  "@profileStatDiscipline": {},
+  "profileStatCurrentStreak": "Current streak",
+  "@profileStatCurrentStreak": {},
+  "profileStatBestStreak": "Best streak",
+  "@profileStatBestStreak": {},
+  "profileStatFocus": "Focus score",
+  "@profileStatFocus": {},
+  "profileStatConsistency": "Consistency",
+  "@profileStatConsistency": {},
+  "profileStatCoins": "Coins",
+  "@profileStatCoins": {},
+  "profileCategoriesSectionTitle": "Categories",
+  "@profileCategoriesSectionTitle": {},
+  "profileChangeAvatarColor": "Change avatar color",
+  "@profileChangeAvatarColor": {},
+  "profileEditDisplayName": "Edit display name",
+  "@profileEditDisplayName": {},
+  "profileDisplayNameLabel": "Name",
+  "@profileDisplayNameLabel": {}
 }

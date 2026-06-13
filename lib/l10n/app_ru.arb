@@ -685,5 +685,19 @@
   "createHabitTitleHintBad": "Не курить / Без сладкого / Без соцсетей",
   "habitSlipAction": "Я сорвался",
   "habitDaysCleanLabel": "{count, plural, =0{сегодня сорвался} =1{1 день без срыва} few{{count} дня без срыва} many{{count} дней без срыва} other{{count} дней без срыва}}",
-  "habitSlipSnack": "Записано. Завтра — заново."
+  "habitSlipSnack": "Записано. Завтра — заново.",
+
+  "profileTitle": "Профиль",
+  "profileXpTotal": "{xp} XP всего",
+  "profileStatsSectionTitle": "Характеристики",
+  "profileStatDiscipline": "Дисциплина",
+  "profileStatCurrentStreak": "Текущий стрик",
+  "profileStatBestStreak": "Лучший стрик",
+  "profileStatFocus": "Фокус",
+  "profileStatConsistency": "Постоянство",
+  "profileStatCoins": "Монеты",
+  "profileCategoriesSectionTitle": "Категории",
+  "profileChangeAvatarColor": "Сменить цвет аватара",
+  "profileEditDisplayName": "Изменить имя",
+  "profileDisplayNameLabel": "Имя"
 }

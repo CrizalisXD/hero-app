@@ -37,7 +37,7 @@ class HeroAvatarPanel extends StatelessWidget {
     final badgeInset = size * 0.08;
 
     return GestureDetector(
-      onTap: () => GoRouter.of(context).push('/avatar'),
+      onTap: () => GoRouter.of(context).push('/profile'),
       child: Center(
         child: SizedBox(
           width: size,

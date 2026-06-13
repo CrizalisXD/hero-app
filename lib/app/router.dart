@@ -12,6 +12,7 @@ import '../features/auth/presentation/sign_up_screen.dart';
 import '../features/auth/presentation/splash_screen.dart';
 import '../features/auth/presentation/welcome_screen.dart';
 import '../features/avatar/presentation/screens/avatar_screen.dart';
+import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/goals/presentation/screens/goal_create_screen.dart';
 import '../features/goals/presentation/screens/goal_detail_screen.dart';
 import '../features/goals/presentation/screens/goal_plan_review_screen.dart';
@@ -304,6 +305,11 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
 
       // ── Modal / secondary screens (above shell) ──
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/profile',
+        builder: (_, __) => const ProfileScreen(),
+      ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: '/avatar',
