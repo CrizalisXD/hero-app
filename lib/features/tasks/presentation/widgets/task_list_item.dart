@@ -98,10 +98,18 @@ class TaskListItem extends StatelessWidget {
 
   static String _shortDueAt(DateTime d) {
     String two(int v) => v.toString().padLeft(2, '0');
+    // Task.fromJson stores due_at as UTC (timestamp from Postgres).
+    // Force local-time conversion before reading h/m/d — otherwise the
+    // user sees the UTC clock and a TZ offset of 3h shows the wrong time
+    // (e.g. event at 16:30 local was rendered as 13:30).
+    final local = d.toLocal();
     final now = DateTime.now();
-    if (d.year == now.year && d.month == now.month && d.day == now.day) {
-      return '${two(d.hour)}:${two(d.minute)}';
+    if (local.year == now.year &&
+        local.month == now.month &&
+        local.day == now.day) {
+      return '${two(local.hour)}:${two(local.minute)}';
     }
-    return '${two(d.day)}.${two(d.month)} ${two(d.hour)}:${two(d.minute)}';
+    return '${two(local.day)}.${two(local.month)} '
+        '${two(local.hour)}:${two(local.minute)}';
   }
 }
