@@ -160,12 +160,69 @@ class SupabaseTasksRepository implements TasksRepository {
         .eq('id', task.id)
         .select()
         .single();
-    return Task.fromJson(row);
+    final updated = Task.fromJson(row);
+
+    // Hero → Calendar outgoing edit sync. If the task is mirrored,
+    // push the new title/start back to the calendar event so both
+    // surfaces stay in agreement until the next reconcile.
+    if (updated.externalCalendarEventId != null && updated.dueAt != null) {
+      unawaited(_pushUpdateToCalendar(updated));
+    }
+    return updated;
   }
 
   @override
   Future<void> deleteTask(String taskId) async {
+    // Look up the task first so we can also drop its calendar event,
+    // if it was mirrored. RLS keeps this safe — the SELECT only returns
+    // the row when it belongs to the current user.
+    String? eventId;
+    try {
+      final row = await _client
+          .from('tasks')
+          .select('external_calendar_event_id')
+          .eq('id', taskId)
+          .maybeSingle();
+      eventId = row?['external_calendar_event_id'] as String?;
+    } catch (_) {
+      // If the lookup fails we still want to delete the task — just
+      // skip the calendar side.
+    }
+
     await _client.from('tasks').delete().eq('id', taskId);
+
+    if (eventId != null) {
+      unawaited(_dropCalendarEvent(eventId));
+    }
+  }
+
+  Future<void> _pushUpdateToCalendar(Task task) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final calId = prefs.getString('cal_default_id');
+      if (calId == null) return;
+      // createOrUpdateEvent updates in-place when eventId is provided.
+      await DeviceCalendarService.instance.updateEventForTask(
+        calendarId: calId,
+        eventId: task.externalCalendarEventId!,
+        title: task.title,
+        notes: task.description,
+        startAt: task.dueAt!,
+      );
+    } catch (e) {
+      debugPrint('push calendar update skipped: $e');
+    }
+  }
+
+  Future<void> _dropCalendarEvent(String eventId) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final calId = prefs.getString('cal_default_id');
+      if (calId == null) return;
+      await DeviceCalendarService.instance.deleteEvent(calId, eventId);
+    } catch (e) {
+      debugPrint('drop calendar event skipped: $e');
+    }
   }
 }
 

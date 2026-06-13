@@ -6,56 +6,51 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/services/supabase_service.dart';
 import '../data/device_calendar_service.dart';
 
-/// Two-way sync between Hero tasks and the user's device calendar.
+/// Two-way sync between Hero tasks and the device calendar.
 ///
-/// Runs on app foreground (called from HeroApp.didChangeAppLifecycleState
-/// → resumed). One pass does the bare minimum: no background workers, no
-/// push channels, no cron — every active install just reconciles when
-/// the user opens the app.
+/// Runs on app foreground (HeroApp.didChangeAppLifecycleState → resumed).
+/// One reconcile pass does the minimum needed for "what you see in the
+/// calendar matches what you see in Hero" — no background workers, no
+/// push, no cron.
 ///
-/// Scope of this pass:
+/// Reconcile responsibilities (in order):
 ///
-///   1. **Calendar → App (creation)**. For every event in the configured
-///      default calendar within [now - 1d, now + 30d], if there's no
-///      Hero task with this `external_calendar_event_id`, create one.
-///      Imported tasks get main_category='mind' as a neutral default —
-///      the auto-classifier doesn't run here because the user didn't
-///      type the title in our UI.
+///   1. **Link-up dedupe**. For each calendar event whose id isn't
+///      already on a Hero task, look for an UNLINKED Hero task with
+///      the same (lowercased) title and a due_at within ±1h of the
+///      event start. If found → write external_calendar_event_id onto
+///      that existing task. Solves the bug where pre-existing Hero
+///      tasks got imported as duplicates.
 ///
-///   2. **Calendar → App (deletion)**. For every Hero task that *has*
-///      an `external_calendar_event_id`, check whether the event still
-///      exists in the calendar. If not → soft-delete the task (set
-///      is_done=true marker? No — we don't have soft-delete on tasks
-///      yet, so this pass *physically* DELETEs the task row. RLS keeps
-///      it safe).
+///   2. **Calendar → App: import**. Remaining calendar events with no
+///      Hero counterpart get created as new tasks.
 ///
-/// Out of scope (left for v1.1):
-///   • Title / time edits propagating either direction
-///   • Conflict resolution when both sides change simultaneously
-///   • Background sync (iOS BGTaskScheduler, Android WorkManager)
-///   • Recurring events (we only mirror single instances right now)
+///   3. **Calendar → App: edit sync**. For tasks already linked to an
+///      event, if the event's title or start has changed → update the
+///      task. Calendar is treated as the source of truth on incoming
+///      sync because the user edited it last in that surface.
+///
+///   4. **Calendar → App: delete**. Linked tasks whose event no longer
+///      exists are deleted.
+///
+/// Out of scope (deferred to v1.1):
+///   • Background sync — iOS BGTaskScheduler is heavily throttled and
+///     gives ~5% extra coverage on top of foreground-on-launch
+///   • Recurring events — model gap, needs its own design
 class CalendarSyncAgent {
   CalendarSyncAgent(this._client);
   final SupabaseClient _client;
 
   bool _running = false;
 
-  /// Quick precondition check: consents granted, sync toggle on,
-  /// default calendar picked. Skip the heavy work if any are off.
   Future<bool> _preflight() async {
     final prefs = await SharedPreferences.getInstance();
     if (prefs.getBool('cal_sync_tasks') != true) return false;
     final calId = prefs.getString('cal_default_id');
     if (calId == null) return false;
-
-    final hasPerms = await DeviceCalendarService.instance.hasPermissions();
-    if (!hasPerms) return false;
-    return true;
+    return DeviceCalendarService.instance.hasPermissions();
   }
 
-  /// Returns silently. All errors are swallowed — sync is best-effort,
-  /// it never blocks the UI or surfaces failures to the user. Diagnostics
-  /// land in `debugPrint` so Xcode/logcat can show them when needed.
   Future<void> reconcile() async {
     if (_running) return;
     _running = true;
@@ -73,46 +68,59 @@ class CalendarSyncAgent {
 
       final calendarEvents = await DeviceCalendarService.instance
           .listEventsInRange(calId, from: from, to: to);
-      final calendarEventIds = {for (final e in calendarEvents) e.id};
+      final calendarEventsById = {
+        for (final e in calendarEvents) e.id: e,
+      };
 
-      // ── 1. Calendar → App (delete) ───────────────────────────────
-      // Tasks that we previously mirrored but the user has since
-      // removed from the calendar.
-      final mirrored = await _client
+      // Snapshot every task that could be involved in sync — both linked
+      // ones (for delete + edit) and unlinked ones (for dedupe).
+      final rows = await _client
           .from('tasks')
-          .select('id, external_calendar_event_id')
+          .select('id, title, due_at, external_calendar_event_id')
           .eq('user_id', uid)
-          .not('external_calendar_event_id', 'is', null);
-      final mirroredList = (mirrored as List).cast<Map<String, dynamic>>();
+          .gte('due_at', from.toUtc().toIso8601String())
+          .lte('due_at', to.toUtc().toIso8601String());
+      final tasks = (rows as List).cast<Map<String, dynamic>>();
 
-      int deletedTasks = 0;
-      for (final row in mirroredList) {
-        final eventId = row['external_calendar_event_id'] as String?;
-        if (eventId == null) continue;
-        if (!calendarEventIds.contains(eventId)) {
-          // Event vanished from calendar → drop the task.
+      final linked = <String, Map<String, dynamic>>{
+        for (final t in tasks)
+          if (t['external_calendar_event_id'] != null)
+            t['external_calendar_event_id'] as String: t,
+      };
+      final unlinked = tasks
+          .where((t) => t['external_calendar_event_id'] == null)
+          .toList(growable: true);
+
+      int linkedCount = 0;
+      int importedCount = 0;
+      int updatedCount = 0;
+      int deletedCount = 0;
+
+      // ── 1. Link-up dedupe ─────────────────────────────────────────
+      for (final ev in calendarEvents) {
+        if (linked.containsKey(ev.id)) continue;
+        final match = _findUnlinkedMatch(unlinked, ev);
+        if (match != null) {
           try {
-            await _client.from('tasks').delete().eq('id', row['id'] as String);
-            deletedTasks++;
+            await _client
+                .from('tasks')
+                .update({'external_calendar_event_id': ev.id})
+                .eq('id', match['id'] as String);
+            linkedCount++;
+            // Move it into the linked map so the rest of the pass
+            // treats it as a normal linked task.
+            match['external_calendar_event_id'] = ev.id;
+            linked[ev.id] = match;
+            unlinked.remove(match);
           } catch (e) {
-            debugPrint('sync delete task err: $e');
+            debugPrint('[calendar-sync] link-up err: $e');
           }
         }
       }
 
-      // ── 2. Calendar → App (import) ───────────────────────────────
-      // Events in the calendar that have no Hero task linked. Skip
-      // events that originated from us (we'd recognize our own
-      // external_calendar_event_id) — already filtered above by the
-      // EXISTS check we'll do.
-      final existingLinks = mirroredList
-          .map((r) => r['external_calendar_event_id'] as String?)
-          .whereType<String>()
-          .toSet();
-
-      int importedTasks = 0;
+      // ── 2. Import remaining events that still have no Hero task ──
       for (final ev in calendarEvents) {
-        if (existingLinks.contains(ev.id)) continue;
+        if (linked.containsKey(ev.id)) continue;
         if (ev.title.trim().isEmpty) continue;
         try {
           await _client.from('tasks').insert({
@@ -127,19 +135,92 @@ class CalendarSyncAgent {
             'due_at': ev.start.toUtc().toIso8601String(),
             'external_calendar_event_id': ev.id,
           });
-          importedTasks++;
+          importedCount++;
         } catch (e) {
-          debugPrint('sync import task err: $e');
+          debugPrint('[calendar-sync] import err: $e');
+        }
+      }
+
+      // ── 3. Edit sync (calendar → app) ─────────────────────────────
+      // Walk the linked map. If event still exists with a changed
+      // title/start, pull the calendar version onto the task.
+      for (final entry in linked.entries) {
+        final ev = calendarEventsById[entry.key];
+        if (ev == null) continue;
+        final task = entry.value;
+
+        final newTitle = ev.title.trim();
+        final newDueAt = ev.start.toUtc();
+        final taskTitle = (task['title'] as String).trim();
+        final taskDueIso = task['due_at'] as String?;
+        final taskDueAt = taskDueIso == null
+            ? null
+            : DateTime.parse(taskDueIso).toUtc();
+
+        final titleChanged = newTitle != taskTitle;
+        final dueChanged = taskDueAt == null ||
+            (newDueAt.difference(taskDueAt).inMinutes).abs() >= 1;
+
+        if (titleChanged || dueChanged) {
+          try {
+            await _client.from('tasks').update({
+              if (titleChanged) 'title': newTitle,
+              if (dueChanged) 'due_at': newDueAt.toIso8601String(),
+            }).eq('id', task['id'] as String);
+            updatedCount++;
+          } catch (e) {
+            debugPrint('[calendar-sync] update err: $e');
+          }
+        }
+      }
+
+      // ── 4. Delete tasks whose calendar event is gone ──────────────
+      for (final entry in linked.entries) {
+        if (!calendarEventsById.containsKey(entry.key)) {
+          try {
+            await _client.from('tasks').delete().eq(
+                  'id',
+                  entry.value['id'] as String,
+                );
+            deletedCount++;
+          } catch (e) {
+            debugPrint('[calendar-sync] delete err: $e');
+          }
         }
       }
 
       debugPrint(
-        '[calendar-sync] reconcile done: '
-        'deleted=$deletedTasks imported=$importedTasks',
+        '[calendar-sync] reconcile: linked=$linkedCount '
+        'imported=$importedCount updated=$updatedCount '
+        'deleted=$deletedCount',
       );
     } finally {
       _running = false;
     }
+  }
+
+  /// Heuristic match for an unlinked task that's likely the same thing
+  /// as `ev`. Same lowercased title + due_at within ±1 hour of the
+  /// event's start. Loose enough to catch user-edited time, strict
+  /// enough to avoid false-positive merges across unrelated entries.
+  Map<String, dynamic>? _findUnlinkedMatch(
+    List<Map<String, dynamic>> unlinked,
+    CalendarEventRef ev,
+  ) {
+    final evTitle = ev.title.trim().toLowerCase();
+    if (evTitle.isEmpty) return null;
+    final evStart = ev.start.toUtc();
+
+    for (final t in unlinked) {
+      final taskTitle = (t['title'] as String).trim().toLowerCase();
+      if (taskTitle != evTitle) continue;
+      final dueIso = t['due_at'] as String?;
+      if (dueIso == null) continue;
+      final taskDue = DateTime.parse(dueIso).toUtc();
+      final diff = taskDue.difference(evStart).inMinutes.abs();
+      if (diff <= 60) return t;
+    }
+    return null;
   }
 }
 

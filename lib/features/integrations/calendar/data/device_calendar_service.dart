@@ -115,6 +115,38 @@ class DeviceCalendarService {
     return null;
   }
 
+  /// Updates an existing event in-place. The device_calendar plugin uses
+  /// the same `createOrUpdateEvent` API for both creates and updates —
+  /// presence of `eventId` decides which one happens.
+  Future<bool> updateEventForTask({
+    required String calendarId,
+    required String eventId,
+    required String title,
+    String? notes,
+    required DateTime startAt,
+    DateTime? endAt,
+  }) async {
+    try {
+      final loc = _safeLocal();
+      final ev = Event(
+        calendarId,
+        eventId: eventId,
+        title: title,
+        description: notes,
+        start: tz.TZDateTime.from(startAt, loc),
+        end: tz.TZDateTime.from(
+          endAt ?? startAt.add(const Duration(minutes: 30)),
+          loc,
+        ),
+      );
+      final res = await _plugin.createOrUpdateEvent(ev);
+      return res?.isSuccess == true;
+    } catch (e) {
+      debugPrint('updateEventForTask err: $e');
+      return false;
+    }
+  }
+
   /// Fetches every event in `calendarId` within [from, to]. Used by
   /// CalendarSyncAgent to import OS-side events into Hero and to verify
   /// that previously-mirrored events still exist.
