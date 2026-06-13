@@ -6,6 +6,7 @@ import '../../../rewards/application/achievements_notifier.dart';
 import '../../../rewards/presentation/widgets/achievement_unlocked_sheet.dart';
 import '../../application/habits_notifier.dart';
 import '../../domain/models/habit.dart';
+import '../../domain/models/habit_type.dart';
 import '../widgets/create_habit_sheet.dart';
 import '../widgets/habit_list_item.dart';
 
@@ -24,14 +25,19 @@ class HabitsScreen extends ConsumerWidget {
           await ref.read(habitsNotifierProvider.notifier).checkin(h.id);
       if (!context.mounted || res == null || res.duplicate) return;
       final l = context.l10n;
+
+      // Bad habit "check-in" = slip event: different message, no XP.
+      final isBad = h.type == HabitType.bad;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           duration: const Duration(seconds: 2),
           content: Text(
-            l.habitCheckinSuccessSnack(
-              res.totalXp,
-              l.habitStreakDays(res.currentStreak),
-            ),
+            isBad
+                ? l.habitSlipSnack
+                : l.habitCheckinSuccessSnack(
+                    res.totalXp,
+                    l.habitStreakDays(res.currentStreak),
+                  ),
           ),
         ),
       );

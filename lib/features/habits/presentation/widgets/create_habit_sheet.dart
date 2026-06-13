@@ -14,6 +14,7 @@ import '../../../categories/domain/models/xp_inputs.dart';
 import '../../../tasks/presentation/widgets/category_chip.dart';
 import '../../application/habits_notifier.dart';
 import '../../domain/models/create_habit_input.dart';
+import '../../domain/models/habit_type.dart';
 
 class CreateHabitSheet extends ConsumerStatefulWidget {
   const CreateHabitSheet({super.key});
@@ -46,6 +47,7 @@ class _CreateHabitSheetState extends ConsumerState<CreateHabitSheet> {
   EnrichedClassification? _classification;
   bool _classifying = false;
   bool _submitting = false;
+  HabitType _type = HabitType.good;
 
   @override
   void initState() {
@@ -148,6 +150,7 @@ class _CreateHabitSheetState extends ConsumerState<CreateHabitSheet> {
       importance: importance,
       xpReward: xpReward,
       disciplineXpReward: disciplineXp,
+      type: _type,
     );
 
     final habit =
@@ -199,13 +202,37 @@ class _CreateHabitSheetState extends ConsumerState<CreateHabitSheet> {
           ),
           const SizedBox(height: 12),
 
+          // Habit type selector — good (build) vs bad (quit)
+          SegmentedButton<HabitType>(
+            segments: [
+              ButtonSegment(
+                value: HabitType.good,
+                label: Text(l.habitTypeGood),
+                icon: const Icon(Icons.add_circle_outline),
+              ),
+              ButtonSegment(
+                value: HabitType.bad,
+                label: Text(l.habitTypeBad),
+                icon: const Icon(Icons.do_disturb_alt_outlined),
+              ),
+            ],
+            selected: {_type},
+            showSelectedIcon: false,
+            onSelectionChanged: (sel) => setState(() => _type = sel.first),
+          ),
+          const SizedBox(height: 12),
+
           // Title field
           TextField(
             controller: _titleCtrl,
             focusNode: _focusNode,
             decoration: InputDecoration(
-              labelText: l.createHabitTitleLabel,
-              hintText: l.createHabitTitleHint,
+              labelText: _type == HabitType.bad
+                  ? l.createHabitTitleLabelBad
+                  : l.createHabitTitleLabel,
+              hintText: _type == HabitType.bad
+                  ? l.createHabitTitleHintBad
+                  : l.createHabitTitleHint,
               border: const OutlineInputBorder(),
             ),
             maxLength: 140,

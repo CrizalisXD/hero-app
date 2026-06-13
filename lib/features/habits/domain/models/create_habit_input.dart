@@ -1,5 +1,6 @@
 import '../../../categories/domain/models/category_id.dart';
 import '../../../categories/domain/models/xp_inputs.dart';
+import 'habit_type.dart';
 
 class CreateHabitInput {
   const CreateHabitInput({
@@ -13,6 +14,7 @@ class CreateHabitInput {
     this.importance = TaskImportance.normal,
     required this.xpReward,
     required this.disciplineXpReward,
+    this.type = HabitType.good,
   });
 
   final String title;
@@ -25,15 +27,20 @@ class CreateHabitInput {
   final TaskImportance importance;
   final int xpReward;
   final int disciplineXpReward;
+  final HabitType type;
 
   Map<String, dynamic> toInsertBody({required String userId}) {
+    // For bad habits we never award XP — the server-side RPC also
+    // zeroes-out the rewards on slip events, but pinning the columns
+    // here keeps the row consistent if someone runs a manual log INSERT.
+    final isBad = type == HabitType.bad;
     return {
       'user_id': userId,
       'goal_id': goalId,
       'title': title.trim(),
       if (description != null && description!.trim().isNotEmpty)
         'description': description!.trim(),
-      'type': 'good',
+      'type': type.wire,
       'input_type': 'boolean',
       'recurrence': 'daily',
       'target_value': 1,
@@ -42,8 +49,8 @@ class CreateHabitInput {
       'difficulty': difficulty.wire,
       'duration': duration.wire,
       'importance': importance.wire,
-      'xp_reward': xpReward,
-      'discipline_xp_reward': disciplineXpReward,
+      'xp_reward': isBad ? 0 : xpReward,
+      'discipline_xp_reward': isBad ? 0 : disciplineXpReward,
     };
   }
 }

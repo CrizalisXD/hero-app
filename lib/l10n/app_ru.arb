@@ -677,5 +677,13 @@
 
   "settingsNotesRow": "Заметки",
   "privacyAiCanUseNotesTitle": "AI может использовать заметки",
-  "privacyAiCanUseNotesBody": "Когда включено, тренер может ссылаться на заметки с пометкой «Доступно AI». Личные заметки всегда скрыты."
+  "privacyAiCanUseNotesBody": "Когда включено, тренер может ссылаться на заметки с пометкой «Доступно AI». Личные заметки всегда скрыты.",
+
+  "habitTypeGood": "Развить",
+  "habitTypeBad": "Бросить",
+  "createHabitTitleLabelBad": "Что бросить?",
+  "createHabitTitleHintBad": "Не курить / Без сладкого / Без соцсетей",
+  "habitSlipAction": "Я сорвался",
+  "habitDaysCleanLabel": "{count, plural, =0{сегодня сорвался} =1{1 день без срыва} few{{count} дня без срыва} many{{count} дней без срыва} other{{count} дней без срыва}}",
+  "habitSlipSnack": "Записано. Завтра — заново."
 }

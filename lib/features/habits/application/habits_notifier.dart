@@ -4,6 +4,7 @@ import '../data/supabase_habits_repository.dart';
 import '../domain/models/create_habit_input.dart';
 import '../domain/models/habit.dart';
 import '../domain/models/habit_checkin_result.dart';
+import '../domain/models/habit_type.dart';
 import '../domain/models/habits_view.dart';
 
 // ── empty view constant ───────────────────────────────────────────────────────
@@ -58,9 +59,19 @@ class HabitsNotifier extends AsyncNotifier<HabitsView> {
 
     // 1. Optimistic update.
     final optimisticChecked = {...previous.checkedToday, habitId};
+    final targetHabit = previous.habits.firstWhere((h) => h.id == habitId);
+    final isBad = targetHabit.type == HabitType.bad;
     final optimisticHabits = previous.habits.map((h) {
       if (h.id != habitId) return h;
-      return h.copyWith(currentStreak: h.currentStreak + 1);
+      // Bad habit slip: streak collapses to 0 and we stamp today as the
+      // last_slip_date so the "days clean" recompute kicks in right away.
+      // Good habit completion: streak + 1 as before.
+      return isBad
+          ? h.copyWith(
+              currentStreak: 0,
+              lastSlipDate: DateTime.now(),
+            )
+          : h.copyWith(currentStreak: h.currentStreak + 1);
     }).toList();
     state = AsyncData(
       previous.copyWith(

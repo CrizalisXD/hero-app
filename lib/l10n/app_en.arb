@@ -1173,5 +1173,22 @@
   "privacyAiCanUseNotesTitle": "AI can use notes",
   "@privacyAiCanUseNotesTitle": {},
   "privacyAiCanUseNotesBody": "When on, Coach may reference notes you marked “Shared with AI”. Private notes are always hidden.",
-  "@privacyAiCanUseNotesBody": {}
+  "@privacyAiCanUseNotesBody": {},
+
+  "habitTypeGood": "Build",
+  "@habitTypeGood": {},
+  "habitTypeBad": "Quit",
+  "@habitTypeBad": {},
+  "createHabitTitleLabelBad": "What to quit?",
+  "@createHabitTitleLabelBad": {},
+  "createHabitTitleHintBad": "Stop smoking / No sugar / No social media",
+  "@createHabitTitleHintBad": {},
+  "habitSlipAction": "I slipped",
+  "@habitSlipAction": {},
+  "habitDaysCleanLabel": "{count, plural, =0{Day zero} =1{1 day clean} other{{count} days clean}}",
+  "@habitDaysCleanLabel": {
+    "placeholders": { "count": { "type": "int" } }
+  },
+  "habitSlipSnack": "Recorded. Tomorrow you start over.",
+  "@habitSlipSnack": {}
 }

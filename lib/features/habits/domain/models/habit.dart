@@ -1,5 +1,6 @@
 import '../../../categories/domain/models/category_id.dart';
 import '../../../categories/domain/models/xp_inputs.dart';
+import 'habit_type.dart';
 
 /// Immutable domain model for a habit.
 ///
@@ -12,7 +13,8 @@ class Habit {
     this.goalId,
     required this.title,
     this.description,
-    this.type = 'good',
+    this.type = HabitType.good,
+    this.lastSlipDate,
     this.inputType = 'boolean',
     this.recurrence = 'daily',
     this.targetValue = 1,
@@ -35,7 +37,10 @@ class Habit {
   final String? goalId;
   final String title;
   final String? description;
-  final String type;
+  final HabitType type;
+  /// For bad habits — last day the user logged a slip. Used to compute
+  /// "days since last slip" for display. Null = never slipped.
+  final DateTime? lastSlipDate;
   final String inputType;
   final String recurrence;
   final int targetValue;
@@ -61,7 +66,10 @@ class Habit {
       goalId: j['goal_id'] as String?,
       title: j['title'] as String,
       description: j['description'] as String?,
-      type: j['type'] as String? ?? 'good',
+      type: HabitType.fromWire(j['type'] as String?),
+      lastSlipDate: j['last_slip_date'] == null
+          ? null
+          : DateTime.parse(j['last_slip_date'] as String),
       inputType: j['input_type'] as String? ?? 'boolean',
       recurrence: j['recurrence'] as String? ?? 'daily',
       targetValue: (j['target_value'] as num?)?.toInt() ?? 1,
@@ -90,7 +98,8 @@ class Habit {
     Object? goalId = _sentinel,
     String? title,
     Object? description = _sentinel,
-    String? type,
+    HabitType? type,
+    Object? lastSlipDate = _sentinel,
     String? inputType,
     String? recurrence,
     int? targetValue,
@@ -115,6 +124,9 @@ class Habit {
       description:
           description == _sentinel ? this.description : description as String?,
       type: type ?? this.type,
+      lastSlipDate: lastSlipDate == _sentinel
+          ? this.lastSlipDate
+          : lastSlipDate as DateTime?,
       inputType: inputType ?? this.inputType,
       recurrence: recurrence ?? this.recurrence,
       targetValue: targetValue ?? this.targetValue,
@@ -136,3 +148,20 @@ class Habit {
 
 // Sentinel for nullable copyWith fields.
 const Object _sentinel = Object();
+
+extension HabitDisplay on Habit {
+  /// What we actually show under the title.
+  ///
+  /// • Good habit → server-tracked [currentStreak].
+  /// • Bad habit  → days since [lastSlipDate], or since [createdAt] if
+  ///   the user has never logged a slip. Always >= 0.
+  int get displayStreak {
+    if (type == HabitType.good) return currentStreak;
+    final reference = lastSlipDate ?? createdAt;
+    final now = DateTime.now();
+    final ref = DateTime(reference.year, reference.month, reference.day);
+    final today = DateTime(now.year, now.month, now.day);
+    final delta = today.difference(ref).inDays;
+    return delta < 0 ? 0 : delta;
+  }
+}

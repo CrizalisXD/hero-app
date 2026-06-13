@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../app/theme/app_colors.dart';
+import '../../../../core/l10n/l10n.dart';
 import '../../../tasks/presentation/widgets/category_chip.dart';
 import '../../domain/models/habit.dart';
+import '../../domain/models/habit_type.dart';
 import 'streak_badge.dart';
 
 class HabitListItem extends StatelessWidget {
@@ -21,6 +23,14 @@ class HabitListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l = context.l10n;
+    final isBad = habit.type == HabitType.bad;
+    // For a good habit, "checkedToday" means the user completed it.
+    // For a bad habit, "checkedToday" means the user logged a slip today
+    // — so the check-in button shouldn't be tappable again until tomorrow.
+    final accentColor = isBad ? Colors.orange.shade400 : AppColors.accent;
+    final doneColor = isBad ? Colors.red.shade400 : AppColors.success;
+
     // Swipe-to-delete: same UX as TaskListItem so the gesture is
     // consistent across Tasks and Habits screens. endToStart only so
     // accidental left-edge swipes (used by iOS back gesture) don't
@@ -39,7 +49,9 @@ class HabitListItem extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Row(
           children: [
-            // Check-in button
+            // Check-in button. For bad habits the icon and color flip
+            // (orange + 🚫) so users instantly see this is a slip log,
+            // not a reward action.
             GestureDetector(
               onTap: checkedToday ? null : onCheckin,
               child: AnimatedContainer(
@@ -47,20 +59,23 @@ class HabitListItem extends StatelessWidget {
                 height: 36,
                 width: 36,
                 decoration: BoxDecoration(
-                  color: checkedToday ? AppColors.success : Colors.transparent,
+                  color: checkedToday ? doneColor : Colors.transparent,
                   border: Border.all(
-                    color:
-                        checkedToday ? AppColors.success : AppColors.accent,
+                    color: checkedToday ? doneColor : accentColor,
                     width: 2,
                   ),
                   shape: BoxShape.circle,
                 ),
                 child: checkedToday
-                    ? const Icon(Icons.check, size: 20, color: Colors.white)
-                    : const Icon(
-                        Icons.add,
+                    ? Icon(
+                        isBad ? Icons.priority_high : Icons.check,
+                        size: 20,
+                        color: Colors.white,
+                      )
+                    : Icon(
+                        isBad ? Icons.do_disturb_alt : Icons.add,
                         size: 18,
-                        color: AppColors.accent,
+                        color: accentColor,
                       ),
               ),
             ),
@@ -88,16 +103,29 @@ class HabitListItem extends StatelessWidget {
                         small: true,
                       ),
                       const SizedBox(width: 8),
-                      StreakBadge(days: habit.currentStreak),
-                      const SizedBox(width: 8),
-                      Text(
-                        '+${habit.xpReward} XP',
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.w500,
+                      // For good habit: server streak. For bad: computed
+                      // "days since last slip" (or since creation).
+                      if (isBad)
+                        Text(
+                          l.habitDaysCleanLabel(habit.displayStreak),
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        )
+                      else ...[
+                        StreakBadge(days: habit.currentStreak),
+                        const SizedBox(width: 8),
+                        Text(
+                          '+${habit.xpReward} XP',
+                          style: const TextStyle(
+                            fontSize: 11,
+                            color: AppColors.textSecondary,
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
-                      ),
+                      ],
                     ],
                   ),
                 ],
