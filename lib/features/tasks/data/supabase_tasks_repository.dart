@@ -21,14 +21,23 @@ class SupabaseTasksRepository implements TasksRepository {
 
   @override
   Future<List<Task>> getTodayTasks() async {
-    // Show tasks where due_at <= now (tasks without due_at go in All tab only).
-    final iso = DateTime.now().toUtc().toIso8601String();
+    // "Today" = every pending task whose due_at falls on today's calendar
+    // date (in the user's local timezone) OR earlier — so overdue tasks
+    // also surface here. Tasks without due_at stay only in the All tab.
+    //
+    // Bug we're fixing: prior version filtered `due_at <= now()` which
+    // hid same-day tasks scheduled later in the day (created at 14:39
+    // for 17:30 → not "due yet" → silently dropped from Today).
+    final now = DateTime.now();
+    final tomorrowMidnightLocal = DateTime(now.year, now.month, now.day + 1);
+    final iso = tomorrowMidnightLocal.toUtc().toIso8601String();
     final rows = await _client
         .from('tasks')
         .select()
         .eq('user_id', _userId)
         .eq('is_done', false)
-        .lte('due_at', iso)
+        .not('due_at', 'is', null)
+        .lt('due_at', iso)
         .order('due_at', ascending: true);
     return rows.map((r) => Task.fromJson(r)).toList();
   }

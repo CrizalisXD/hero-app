@@ -99,6 +99,10 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
       initialTime: TimeOfDay.fromDateTime(
         _dueAt ?? now.add(const Duration(hours: 1)),
       ),
+      // Skip the analog dial — user feedback was that it's clumsy on iOS.
+      // Force the digital input mode. The dial button stays visible in
+      // the dialog for users who do prefer it.
+      initialEntryMode: TimePickerEntryMode.input,
     );
     if (time == null || !mounted) return;
     setState(() {
