@@ -52,32 +52,16 @@ class HabitsScreen extends ConsumerWidget {
 
   // ─── delete ────────────────────────────────────────────────────────────────
 
+  /// Swipe-to-delete handler. UX matches TaskListItem so the gesture is
+  /// consistent across the app. No confirm dialog — same as Tasks; the
+  /// Dismissible widget itself gives the visual "are you sure" via the
+  /// reveal of the red destructive background as the user drags.
   Future<void> _delete(
     BuildContext context,
     WidgetRef ref,
     Habit h,
   ) async {
-    final l = context.l10n;
-    final ok = await showDialog<bool>(
-      context: context,
-      builder: (_) => AlertDialog(
-        title: Text(l.habitDeleteConfirmTitle),
-        content: Text(l.habitDeleteConfirmBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(l.habitDeleteCancel),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(l.habitDeleteAction),
-          ),
-        ],
-      ),
-    );
-    if (ok == true && context.mounted) {
-      await ref.read(habitsNotifierProvider.notifier).delete(h.id);
-    }
+    await ref.read(habitsNotifierProvider.notifier).delete(h.id);
   }
 
   // ─── build ─────────────────────────────────────────────────────────────────
@@ -126,7 +110,7 @@ class HabitsScreen extends ConsumerWidget {
                   habit: h,
                   checkedToday: view.checkedToday.contains(h.id),
                   onCheckin: () => _checkin(context, ref, h),
-                  onLongPress: () => _delete(context, ref, h),
+                  onDelete: () => _delete(context, ref, h),
                 );
               },
             ),

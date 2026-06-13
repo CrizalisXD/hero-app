@@ -11,18 +11,30 @@ class HabitListItem extends StatelessWidget {
     required this.habit,
     required this.checkedToday,
     required this.onCheckin,
-    required this.onLongPress,
+    required this.onDelete,
   });
 
   final Habit habit;
   final bool checkedToday;
   final VoidCallback onCheckin;
-  final VoidCallback onLongPress;
+  final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onLongPress: onLongPress,
+    // Swipe-to-delete: same UX as TaskListItem so the gesture is
+    // consistent across Tasks and Habits screens. endToStart only so
+    // accidental left-edge swipes (used by iOS back gesture) don't
+    // fire the delete.
+    return Dismissible(
+      key: ValueKey(habit.id),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 16),
+        color: Colors.red.withValues(alpha: 0.8),
+        child: const Icon(Icons.delete_outline, color: Colors.white),
+      ),
+      onDismissed: (_) => onDelete(),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Row(
