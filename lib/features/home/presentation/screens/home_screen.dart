@@ -26,11 +26,14 @@ class HomeScreen extends ConsumerWidget {
         onRetry: () => ref.read(homeNotifierProvider.notifier).refresh(),
       ),
       data: (data) => Scaffold(
-        // Transparent AppBar so it sits over Home content. Only purpose:
-        // expose the Settings entry point per Phase 11 §11.8.
+        // Standard AppBar (no transparent overlay) so content never
+        // peeks under the iOS status bar. The "Добрый вечер, Hero"
+        // header lives inside ListView and stays below this bar.
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
+          scrolledUnderElevation: 0,
+          toolbarHeight: 44,
           actions: [
             IconButton(
               icon: const Icon(Icons.settings_outlined),
@@ -38,39 +41,47 @@ class HomeScreen extends ConsumerWidget {
             ),
           ],
         ),
-        extendBodyBehindAppBar: true,
         body: RefreshIndicator(
-        onRefresh: () => ref.read(homeNotifierProvider.notifier).refresh(),
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-          children: [
-            HeroAvatarPanel(
-              avatar: data.avatar,
-              level: data.character.level,
-            ),
-            const SizedBox(height: 20),
-            HeroProgressHeader(
-              displayName: data.displayName,
-              character: data.character,
-            ),
-            const SizedBox(height: 24),
-            const BubbleActionsPanel(),
-            const SizedBox(height: 20),
-            TodayFocusPanel(tasks: data.todayTasks),
-            const SizedBox(height: 12),
-            ActiveGoalPanel(
-              goal: data.activeGoal,
-              progress: data.activeGoalProgress,
-            ),
-            const SizedBox(height: 12),
-            DailyTasksPreview(
-              habits: data.activeHabits,
-              checkedToday: data.habitsCheckedToday,
-            ),
-            const SizedBox(height: 12),
-            const ActiveChallengesBlock(),
-          ],
-        ),
+          onRefresh: () => ref.read(homeNotifierProvider.notifier).refresh(),
+          child: ListView(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 24),
+            children: [
+              // Compact side-by-side hero card: avatar on the left,
+              // greeting + level + XP/energy on the right.
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  HeroAvatarPanel(
+                    avatar: data.avatar,
+                    level: data.character.level,
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: HeroProgressHeader(
+                      displayName: data.displayName,
+                      character: data.character,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              const BubbleActionsPanel(),
+              const SizedBox(height: 20),
+              TodayFocusPanel(tasks: data.todayTasks),
+              const SizedBox(height: 12),
+              ActiveGoalPanel(
+                goal: data.activeGoal,
+                progress: data.activeGoalProgress,
+              ),
+              const SizedBox(height: 12),
+              DailyTasksPreview(
+                habits: data.activeHabits,
+                checkedToday: data.habitsCheckedToday,
+              ),
+              const SizedBox(height: 12),
+              const ActiveChallengesBlock(),
+            ],
+          ),
         ),
       ),
     );
