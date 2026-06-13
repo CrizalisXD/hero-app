@@ -49,17 +49,63 @@ class HealthNativeService {
     final perms =
         List<HealthDataAccess>.filled(_types.length, HealthDataAccess.READ);
     try {
-      return await Health()
+      // On iOS: requestAuthorization returns true after the system
+      // dialog has been shown, regardless of READ/WRITE choice
+      // (Apple intentionally hides whether READ was granted to prevent
+      // fingerprinting). The only reliable signal that we actually
+      // have access is being able to read a sample — so we always
+      // probe afterwards. See [hasPermissions].
+      final ok = await Health()
           .requestAuthorization(_types, permissions: perms);
+      if (!ok) return false;
+      // Probe: if we can pull a record (even from 7 days back), we
+      // know the user has at least one read scope active.
+      return await _probeReadable();
     } catch (e) {
       debugPrint('Health requestAuthorization err: $e');
       return false;
     }
   }
 
+  /// iOS HealthKit DOES NOT expose READ permission state by design
+  /// (privacy / anti-fingerprinting). `Health().hasPermissions` returns
+  /// null/false even after the user grants READ via system Settings,
+  /// which is what caused the "Доступ запрещён" Phase 18 bug: user
+  /// manually allowed it, app still said no.
+  ///
+  /// Fix: don't trust hasPermissions on iOS. Instead probe — try to
+  /// read one sample from the last 7 days. If that succeeds, we have
+  /// access. On Android (Health Connect) hasPermissions works fine
+  /// and we keep it.
   Future<bool> hasPermissions() async {
     await _configure();
-    return (await Health().hasPermissions(_types)) ?? false;
+    if (Platform.isAndroid) {
+      return (await Health().hasPermissions(_types)) ?? false;
+    }
+    return _probeReadable();
+  }
+
+  /// Tries to read at least one HealthKit sample from the past week.
+  /// Returns true if the API answered without an authorization error,
+  /// even if the bucket is empty (a healthy phone that just has no
+  /// steps logged still proves we have read access).
+  Future<bool> _probeReadable() async {
+    try {
+      final now = DateTime.now();
+      final start = now.subtract(const Duration(days: 7));
+      // getHealthDataFromTypes throws PlatformException on iOS when
+      // there's no authorization. Empty list = "no data but we asked
+      // successfully" = read scope IS granted.
+      await Health().getHealthDataFromTypes(
+        startTime: start,
+        endTime: now,
+        types: _types,
+      );
+      return true;
+    } catch (e) {
+      debugPrint('Health probe failed: $e');
+      return false;
+    }
   }
 
   /// Aggregates the last [days] calendar days. Per-sample reads are
