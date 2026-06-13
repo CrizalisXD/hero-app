@@ -31,7 +31,8 @@ function ok(body: any) {
 
 function systemPrompt(locale: string, profile: any): string {
   const isRu = locale === 'ru'
-  const profileLines = profile
+  const hasProfile = profile && Object.keys(profile).length > 0
+  const profileLines = hasProfile
     ? [
         `energy_level=${profile.current_energy_level}/5`,
         `time_per_day=${profile.current_time_commitment_minutes}min`,
@@ -86,11 +87,23 @@ serve(async (req) => {
   const title = (payload.goal_title ?? '').toString().trim().slice(0, 200)
   if (title.length < 2) return bad('title_too_short')
 
-  // Load user profile for personalisation
-  const { data: profile } = await client
-    .from('users')
-    .select('current_energy_level,current_time_commitment_minutes,current_support_style,current_failure_reasons')
-    .single()
+  // Load user profile for personalisation.
+  // Gated by ai_can_use_onboarding consent: opt-out default (default ON,
+  // only stripped when user explicitly toggled it OFF). Same logic as
+  // ai-chat — see that function for the rationale.
+  const [profileRes, consentRes] = await Promise.all([
+    client
+      .from('users')
+      .select('current_energy_level,current_time_commitment_minutes,current_support_style,current_failure_reasons')
+      .single(),
+    client
+      .from('user_consents')
+      .select('granted')
+      .eq('consent_key', 'ai_can_use_onboarding')
+      .maybeSingle(),
+  ])
+  const onboardingConsentGranted = consentRes.data?.granted !== false
+  const profile = onboardingConsentGranted ? (profileRes.data ?? {}) : {}
 
   const locale = payload.locale === 'en' ? 'en' : 'ru'
 

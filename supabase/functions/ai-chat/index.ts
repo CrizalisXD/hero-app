@@ -56,15 +56,20 @@ function buildSystemPrompt(
   lines.push(`Answer ONLY in the user's language: ${locale}. Never switch language unless asked.`)
   lines.push(styleHint)
 
-  lines.push('---PROFILE---')
-  lines.push(JSON.stringify({
-    energy: profile?.current_energy_level,
-    time_per_day_min: profile?.current_time_commitment_minutes,
-    main_obstacle: profile?.current_main_obstacle,
-    failure_reasons: profile?.current_failure_reasons ?? [],
-    support_style: style,
-    life_areas: profile?.current_life_change_areas ?? [],
-  }))
+  // If the user revoked `ai_can_use_onboarding`, the caller passes
+  // profile={} — skip the PROFILE block entirely so the model doesn't
+  // see any onboarding-derived fields.
+  if (profile && Object.keys(profile).length > 0) {
+    lines.push('---PROFILE---')
+    lines.push(JSON.stringify({
+      energy: profile?.current_energy_level,
+      time_per_day_min: profile?.current_time_commitment_minutes,
+      main_obstacle: profile?.current_main_obstacle,
+      failure_reasons: profile?.current_failure_reasons ?? [],
+      support_style: style,
+      life_areas: profile?.current_life_change_areas ?? [],
+    }))
+  }
 
   if (goals.length > 0) {
     lines.push('---ACTIVE GOALS---')
@@ -209,7 +214,7 @@ serve(async (req) => {
   }
 
   // 4) Gather context in parallel
-  const [profileRes, goalsRes, tasksRes, habitsRes, memoryRes, historyRes, consentRes] =
+  const [profileRes, goalsRes, tasksRes, habitsRes, memoryRes, historyRes, consentsRes] =
     await Promise.all([
       client.from('users').select(
         'current_energy_level, current_time_commitment_minutes, current_main_obstacle, current_failure_reasons, current_support_style, current_life_change_areas',
@@ -224,10 +229,25 @@ serve(async (req) => {
       // locked the AI to whatever it said in the first turns and the
       // user's latest questions were silently dropped from context.
       client.from('ai_messages').select('role, content, created_at').eq('conversation_id', conversationId).order('created_at', { ascending: false }).limit(HISTORY_LIMIT),
-      client.from('user_consents').select('granted').eq('consent_key', 'ai_can_use_notes').maybeSingle(),
+      // Fetch both consents in one call — ai_can_use_notes (opt-in default
+      // off) and ai_can_use_onboarding (opt-out default on).
+      client.from('user_consents').select('consent_key, granted').in('consent_key', ['ai_can_use_notes', 'ai_can_use_onboarding']),
     ])
 
-  const profile = profileRes.data ?? {}
+  // Build consent lookup with TZ-correct defaults:
+  //   notes      → false if absent  (strict opt-in, privacy by default)
+  //   onboarding → true  if absent  (implicit consent: user filled the form)
+  const consentMap: Record<string, boolean> = {}
+  for (const row of (consentsRes.data ?? []) as any[]) {
+    consentMap[row.consent_key] = row.granted === true
+  }
+  const notesConsentGranted = consentMap['ai_can_use_notes'] === true
+  const onboardingConsentGranted = consentMap['ai_can_use_onboarding'] !== false
+
+  // Strip the entire profile context when the user explicitly opted out.
+  // Empty object → buildSystemPrompt falls back to neutral style and skips
+  // the ---PROFILE--- block.
+  const profile = onboardingConsentGranted ? (profileRes.data ?? {}) : {}
   const goals = goalsRes.data ?? []
   const tasks = tasksRes.data ?? []
   const habits = habitsRes.data ?? []
@@ -241,7 +261,6 @@ serve(async (req) => {
   // ones. This guarantees that flipping the toggle off in Settings
   // takes effect on the very next chat turn.
   let notes: any[] = []
-  const notesConsentGranted = consentRes.data?.granted === true
   if (notesConsentGranted) {
     const notesRes = await client
       .from('notes')
@@ -255,7 +274,7 @@ serve(async (req) => {
       console.error('notes fetch err', notesRes.error)
     }
   }
-  console.log(`chat: consent=${notesConsentGranted} notes=${notes.length}`)
+  console.log(`chat: notes_consent=${notesConsentGranted} onboarding_consent=${onboardingConsentGranted} notes=${notes.length}`)
 
   // 5) Build messages array for Groq
   const messages = [
