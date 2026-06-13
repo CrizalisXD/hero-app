@@ -67,17 +67,26 @@ class GoalPlanReviewScreen extends ConsumerWidget {
     }
 
     if (state is GoalCreationDone) {
-      // Confirmed — navigate to THIS goal's detail screen, not the
-      // generic list. The list refresh happens before navigation so
-      // the detail screen finds the new goal in the cache. We also
-      // reset the creation state machine so future `/goals/new` starts
-      // fresh.
+      // Confirmed — navigate to the new goal's detail screen.
+      //
+      // RACE CONDITION FIX: previously we called reset() BEFORE
+      // context.go(). reset() flips state synchronously to Idle, which
+      // makes Riverpod fire a rebuild before the navigation actually
+      // executes. The Idle branch's postFrame redirect to /goals/new
+      // would then race the /goals/{id} navigation — and the user
+      // would land on the empty "Новая цель" form.
+      //
+      // Now: capture goalId, navigate FIRST. The state machine reset
+      // is deferred to a microtask so it lands after navigation has
+      // unmounted this screen — no rebuild here, no redirect race.
+      final goalId = state.result.goalId;
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (context.mounted) {
-          ref.read(goalsNotifierProvider.notifier).onGoalCreated();
+        if (!context.mounted) return;
+        ref.read(goalsNotifierProvider.notifier).onGoalCreated();
+        context.go('/goals/$goalId');
+        Future.delayed(const Duration(milliseconds: 250), () {
           ref.read(goalCreationProvider.notifier).reset();
-          context.go('/goals/${state.result.goalId}');
-        }
+        });
       });
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
