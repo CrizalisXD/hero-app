@@ -97,10 +97,15 @@ function buildSystemPrompt(
   const aiNotes = notes.filter(n => n?.visibility === 'ai_allowed')
   if (aiNotes.length > 0) {
     lines.push('---USER NOTES (shared with you)---')
-    for (const n of aiNotes.slice(0, 10)) {
+    aiNotes.slice(0, 10).forEach((n, i) => {
       const title = n.title ? `[${String(n.title).slice(0, 60)}] ` : ''
-      lines.push(`- ${title}${String(n.content ?? '').slice(0, 400)}`)
-    }
+      lines.push(`note_${i + 1}: ${title}${String(n.content ?? '').slice(0, 400)}`)
+    })
+    lines.push(
+      isRu
+        ? 'ВАЖНО про заметки: это ОТДЕЛЬНЫЕ записи пользователя. Каждый раз когда юзер спрашивает «что мне нужно сделать / купить / напомни про X» — заново просмотри ВСЕ заметки выше и упомяни ВСЕ релевантные, не только одну. Если про X в заметках ничего нет — честно скажи «в заметках про это ничего». Никогда не цитируй ОДНУ ТУ ЖЕ заметку как ответ на несвязанные вопросы.'
+        : 'IMPORTANT about notes: these are SEPARATE user records. Each time the user asks "what should I do / buy / remind me about X" — re-scan ALL notes above and list EVERY relevant one, not just one. If a topic isn\'t in any note, say so honestly. Never reuse the same note as the answer to unrelated questions.',
+    )
   }
 
   lines.push('---OUTPUT FORMAT---')
@@ -213,7 +218,12 @@ serve(async (req) => {
       client.from('tasks').select('id, title, main_category, is_done').eq('is_done', false).limit(5),
       client.from('habits').select('id, title, main_category, current_streak').eq('is_archived', false).limit(5),
       client.from('ai_memory').select('memory_type, content').order('last_used_at', { ascending: false, nullsFirst: false }).limit(MEMORY_LIMIT),
-      client.from('ai_messages').select('role, content').eq('conversation_id', conversationId).order('created_at', { ascending: true }).limit(HISTORY_LIMIT),
+      // Take the LAST HISTORY_LIMIT messages (newest), then reverse to
+      // chronological order client-side. Previously this used ascending=true
+      // which returned the OLDEST 10 — meaning growing conversations
+      // locked the AI to whatever it said in the first turns and the
+      // user's latest questions were silently dropped from context.
+      client.from('ai_messages').select('role, content, created_at').eq('conversation_id', conversationId).order('created_at', { ascending: false }).limit(HISTORY_LIMIT),
       client.from('user_consents').select('granted').eq('consent_key', 'ai_can_use_notes').maybeSingle(),
     ])
 
@@ -222,14 +232,17 @@ serve(async (req) => {
   const tasks = tasksRes.data ?? []
   const habits = habitsRes.data ?? []
   const memory = memoryRes.data ?? []
-  const history = (historyRes.data ?? []) as any[]
+  // historyRes came back DESC (newest first). Reverse to chronological
+  // ASC order before feeding into the LLM messages array.
+  const history = ((historyRes.data ?? []) as any[]).slice().reverse()
 
   // Notes are gated by explicit consent. If the user hasn't granted
   // ai_can_use_notes, we don't fetch them at all — not even ai_allowed
   // ones. This guarantees that flipping the toggle off in Settings
   // takes effect on the very next chat turn.
   let notes: any[] = []
-  if (consentRes.data?.granted === true) {
+  const notesConsentGranted = consentRes.data?.granted === true
+  if (notesConsentGranted) {
     const notesRes = await client
       .from('notes')
       .select('title, content, visibility')
@@ -238,7 +251,11 @@ serve(async (req) => {
       .order('updated_at', { ascending: false })
       .limit(10)
     notes = notesRes.data ?? []
+    if (notesRes.error) {
+      console.error('notes fetch err', notesRes.error)
+    }
   }
+  console.log(`chat: consent=${notesConsentGranted} notes=${notes.length}`)
 
   // 5) Build messages array for Groq
   const messages = [
