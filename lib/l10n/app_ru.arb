@@ -654,6 +654,7 @@
   "commonCancel": "Отмена",
   "commonSave": "Сохранить",
   "commonDelete": "Удалить",
+  "commonUndo": "Отменить",
 
   "notesTitle": "Заметки",
   "notesPrivateTab": "Личные",

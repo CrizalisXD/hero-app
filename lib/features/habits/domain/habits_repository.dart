@@ -7,6 +7,10 @@ abstract class HabitsRepository {
   Future<Set<String>> habitIdsCheckedToday();
   Future<Habit> create(CreateHabitInput input);
   Future<HabitCheckinResult> checkin(String habitId);
+
+  /// Reverses today's [checkin] call. Used for the undo snackbar.
+  Future<void> uncheckin(String habitId);
+
   Future<void> archive(String habitId);
   Future<void> delete(String habitId);
 }

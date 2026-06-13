@@ -67,6 +67,23 @@ class TasksNotifier extends AsyncNotifier<List<Task>> {
     }
   }
 
+  /// Undo for a just-completed task. Optimistically flips is_done back
+  /// to false and asks the server to reverse XP / ledger.
+  Future<void> uncompleteTask(String taskId) async {
+    final previous = state.valueOrNull ?? const <Task>[];
+    final updated = previous.map((t) {
+      if (t.id != taskId) return t;
+      return t.copyWith(isDone: false, completedAt: null);
+    }).toList();
+    state = AsyncData(updated);
+    try {
+      await _repo.uncompleteTask(taskId);
+    } catch (_) {
+      state = AsyncData(previous);
+      rethrow;
+    }
+  }
+
   Future<void> deleteTask(String taskId) async {
     final previous = state.valueOrNull ?? [];
     state = AsyncData(previous.where((t) => t.id != taskId).toList());
@@ -125,6 +142,23 @@ class TodayTasksNotifier extends AsyncNotifier<List<Task>> {
   void deleteTask(String taskId) {
     final current = state.valueOrNull ?? [];
     state = AsyncData(current.where((t) => t.id != taskId).toList());
+  }
+
+  /// Undo for Today tab. Server reversal is delegated to
+  /// [TasksNotifier.uncompleteTask] via the screen.
+  Future<void> uncompleteTask(String taskId) async {
+    final previous = state.valueOrNull ?? const <Task>[];
+    final updated = previous.map((t) {
+      if (t.id != taskId) return t;
+      return t.copyWith(isDone: false, completedAt: null);
+    }).toList();
+    state = AsyncData(updated);
+    try {
+      await _repo.uncompleteTask(taskId);
+    } catch (_) {
+      state = AsyncData(previous);
+      rethrow;
+    }
   }
 }
 

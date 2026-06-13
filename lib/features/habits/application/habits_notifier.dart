@@ -98,6 +98,38 @@ class HabitsNotifier extends AsyncNotifier<HabitsView> {
     }
   }
 
+  /// Undo today's check-in. Optimistically removes the habit from the
+  /// "checked today" set, decrements streak in the local row, and asks
+  /// the server to reverse XP / discipline / habit_logs row.
+  Future<void> uncheckin(String habitId) async {
+    final previous = state.value;
+    if (previous == null) return;
+
+    final wasChecked = previous.checkedToday.contains(habitId);
+    if (!wasChecked) return;
+
+    final newChecked =
+        previous.checkedToday.where((id) => id != habitId).toSet();
+    final newHabits = previous.habits.map((h) {
+      if (h.id != habitId) return h;
+      return h.copyWith(
+        currentStreak: h.currentStreak > 0 ? h.currentStreak - 1 : 0,
+      );
+    }).toList();
+    state = AsyncData(
+      previous.copyWith(
+        habits: newHabits,
+        checkedToday: newChecked,
+      ),
+    );
+    try {
+      await _repo.uncheckin(habitId);
+    } catch (_) {
+      state = AsyncData(previous);
+      rethrow;
+    }
+  }
+
   /// Optimistic delete + rollback on error.
   Future<void> delete(String habitId) async {
     final previous = state.value;

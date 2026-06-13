@@ -23,13 +23,31 @@ class TaskListItem extends StatelessWidget {
 
     return Dismissible(
       key: ValueKey(task.id),
-      direction: DismissDirection.endToStart,
+      direction: task.isDone
+          ? DismissDirection.endToStart
+          : DismissDirection.horizontal,
       background: Container(
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(left: 16),
+        color: Colors.green.withValues(alpha: 0.85),
+        child: const Icon(Icons.check, color: Colors.white),
+      ),
+      secondaryBackground: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 16),
         color: Colors.red.withValues(alpha: 0.8),
         child: const Icon(Icons.delete_outline, color: Colors.white),
       ),
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.startToEnd) {
+          // Swipe right = complete. Don't actually dismiss the row —
+          // let the parent rebuild it with isDone=true.
+          if (!task.isDone) onComplete();
+          return false;
+        }
+        // Swipe left = delete.
+        return true;
+      },
       onDismissed: (_) => onDelete(),
       child: ListTile(
         contentPadding:

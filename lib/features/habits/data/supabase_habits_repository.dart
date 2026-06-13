@@ -107,6 +107,14 @@ class SupabaseHabitsRepository implements HabitsRepository {
   }
 
   @override
+  Future<void> uncheckin(String habitId) async {
+    await _client.rpc<dynamic>(
+      'uncomplete_habit_checkin',
+      params: {'p_habit_id': habitId},
+    );
+  }
+
+  @override
   Future<void> delete(String habitId) async {
     await _client
         .from('habits')

@@ -1128,6 +1128,8 @@
   "@commonSave": {},
   "commonDelete": "Delete",
   "@commonDelete": {},
+  "commonUndo": "Undo",
+  "@commonUndo": {},
 
   "notesTitle": "Notes",
   "@notesTitle": {},

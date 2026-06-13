@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/l10n/l10n.dart';
+import '../../../home/application/home_notifier.dart';
 import '../../../rewards/application/achievements_notifier.dart';
 import '../../../rewards/presentation/widgets/achievement_unlocked_sheet.dart';
 import '../../application/habits_notifier.dart';
@@ -28,19 +29,32 @@ class HabitsScreen extends ConsumerWidget {
 
       // Bad habit "check-in" = slip event: different message, no XP.
       final isBad = h.type == HabitType.bad;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          duration: const Duration(seconds: 2),
-          content: Text(
-            isBad
-                ? l.habitSlipSnack
-                : l.habitCheckinSuccessSnack(
-                    res.totalXp,
-                    l.habitStreakDays(res.currentStreak),
-                  ),
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            duration: const Duration(seconds: 5),
+            content: Text(
+              isBad
+                  ? l.habitSlipSnack
+                  : l.habitCheckinSuccessSnack(
+                      res.totalXp,
+                      l.habitStreakDays(res.currentStreak),
+                    ),
+            ),
+            action: SnackBarAction(
+              label: l.commonUndo,
+              onPressed: () async {
+                try {
+                  await ref
+                      .read(habitsNotifierProvider.notifier)
+                      .uncheckin(h.id);
+                  ref.invalidate(homeNotifierProvider);
+                } catch (_) {}
+              },
+            ),
           ),
-        ),
-      );
+        );
       if (res.unlockedAchievements.isNotEmpty && context.mounted) {
         await AchievementUnlockedSheet.showAll(
           context,

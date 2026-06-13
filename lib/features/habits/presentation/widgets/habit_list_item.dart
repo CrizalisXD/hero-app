@@ -31,19 +31,37 @@ class HabitListItem extends StatelessWidget {
     final accentColor = isBad ? Colors.orange.shade400 : AppColors.accent;
     final doneColor = isBad ? Colors.red.shade400 : AppColors.success;
 
-    // Swipe-to-delete: same UX as TaskListItem so the gesture is
-    // consistent across Tasks and Habits screens. endToStart only so
-    // accidental left-edge swipes (used by iOS back gesture) don't
-    // fire the delete.
+    // Bi-directional swipe — same UX as TaskListItem so the gesture
+    // language is consistent across Tasks and Habits screens.
+    //   Swipe RIGHT → check-in / slip-log (depending on habit.type).
+    //   Swipe LEFT  → delete.
     return Dismissible(
       key: ValueKey(habit.id),
-      direction: DismissDirection.endToStart,
+      direction: checkedToday
+          ? DismissDirection.endToStart
+          : DismissDirection.horizontal,
       background: Container(
+        alignment: Alignment.centerLeft,
+        padding: const EdgeInsets.only(left: 16),
+        color: (isBad ? Colors.orange : Colors.green).withValues(alpha: 0.85),
+        child: Icon(
+          isBad ? Icons.do_disturb_alt : Icons.check,
+          color: Colors.white,
+        ),
+      ),
+      secondaryBackground: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 16),
         color: Colors.red.withValues(alpha: 0.8),
         child: const Icon(Icons.delete_outline, color: Colors.white),
       ),
+      confirmDismiss: (direction) async {
+        if (direction == DismissDirection.startToEnd) {
+          if (!checkedToday) onCheckin();
+          return false;
+        }
+        return true;
+      },
       onDismissed: (_) => onDelete(),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),

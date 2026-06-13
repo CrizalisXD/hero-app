@@ -7,6 +7,10 @@ abstract class TasksRepository {
   Future<List<Task>> getTasks({String? goalId, bool? isDone});
   Future<Task> createTask(CreateTaskInput input);
   Future<TaskCompletionResult> completeTask(String taskId);
+
+  /// Reverses a [completeTask] call. Used for the undo snackbar.
+  Future<void> uncompleteTask(String taskId);
+
   Future<Task> updateTask(Task task);
   Future<void> deleteTask(String taskId);
 }

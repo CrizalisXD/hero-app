@@ -146,6 +146,14 @@ class SupabaseTasksRepository implements TasksRepository {
   }
 
   @override
+  Future<void> uncompleteTask(String taskId) async {
+    await _client.rpc<dynamic>(
+      'uncomplete_task',
+      params: {'p_task_id': taskId},
+    );
+  }
+
+  @override
   Future<Task> updateTask(Task task) async {
     final row = await _client
         .from('tasks')

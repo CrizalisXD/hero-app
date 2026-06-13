@@ -222,11 +222,28 @@ class _AllTab extends ConsumerWidget {
         SnackBar(content: Text(l.taskDuplicate)),
       );
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('${l.taskCompleted} +${result.categoryXp} XP'),
-        ),
-      );
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            duration: const Duration(seconds: 5),
+            content: Text('${l.taskCompleted} +${result.categoryXp} XP'),
+            action: SnackBarAction(
+              label: l.commonUndo,
+              onPressed: () async {
+                try {
+                  await ref
+                      .read(tasksNotifierProvider.notifier)
+                      .uncompleteTask(taskId);
+                  await ref
+                      .read(todayTasksNotifierProvider.notifier)
+                      .uncompleteTask(taskId);
+                  ref.invalidate(homeNotifierProvider);
+                } catch (_) {}
+              },
+            ),
+          ),
+        );
       if (result.levelsGained > 0 && context.mounted) {
         await LevelUpOverlay.show(context, newLevel: result.levelAfter);
         ref.invalidate(homeNotifierProvider);
