@@ -25,6 +25,8 @@ import '../features/challenges/presentation/screens/challenge_detail_screen.dart
 import '../features/challenges/presentation/screens/challenges_list_screen.dart';
 import '../features/integrations/calendar/presentation/screens/calendar_screen.dart';
 import '../features/integrations/health/presentation/screens/health_screen.dart';
+import '../features/notes/presentation/screens/note_editor_screen.dart';
+import '../features/notes/presentation/screens/notes_screen.dart';
 import '../features/siri/presentation/screens/siri_settings_screen.dart';
 import '../features/rewards/presentation/screens/rewards_screen.dart';
 import '../features/social/presentation/screens/friend_search_screen.dart';
@@ -176,6 +178,26 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         path: '/settings/voice',
         builder: (_, __) => const SiriSettingsScreen(),
+      ),
+
+      // ── Notes (Phase 17) ──
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/notes',
+        builder: (_, __) => const NotesScreen(),
+        routes: [
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: 'new',
+            builder: (_, __) => const NoteEditorScreen(),
+          ),
+          GoRoute(
+            parentNavigatorKey: _rootNavigatorKey,
+            path: ':id',
+            builder: (_, st) =>
+                NoteEditorScreen(noteId: st.pathParameters['id']),
+          ),
+        ],
       ),
 
       // ── Rewards (Phase 12) ──

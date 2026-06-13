@@ -649,5 +649,33 @@
   "siriIntentAskCoachTitle": "Спросить тренера",
   "siriIntentAskCoachDescription": "Открывает чат тренера Hero.",
   "siriIntentShowTodayTitle": "Показать сегодня",
-  "siriIntentShowTodayDescription": "Открывает задачи на сегодня."
+  "siriIntentShowTodayDescription": "Открывает задачи на сегодня.",
+
+  "commonCancel": "Отмена",
+  "commonSave": "Сохранить",
+  "commonDelete": "Удалить",
+
+  "notesTitle": "Заметки",
+  "notesPrivateTab": "Личные",
+  "notesAiAllowedTab": "Доступно AI",
+  "notesPrivateEmpty": "Пока нет личных заметок. Нажми +, чтобы добавить.",
+  "notesAiAllowedEmpty": "Нет заметок, доступных AI. Нажми +, чтобы добавить.",
+  "notesAddTooltip": "Новая заметка",
+  "noteUntitled": "Без названия",
+  "noteCreateTitle": "Новая заметка",
+  "noteEditTitle": "Редактировать заметку",
+  "noteTitleLabel": "Заголовок (необязательно)",
+  "noteContentLabel": "Текст",
+  "noteContentRequired": "Текст не может быть пустым.",
+  "noteSaveError": "Не удалось сохранить заметку",
+  "noteDeleteConfirmTitle": "Удалить заметку?",
+  "noteDeleteConfirmBody": "Заметка исчезнет из списка.",
+  "noteVisibilityPrivate": "Личная",
+  "noteVisibilityPrivateHint": "Никто кроме тебя не увидит. AI её не читает.",
+  "noteVisibilityAiAllowed": "Доступно AI",
+  "noteVisibilityAiAllowedHint": "Тренер может ссылаться на заметку, если включён переключатель «AI может использовать заметки».",
+
+  "settingsNotesRow": "Заметки",
+  "privacyAiCanUseNotesTitle": "AI может использовать заметки",
+  "privacyAiCanUseNotesBody": "Когда включено, тренер может ссылаться на заметки с пометкой «Доступно AI». Личные заметки всегда скрыты."
 }

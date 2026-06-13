@@ -57,6 +57,12 @@ class SettingsScreen extends StatelessWidget {
           ),
           _row(
             context,
+            icon: Icons.sticky_note_2_outlined,
+            label: l.settingsNotesRow,
+            to: '/notes',
+          ),
+          _row(
+            context,
             icon: Icons.psychology_outlined,
             label: l.settingsSectionAiMemory,
             to: '/settings/ai-memory',

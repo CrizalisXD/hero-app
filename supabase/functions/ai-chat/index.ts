@@ -38,6 +38,7 @@ function buildSystemPrompt(
   tasks: any[],
   habits: any[],
   memory: any[],
+  notes: any[],
 ): string {
   const isRu = locale === 'ru'
   const style = profile?.current_support_style ?? 'direct'
@@ -87,6 +88,18 @@ function buildSystemPrompt(
     lines.push('---MEMORY---')
     for (const m of memory) {
       lines.push(`- [${m.memory_type}] ${m.content}`)
+    }
+  }
+  // Notes are only injected when the user has explicitly granted
+  // ai_can_use_notes consent AND the note's visibility is 'ai_allowed'.
+  // The fetch path guarantees both — but we re-check visibility here
+  // as defense in depth.
+  const aiNotes = notes.filter(n => n?.visibility === 'ai_allowed')
+  if (aiNotes.length > 0) {
+    lines.push('---USER NOTES (shared with you)---')
+    for (const n of aiNotes.slice(0, 10)) {
+      const title = n.title ? `[${String(n.title).slice(0, 60)}] ` : ''
+      lines.push(`- ${title}${String(n.content ?? '').slice(0, 400)}`)
     }
   }
 
@@ -191,7 +204,7 @@ serve(async (req) => {
   }
 
   // 4) Gather context in parallel
-  const [profileRes, goalsRes, tasksRes, habitsRes, memoryRes, historyRes] =
+  const [profileRes, goalsRes, tasksRes, habitsRes, memoryRes, historyRes, consentRes] =
     await Promise.all([
       client.from('users').select(
         'current_energy_level, current_time_commitment_minutes, current_main_obstacle, current_failure_reasons, current_support_style, current_life_change_areas',
@@ -201,6 +214,7 @@ serve(async (req) => {
       client.from('habits').select('id, title, main_category, current_streak').eq('is_archived', false).limit(5),
       client.from('ai_memory').select('memory_type, content').order('last_used_at', { ascending: false, nullsFirst: false }).limit(MEMORY_LIMIT),
       client.from('ai_messages').select('role, content').eq('conversation_id', conversationId).order('created_at', { ascending: true }).limit(HISTORY_LIMIT),
+      client.from('user_consents').select('granted').eq('consent_key', 'ai_can_use_notes').maybeSingle(),
     ])
 
   const profile = profileRes.data ?? {}
@@ -210,11 +224,27 @@ serve(async (req) => {
   const memory = memoryRes.data ?? []
   const history = (historyRes.data ?? []) as any[]
 
+  // Notes are gated by explicit consent. If the user hasn't granted
+  // ai_can_use_notes, we don't fetch them at all — not even ai_allowed
+  // ones. This guarantees that flipping the toggle off in Settings
+  // takes effect on the very next chat turn.
+  let notes: any[] = []
+  if (consentRes.data?.granted === true) {
+    const notesRes = await client
+      .from('notes')
+      .select('title, content, visibility')
+      .eq('visibility', 'ai_allowed')
+      .eq('is_deleted', false)
+      .order('updated_at', { ascending: false })
+      .limit(10)
+    notes = notesRes.data ?? []
+  }
+
   // 5) Build messages array for Groq
   const messages = [
     {
       role: 'system',
-      content: buildSystemPrompt(locale, profile, goals, tasks, habits, memory),
+      content: buildSystemPrompt(locale, profile, goals, tasks, habits, memory, notes),
     },
     ...history.map((m: any) => ({
       role: m.role === 'system' ? 'system' : m.role,
