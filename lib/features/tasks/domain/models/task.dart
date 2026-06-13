@@ -21,6 +21,7 @@ class Task {
     this.dueDate,
     this.dueAt,
     this.completedAt,
+    this.externalCalendarEventId,
     required this.createdAt,
   });
 
@@ -42,6 +43,9 @@ class Task {
   final DateTime? dueDate;
   final DateTime? dueAt;
   final DateTime? completedAt;
+  /// Set when this task has been mirrored into the device calendar.
+  /// CalendarSyncAgent uses this to detect deletions on the OS side.
+  final String? externalCalendarEventId;
   final DateTime createdAt;
 
   factory Task.fromJson(Map<String, dynamic> j) {
@@ -77,6 +81,8 @@ class Task {
       completedAt: j['completed_at'] == null
           ? null
           : DateTime.parse(j['completed_at'] as String),
+      externalCalendarEventId:
+          j['external_calendar_event_id'] as String?,
       createdAt: DateTime.parse(j['created_at'] as String),
     );
   }

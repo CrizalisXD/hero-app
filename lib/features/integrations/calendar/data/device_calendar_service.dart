@@ -13,6 +13,21 @@ class TodayCalendarEvent {
   final DateTime end;
 }
 
+/// Event identified by its native id — used by CalendarSyncAgent for
+/// bidirectional sync. Title and start are the user-visible bits.
+class CalendarEventRef {
+  const CalendarEventRef({
+    required this.id,
+    required this.title,
+    this.description,
+    required this.start,
+  });
+  final String id;
+  final String title;
+  final String? description;
+  final DateTime start;
+}
+
 /// Thin wrapper around `device_calendar`. Singleton — the plugin
 /// holds platform channel state.
 class DeviceCalendarService {
@@ -98,6 +113,43 @@ class DeviceCalendarService {
       debugPrint('createEventForTask err: $e');
     }
     return null;
+  }
+
+  /// Fetches every event in `calendarId` within [from, to]. Used by
+  /// CalendarSyncAgent to import OS-side events into Hero and to verify
+  /// that previously-mirrored events still exist.
+  Future<List<CalendarEventRef>> listEventsInRange(
+    String calendarId, {
+    required DateTime from,
+    required DateTime to,
+  }) async {
+    final res = await _plugin.retrieveEvents(
+      calendarId,
+      RetrieveEventsParams(startDate: from, endDate: to),
+    );
+    final events = res.data ?? <Event>[];
+    return events
+        .where((e) => e.eventId != null && e.start != null)
+        .map(
+          (e) => CalendarEventRef(
+            id: e.eventId!,
+            title: e.title ?? '',
+            description: e.description,
+            start: e.start!.toLocal(),
+          ),
+        )
+        .toList(growable: false);
+  }
+
+  /// Hard-delete an event by id. Returns true on success.
+  Future<bool> deleteEvent(String calendarId, String eventId) async {
+    try {
+      final res = await _plugin.deleteEvent(calendarId, eventId);
+      return res.isSuccess && (res.data ?? false);
+    } catch (e) {
+      debugPrint('deleteEvent err: $e');
+      return false;
+    }
   }
 
   tz.Location _safeLocal() {

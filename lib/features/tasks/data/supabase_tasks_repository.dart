@@ -84,12 +84,26 @@ class SupabaseTasksRepository implements TasksRepository {
           .maybeSingle();
       if ((consent?['granted'] as bool?) != true) return;
 
-      await DeviceCalendarService.instance.createEventForTask(
+      final eventId = await DeviceCalendarService.instance.createEventForTask(
         calendarId: calId,
         title: task.title,
         notes: task.description,
         startAt: task.dueAt!,
       );
+
+      // Persist the calendar event id so CalendarSyncAgent can detect
+      // deletions on the OS side. Best-effort — failure here just leaves
+      // the column NULL (sync still works for new events going forward).
+      if (eventId != null) {
+        try {
+          await _client
+              .from('tasks')
+              .update({'external_calendar_event_id': eventId})
+              .eq('id', task.id);
+        } catch (e) {
+          debugPrint('save external_calendar_event_id failed: $e');
+        }
+      }
     } catch (e) {
       debugPrint('createEventForTask mirror skipped: $e');
     }

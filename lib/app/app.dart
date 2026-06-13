@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/l10n/locale_notifier.dart';
+import '../features/integrations/calendar/application/calendar_sync_agent.dart';
 import '../features/siri/application/siri_command_handler.dart';
+import '../features/tasks/application/tasks_notifier.dart';
 import '../l10n/generated/app_localizations.dart';
 import 'router.dart';
 import 'theme/app_theme.dart';
@@ -35,6 +37,7 @@ class _HeroAppState extends ConsumerState<HeroApp>
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
       _maybeHandleSiri();
+      _maybeReconcileCalendar();
     }
   }
 
@@ -42,6 +45,21 @@ class _HeroAppState extends ConsumerState<HeroApp>
     final context = rootNavigatorKey.currentContext;
     if (context == null || !mounted) return;
     await ref.read(siriCommandHandlerProvider).handlePendingIfAny(context);
+  }
+
+  /// Best-effort 2-way calendar sync. The agent gates itself on consent
+  /// + toggle + permissions, so calling it unconditionally is safe.
+  Future<void> _maybeReconcileCalendar() async {
+    try {
+      await ref.read(calendarSyncAgentProvider).reconcile();
+      // After a sync pass, refresh the tasks notifiers so newly-imported
+      // or removed rows show up in the UI without the user pulling-to-
+      // refresh manually.
+      ref.invalidate(tasksNotifierProvider);
+      ref.invalidate(todayTasksNotifierProvider);
+    } catch (_) {
+      // Agent already swallows errors; this is a defensive net.
+    }
   }
 
   @override
