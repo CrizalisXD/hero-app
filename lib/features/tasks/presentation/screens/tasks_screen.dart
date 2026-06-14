@@ -226,7 +226,9 @@ class _AllTab extends ConsumerWidget {
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
-            duration: const Duration(seconds: 5),
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 3),
+            margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
             content: Text('${l.taskCompleted} +${result.categoryXp} XP'),
             action: SnackBarAction(
               label: l.commonUndo,

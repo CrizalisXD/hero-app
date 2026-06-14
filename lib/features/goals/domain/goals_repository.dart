@@ -23,4 +23,9 @@ abstract interface class GoalsRepository {
 
   /// Progress for a single goal (filtered from fetchProgress).
   Future<GoalProgress?> progressOf(String goalId);
+
+  /// Soft-deletes a goal. Sets is_deleted=true so it disappears from
+  /// every list; child tasks/habits/milestones stay linked but the goal
+  /// no longer surfaces.
+  Future<void> deleteGoal(String goalId);
 }

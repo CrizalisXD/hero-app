@@ -9,10 +9,12 @@ class NoteTile extends StatelessWidget {
     super.key,
     required this.note,
     required this.onTap,
+    this.onDelete,
   });
 
   final Note note;
   final VoidCallback onTap;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class NoteTile extends StatelessWidget {
     final isAi = note.visibility == NoteVisibility.aiAllowed;
     final preview = note.content.trim().split('\n').first;
 
-    return ListTile(
+    final tile = ListTile(
       onTap: onTap,
       leading: Icon(
         isAi ? Icons.smart_toy_outlined : Icons.lock_outline,
@@ -39,6 +41,21 @@ class NoteTile extends StatelessWidget {
         isAi ? l.noteVisibilityAiAllowed : l.noteVisibilityPrivate,
         style: theme.textTheme.bodySmall,
       ),
+    );
+
+    if (onDelete == null) return tile;
+
+    return Dismissible(
+      key: ValueKey('note-${note.id}'),
+      direction: DismissDirection.endToStart,
+      background: Container(
+        alignment: Alignment.centerRight,
+        padding: const EdgeInsets.only(right: 16),
+        color: Colors.red.withValues(alpha: 0.8),
+        child: const Icon(Icons.delete_outline, color: Colors.white),
+      ),
+      onDismissed: (_) => onDelete!(),
+      child: tile,
     );
   }
 }

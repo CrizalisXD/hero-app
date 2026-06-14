@@ -43,6 +43,24 @@ class GoalsNotifier extends AsyncNotifier<GoalsView> {
 
   /// Called after a goal is confirmed so the list refreshes immediately.
   Future<void> onGoalCreated() => reload();
+
+  /// Optimistically removes the goal from the list, then calls the
+  /// server soft-delete RPC. On failure the row is restored.
+  Future<void> deleteGoal(String goalId) async {
+    final previous = state.value;
+    if (previous == null) return;
+    final next = GoalsView(
+      goals: previous.goals.where((g) => g.id != goalId).toList(),
+      progress: previous.progress,
+    );
+    state = AsyncData(next);
+    try {
+      await ref.read(goalsRepositoryProvider).deleteGoal(goalId);
+    } catch (_) {
+      state = AsyncData(previous);
+      rethrow;
+    }
+  }
 }
 
 final goalsNotifierProvider =

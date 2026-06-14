@@ -48,13 +48,29 @@ class GoalsScreen extends ConsumerWidget {
               itemBuilder: (_, i) {
                 final goal = view.goals[i];
                 final progress = view.progressFor(goal.id);
-                return _GoalTile(
-                  goal: goal,
-                  tasksDone: progress?.tasksDone ?? 0,
-                  tasksTotal: progress?.tasksTotal ?? 0,
-                  milestonesDone: progress?.milestonesDone ?? 0,
-                  milestonesTotal: progress?.milestonesTotal ?? 0,
-                  onTap: () => context.push('/goals/${goal.id}'),
+                return Dismissible(
+                  key: ValueKey('goal-${goal.id}'),
+                  direction: DismissDirection.endToStart,
+                  background: Container(
+                    alignment: Alignment.centerRight,
+                    padding: const EdgeInsets.only(right: 16),
+                    color: Colors.red.withValues(alpha: 0.8),
+                    child: const Icon(
+                      Icons.delete_outline,
+                      color: Colors.white,
+                    ),
+                  ),
+                  onDismissed: (_) => ref
+                      .read(goalsNotifierProvider.notifier)
+                      .deleteGoal(goal.id),
+                  child: _GoalTile(
+                    goal: goal,
+                    tasksDone: progress?.tasksDone ?? 0,
+                    tasksTotal: progress?.tasksTotal ?? 0,
+                    milestonesDone: progress?.milestonesDone ?? 0,
+                    milestonesTotal: progress?.milestonesTotal ?? 0,
+                    onTap: () => context.push('/goals/${goal.id}'),
+                  ),
                 );
               },
             ),

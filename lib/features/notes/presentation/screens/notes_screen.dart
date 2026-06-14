@@ -73,16 +73,20 @@ class _NoteList extends StatelessWidget {
         ),
       );
     }
-    return ListView.separated(
-      itemCount: rows.length,
-      separatorBuilder: (_, __) => const Divider(height: 1),
-      itemBuilder: (ctx, i) {
-        final n = rows[i];
-        return NoteTile(
-          note: n,
-          onTap: () => ctx.push('/notes/${n.id}'),
-        );
-      },
+    return Consumer(
+      builder: (context, ref, _) => ListView.separated(
+        itemCount: rows.length,
+        separatorBuilder: (_, __) => const Divider(height: 1),
+        itemBuilder: (ctx, i) {
+          final n = rows[i];
+          return NoteTile(
+            note: n,
+            onTap: () => ctx.push('/notes/${n.id}'),
+            onDelete: () =>
+                ref.read(notesNotifierProvider.notifier).deleteNote(n.id),
+          );
+        },
+      ),
     );
   }
 }

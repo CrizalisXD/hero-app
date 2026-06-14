@@ -107,6 +107,15 @@ class SupabaseGoalsRepository implements GoalsRepository {
   }
 
   @override
+  Future<void> deleteGoal(String goalId) async {
+    await _client
+        .from('goals')
+        .update({'is_deleted': true})
+        .eq('id', goalId)
+        .eq('user_id', _uid);
+  }
+
+  @override
   Future<GoalProgress?> progressOf(String goalId) async {
     final all = await fetchProgress();
     try {
