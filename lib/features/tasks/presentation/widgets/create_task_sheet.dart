@@ -33,6 +33,8 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
   bool _classifying = false;
   bool _submitting = false;
   DateTime? _dueAt;
+  bool _isRecurring = false;
+  String _recurrence = 'daily';
 
   @override
   void initState() {
@@ -172,6 +174,8 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
       xpReward: xpReward,
       disciplineXpReward: disciplineXp,
       dueAt: _dueAt,
+      isRecurring: _isRecurring,
+      recurrence: _isRecurring ? _recurrence : null,
     );
 
     final task =
@@ -243,6 +247,12 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
 
           // Due date row
           _buildDueDateRow(l, theme),
+          const SizedBox(height: 4),
+
+          // Recurring toggle — "повторяющиеся задачи" = чистить зубы,
+          // выкинуть мусор. Не привычка (нет стрика), просто авто-копия
+          // на следующий день/неделю при выполнении.
+          _buildRecurringRow(l, theme),
           const SizedBox(height: 14),
 
           // Submit
@@ -327,6 +337,62 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
             _dueAt == null ? '—' : _formatDueAt(_dueAt!),
           ),
         ),
+      ],
+    );
+  }
+
+  Widget _buildRecurringRow(AppLocalizations l, ThemeData theme) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SwitchListTile(
+          contentPadding: EdgeInsets.zero,
+          dense: true,
+          value: _isRecurring,
+          onChanged: (v) => setState(() => _isRecurring = v),
+          title: Row(
+            children: [
+              Icon(Icons.repeat, color: theme.hintColor, size: 18),
+              const SizedBox(width: 8),
+              Text(
+                l.createTaskRecurring,
+                style: theme.textTheme.bodyMedium,
+              ),
+            ],
+          ),
+        ),
+        if (_isRecurring)
+          Padding(
+            padding: const EdgeInsets.only(left: 28, bottom: 4),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SegmentedButton<String>(
+                  showSelectedIcon: false,
+                  segments: [
+                    ButtonSegment(
+                      value: 'daily',
+                      label: Text(l.createTaskRecurringDaily),
+                    ),
+                    ButtonSegment(
+                      value: 'weekly',
+                      label: Text(l.createTaskRecurringWeekly),
+                    ),
+                  ],
+                  selected: {_recurrence},
+                  onSelectionChanged: (set) =>
+                      setState(() => _recurrence = set.first),
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  l.createTaskRecurringHint,
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: theme.hintColor,
+                  ),
+                ),
+              ],
+            ),
+          ),
       ],
     );
   }

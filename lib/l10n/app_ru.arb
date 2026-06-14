@@ -658,6 +658,10 @@
   "taskCompleteAction": "Готово",
   "habitSkipAction": "Пропустить",
   "habitSkippedSnack": "Сегодня пропущено — стрик сохранён.",
+  "createTaskRecurring": "Повторять",
+  "createTaskRecurringDaily": "Каждый день",
+  "createTaskRecurringWeekly": "Каждую неделю",
+  "createTaskRecurringHint": "Когда отметишь как готово — копия появится на следующий день. Стрика нет, это просто напоминание.",
 
   "notesTitle": "Заметки",
   "notesPrivateTab": "Личные",

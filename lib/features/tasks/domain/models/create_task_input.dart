@@ -16,6 +16,7 @@ class CreateTaskInput {
     this.dueDate,
     this.dueAt,
     this.isRecurring = false,
+    this.recurrence,
   });
 
   final String title;
@@ -32,6 +33,8 @@ class CreateTaskInput {
   /// Precision due datetime (timestamptz). Takes priority over [dueDate].
   final DateTime? dueAt;
   final bool isRecurring;
+  /// 'daily' or 'weekly' when [isRecurring] is true.
+  final String? recurrence;
 
   Map<String, dynamic> toInsertBody({required String userId}) {
     final body = <String, dynamic>{
@@ -48,7 +51,7 @@ class CreateTaskInput {
       'xp_reward': xpReward,
       'discipline_xp_reward': disciplineXpReward,
       'is_recurring': isRecurring,
-      'recurrence': isRecurring ? 'daily' : null,
+      'recurrence': isRecurring ? (recurrence ?? 'daily') : null,
     };
 
     // Only include date/time fields when set — avoids "column does not exist"
