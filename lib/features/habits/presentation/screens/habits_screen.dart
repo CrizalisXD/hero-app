@@ -29,12 +29,14 @@ class HabitsScreen extends ConsumerWidget {
 
       // Bad habit "check-in" = slip event: different message, no XP.
       final isBad = h.type == HabitType.bad;
+      // Quiet floating snack. No "Undo" action — the slide-action /
+      // tap-to-undo on the tile is the discoverable rollback path now.
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
             behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 2),
             margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
             content: Text(
               isBad
@@ -43,17 +45,6 @@ class HabitsScreen extends ConsumerWidget {
                       res.totalXp,
                       l.habitStreakDays(res.currentStreak),
                     ),
-            ),
-            action: SnackBarAction(
-              label: l.commonUndo,
-              onPressed: () async {
-                try {
-                  await ref
-                      .read(habitsNotifierProvider.notifier)
-                      .uncheckin(h.id);
-                  ref.invalidate(homeNotifierProvider);
-                } catch (_) {}
-              },
             ),
           ),
         );
@@ -70,6 +61,42 @@ class HabitsScreen extends ConsumerWidget {
         SnackBar(content: Text(context.l10n.habitCheckinErrorSnack)),
       );
     }
+  }
+
+  // ─── uncheckin (undo) ──────────────────────────────────────────────────────
+
+  Future<void> _uncheckin(
+    BuildContext context,
+    WidgetRef ref,
+    Habit h,
+  ) async {
+    try {
+      await ref.read(habitsNotifierProvider.notifier).uncheckin(h.id);
+      ref.invalidate(homeNotifierProvider);
+    } catch (_) {}
+  }
+
+  // ─── skip today ────────────────────────────────────────────────────────────
+
+  Future<void> _skip(
+    BuildContext context,
+    WidgetRef ref,
+    Habit h,
+  ) async {
+    try {
+      await ref.read(habitsNotifierProvider.notifier).skipToday(h.id);
+      if (!context.mounted) return;
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          SnackBar(
+            behavior: SnackBarBehavior.floating,
+            duration: const Duration(seconds: 2),
+            margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
+            content: Text(context.l10n.habitSkippedSnack),
+          ),
+        );
+    } catch (_) {}
   }
 
   // ─── delete ────────────────────────────────────────────────────────────────
@@ -132,6 +159,8 @@ class HabitsScreen extends ConsumerWidget {
                   habit: h,
                   checkedToday: view.checkedToday.contains(h.id),
                   onCheckin: () => _checkin(context, ref, h),
+                  onUncheckin: () => _uncheckin(context, ref, h),
+                  onSkip: () => _skip(context, ref, h),
                   onDelete: () => _delete(context, ref, h),
                 );
               },

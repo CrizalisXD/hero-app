@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
@@ -7,71 +8,94 @@ import '../../domain/models/habit.dart';
 import '../../domain/models/habit_type.dart';
 import 'streak_badge.dart';
 
+/// Bidirectional slide actions:
+///   right-swipe → check-in (full swipe dismisses to act)
+///   left-swipe  → reveals action buttons:
+///     • Удалить (always)
+///     • Пропустить (only when not checked yet)
+///     • Отменить (only when checked today)
 class HabitListItem extends StatelessWidget {
   const HabitListItem({
     super.key,
     required this.habit,
     required this.checkedToday,
     required this.onCheckin,
+    required this.onUncheckin,
+    required this.onSkip,
     required this.onDelete,
   });
 
   final Habit habit;
   final bool checkedToday;
   final VoidCallback onCheckin;
+  final VoidCallback onUncheckin;
+  final VoidCallback onSkip;
   final VoidCallback onDelete;
 
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
     final isBad = habit.type == HabitType.bad;
-    // For a good habit, "checkedToday" means the user completed it.
-    // For a bad habit, "checkedToday" means the user logged a slip today
-    // — so the check-in button shouldn't be tappable again until tomorrow.
     final accentColor = isBad ? Colors.orange.shade400 : AppColors.accent;
     final doneColor = isBad ? Colors.red.shade400 : AppColors.success;
 
-    // Bi-directional swipe — same UX as TaskListItem so the gesture
-    // language is consistent across Tasks and Habits screens.
-    //   Swipe RIGHT → check-in / slip-log (depending on habit.type).
-    //   Swipe LEFT  → delete.
-    return Dismissible(
-      key: ValueKey(habit.id),
-      direction: checkedToday
-          ? DismissDirection.endToStart
-          : DismissDirection.horizontal,
-      background: Container(
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: 16),
-        color: (isBad ? Colors.orange : Colors.green).withValues(alpha: 0.85),
-        child: Icon(
-          isBad ? Icons.do_disturb_alt : Icons.check,
-          color: Colors.white,
-        ),
+    return Slidable(
+      key: ValueKey('habit-${habit.id}'),
+      startActionPane: checkedToday
+          ? null
+          : ActionPane(
+              motion: const StretchMotion(),
+              extentRatio: 0.25,
+              dismissible: DismissiblePane(onDismissed: onCheckin),
+              children: [
+                SlidableAction(
+                  onPressed: (_) => onCheckin(),
+                  backgroundColor: isBad ? Colors.orange : Colors.green,
+                  foregroundColor: Colors.white,
+                  icon: isBad ? Icons.do_disturb_alt : Icons.check,
+                  label: isBad ? l.habitSlipAction : l.habitCheckinAction,
+                ),
+              ],
+            ),
+      endActionPane: ActionPane(
+        motion: const StretchMotion(),
+        // Wider extent when there are 2 actions (delete + skip OR
+        // delete + undo) vs 1 (delete only when nothing else applies).
+        extentRatio: 0.55,
+        dismissible: DismissiblePane(onDismissed: onDelete),
+        children: [
+          if (checkedToday)
+            SlidableAction(
+              onPressed: (_) => onUncheckin(),
+              backgroundColor: Colors.blueGrey,
+              foregroundColor: Colors.white,
+              icon: Icons.undo,
+              label: l.commonUndo,
+            )
+          else
+            SlidableAction(
+              onPressed: (_) => onSkip(),
+              backgroundColor: Colors.amber.shade700,
+              foregroundColor: Colors.white,
+              icon: Icons.skip_next,
+              label: l.habitSkipAction,
+            ),
+          SlidableAction(
+            onPressed: (_) => onDelete(),
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            icon: Icons.delete_outline,
+            label: l.commonDelete,
+          ),
+        ],
       ),
-      secondaryBackground: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 16),
-        color: Colors.red.withValues(alpha: 0.8),
-        child: const Icon(Icons.delete_outline, color: Colors.white),
-      ),
-      confirmDismiss: (direction) async {
-        if (direction == DismissDirection.startToEnd) {
-          if (!checkedToday) onCheckin();
-          return false;
-        }
-        return true;
-      },
-      onDismissed: (_) => onDelete(),
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
         child: Row(
           children: [
-            // Check-in button. For bad habits the icon and color flip
-            // (orange + 🚫) so users instantly see this is a slip log,
-            // not a reward action.
             GestureDetector(
-              onTap: checkedToday ? null : onCheckin,
+              // Tap toggles: checked → uncheckin, unchecked → checkin.
+              onTap: checkedToday ? onUncheckin : onCheckin,
               child: AnimatedContainer(
                 duration: const Duration(milliseconds: 180),
                 height: 36,
@@ -98,7 +122,6 @@ class HabitListItem extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 14),
-            // Content
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,8 +144,6 @@ class HabitListItem extends StatelessWidget {
                         small: true,
                       ),
                       const SizedBox(width: 8),
-                      // For good habit: server streak. For bad: computed
-                      // "days since last slip" (or since creation).
                       if (isBad)
                         Text(
                           l.habitDaysCleanLabel(habit.displayStreak),

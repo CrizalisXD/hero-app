@@ -1,18 +1,30 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 
+import '../../../../core/l10n/l10n.dart';
 import '../../domain/models/task.dart';
 import 'category_chip.dart';
 
+/// Bidirectional slide actions per the user's request:
+///   right-swipe (DismissDirection.startToEnd) → quick complete
+///   left-swipe (DismissDirection.endToStart) → reveals action buttons:
+///     • Удалить
+///     • Отменить (only when task is done)
+/// Tapping the leading circle still works as the primary tap target —
+/// tapping a completed task uncompletes it (intuitive, matches iOS
+/// Reminders / Things 3).
 class TaskListItem extends StatelessWidget {
   const TaskListItem({
     super.key,
     required this.task,
     required this.onComplete,
+    required this.onUncomplete,
     required this.onDelete,
   });
 
   final Task task;
   final VoidCallback onComplete;
+  final VoidCallback onUncomplete;
   final VoidCallback onDelete;
 
   @override
@@ -20,40 +32,57 @@ class TaskListItem extends StatelessWidget {
     final theme = Theme.of(context);
     final mutedColor =
         theme.colorScheme.onSurface.withValues(alpha: 0.45);
+    final l = context.l10n;
 
-    return Dismissible(
-      key: ValueKey(task.id),
-      direction: task.isDone
-          ? DismissDirection.endToStart
-          : DismissDirection.horizontal,
-      background: Container(
-        alignment: Alignment.centerLeft,
-        padding: const EdgeInsets.only(left: 16),
-        color: Colors.green.withValues(alpha: 0.85),
-        child: const Icon(Icons.check, color: Colors.white),
+    return Slidable(
+      key: ValueKey('task-${task.id}'),
+      // Right-swipe: instant complete (only when not done).
+      startActionPane: task.isDone
+          ? null
+          : ActionPane(
+              motion: const StretchMotion(),
+              extentRatio: 0.25,
+              dismissible: DismissiblePane(onDismissed: onComplete),
+              children: [
+                SlidableAction(
+                  onPressed: (_) => onComplete(),
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  icon: Icons.check,
+                  label: l.taskCompleteAction,
+                ),
+              ],
+            ),
+      // Left-swipe: reveal Delete + (Undo if done).
+      endActionPane: ActionPane(
+        motion: const StretchMotion(),
+        extentRatio: task.isDone ? 0.55 : 0.30,
+        dismissible: DismissiblePane(onDismissed: onDelete),
+        children: [
+          if (task.isDone)
+            SlidableAction(
+              onPressed: (_) => onUncomplete(),
+              backgroundColor: Colors.blueGrey,
+              foregroundColor: Colors.white,
+              icon: Icons.undo,
+              label: l.commonUndo,
+            ),
+          SlidableAction(
+            onPressed: (_) => onDelete(),
+            backgroundColor: Colors.red,
+            foregroundColor: Colors.white,
+            icon: Icons.delete_outline,
+            label: l.commonDelete,
+          ),
+        ],
       ),
-      secondaryBackground: Container(
-        alignment: Alignment.centerRight,
-        padding: const EdgeInsets.only(right: 16),
-        color: Colors.red.withValues(alpha: 0.8),
-        child: const Icon(Icons.delete_outline, color: Colors.white),
-      ),
-      confirmDismiss: (direction) async {
-        if (direction == DismissDirection.startToEnd) {
-          // Swipe right = complete. Don't actually dismiss the row —
-          // let the parent rebuild it with isDone=true.
-          if (!task.isDone) onComplete();
-          return false;
-        }
-        // Swipe left = delete.
-        return true;
-      },
-      onDismissed: (_) => onDelete(),
       child: ListTile(
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         leading: GestureDetector(
-          onTap: task.isDone ? null : onComplete,
+          // Tap on the circle toggles state — natural undo:
+          // checked task untaps back to active.
+          onTap: task.isDone ? onUncomplete : onComplete,
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 200),
             width: 28,
@@ -116,10 +145,6 @@ class TaskListItem extends StatelessWidget {
 
   static String _shortDueAt(DateTime d) {
     String two(int v) => v.toString().padLeft(2, '0');
-    // Task.fromJson stores due_at as UTC (timestamp from Postgres).
-    // Force local-time conversion before reading h/m/d — otherwise the
-    // user sees the UTC clock and a TZ offset of 3h shows the wrong time
-    // (e.g. event at 16:30 local was rendered as 13:30).
     final local = d.toLocal();
     final now = DateTime.now();
     if (local.year == now.year &&

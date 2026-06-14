@@ -115,6 +115,14 @@ class SupabaseHabitsRepository implements HabitsRepository {
   }
 
   @override
+  Future<void> skipToday(String habitId) async {
+    await _client.rpc<dynamic>(
+      'skip_habit_today',
+      params: {'p_habit_id': habitId},
+    );
+  }
+
+  @override
   Future<void> delete(String habitId) async {
     await _client
         .from('habits')

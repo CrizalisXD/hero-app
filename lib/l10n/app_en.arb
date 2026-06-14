@@ -1130,6 +1130,12 @@
   "@commonDelete": {},
   "commonUndo": "Undo",
   "@commonUndo": {},
+  "taskCompleteAction": "Done",
+  "@taskCompleteAction": {},
+  "habitSkipAction": "Skip",
+  "@habitSkipAction": {},
+  "habitSkippedSnack": "Skipped today — streak stays intact.",
+  "@habitSkippedSnack": {},
 
   "notesTitle": "Notes",
   "@notesTitle": {},

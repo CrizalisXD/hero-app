@@ -11,6 +11,11 @@ abstract class HabitsRepository {
   /// Reverses today's [checkin] call. Used for the undo snackbar.
   Future<void> uncheckin(String habitId);
 
+  /// Mark today as a conscious "skip" for this habit — no XP, streak
+  /// untouched. Used so a planned-off day (travel, sick) doesn't break
+  /// the chain.
+  Future<void> skipToday(String habitId);
+
   Future<void> archive(String habitId);
   Future<void> delete(String habitId);
 }

@@ -130,6 +130,25 @@ class HabitsNotifier extends AsyncNotifier<HabitsView> {
     }
   }
 
+  /// Mark today as a conscious "skip" — habit moves into checkedToday
+  /// set (so the swipe action button hides) but no XP/streak math runs.
+  Future<void> skipToday(String habitId) async {
+    final previous = state.value;
+    if (previous == null) return;
+    if (previous.checkedToday.contains(habitId)) return;
+    state = AsyncData(
+      previous.copyWith(
+        checkedToday: {...previous.checkedToday, habitId},
+      ),
+    );
+    try {
+      await _repo.skipToday(habitId);
+    } catch (_) {
+      state = AsyncData(previous);
+      rethrow;
+    }
+  }
+
   /// Optimistic delete + rollback on error.
   Future<void> delete(String habitId) async {
     final previous = state.value;

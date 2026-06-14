@@ -102,6 +102,19 @@ class _TodayTab extends ConsumerWidget {
               child: _TaskList(
                 tasks: tasks,
                 onComplete: (id) => _handleComplete(context, ref, id),
+                onUncomplete: (id) async {
+                  // Tap or slide-action "Undo" — reverse the completion
+                  // both locally (in both notifiers) and on the server.
+                  try {
+                    await ref
+                        .read(tasksNotifierProvider.notifier)
+                        .uncompleteTask(id);
+                    await ref
+                        .read(todayTasksNotifierProvider.notifier)
+                        .uncompleteTask(id);
+                    ref.invalidate(homeNotifierProvider);
+                  } catch (_) {}
+                },
                 onDelete: (id) {
                   // Mirror into both notifiers so Today and All stay in sync.
                   ref
@@ -189,6 +202,14 @@ class _AllTab extends ConsumerWidget {
               child: _TaskList(
                 tasks: tasks,
                 onComplete: (id) => _handleComplete(context, ref, id),
+                onUncomplete: (id) async {
+                  try {
+                    await ref
+                        .read(tasksNotifierProvider.notifier)
+                        .uncompleteTask(id);
+                    ref.invalidate(homeNotifierProvider);
+                  } catch (_) {}
+                },
                 onDelete: (id) =>
                     ref.read(tasksNotifierProvider.notifier).deleteTask(id),
               ),
@@ -222,15 +243,20 @@ class _AllTab extends ConsumerWidget {
         SnackBar(content: Text(l.taskDuplicate)),
       );
     } else {
+      // Quiet floating snack. Undo discovery moved off the snack:
+      // tap the checked circle or use the slide-action "Undo" button.
       ScaffoldMessenger.of(context)
         ..hideCurrentSnackBar()
         ..showSnackBar(
           SnackBar(
             behavior: SnackBarBehavior.floating,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 2),
             margin: const EdgeInsets.fromLTRB(16, 0, 16, 24),
             content: Text('${l.taskCompleted} +${result.categoryXp} XP'),
             action: SnackBarAction(
+              // Kept as a fallback for users who instinctively reach for
+              // the snack action — it's the same flow, just a third path
+              // alongside tap-toggle and slide-action.
               label: l.commonUndo,
               onPressed: () async {
                 try {
@@ -267,11 +293,13 @@ class _TaskList extends StatelessWidget {
   const _TaskList({
     required this.tasks,
     required this.onComplete,
+    required this.onUncomplete,
     required this.onDelete,
   });
 
   final List<Task> tasks;
   final void Function(String taskId) onComplete;
+  final void Function(String taskId) onUncomplete;
   final void Function(String taskId) onDelete;
 
   @override
@@ -283,6 +311,7 @@ class _TaskList extends StatelessWidget {
       itemBuilder: (_, i) => TaskListItem(
         task: tasks[i],
         onComplete: () => onComplete(tasks[i].id),
+        onUncomplete: () => onUncomplete(tasks[i].id),
         onDelete: () => onDelete(tasks[i].id),
       ),
     );

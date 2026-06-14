@@ -655,6 +655,9 @@
   "commonSave": "Сохранить",
   "commonDelete": "Удалить",
   "commonUndo": "Отменить",
+  "taskCompleteAction": "Готово",
+  "habitSkipAction": "Пропустить",
+  "habitSkippedSnack": "Сегодня пропущено — стрик сохранён.",
 
   "notesTitle": "Заметки",
   "notesPrivateTab": "Личные",
