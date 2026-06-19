@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/l10n/l10n.dart';
 import '../../../challenges/presentation/widgets/active_challenges_block.dart';
 import '../../application/home_notifier.dart';
 import '../widgets/active_goal_panel.dart';
@@ -36,11 +37,12 @@ class HomeScreen extends ConsumerWidget {
           actions: [
             IconButton(
               icon: const Icon(Icons.sports_score_outlined),
-              tooltip: 'Challenges',
+              tooltip: context.l10n.navChallenges,
               onPressed: () => context.push('/challenges'),
             ),
             IconButton(
               icon: const Icon(Icons.settings_outlined),
+              tooltip: context.l10n.settingsTitle,
               onPressed: () => context.push('/settings'),
             ),
           ],
