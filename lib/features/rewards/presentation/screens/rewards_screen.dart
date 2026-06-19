@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_radius.dart';
 import '../../../../core/widgets/hero_card.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../application/achievement_l10n.dart';
@@ -44,21 +45,33 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: HeroCard(
         padding: const EdgeInsets.all(12),
-        borderColor: unlocked ? color.withValues(alpha: 0.5) : null,
+        borderColor: color.withValues(alpha: unlocked ? 0.55 : 0.22),
         child: Row(
           children: [
+            // Rarity accent stripe — gives the list color rhythm.
+            Container(
+              width: 4,
+              height: 44,
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: unlocked ? 0.9 : 0.5),
+                borderRadius: BorderRadius.circular(AppRadius.pill),
+              ),
+            ),
+            const SizedBox(width: 12),
             Container(
               height: 44,
               width: 44,
               decoration: BoxDecoration(
-                color: unlocked
-                    ? color.withValues(alpha: 0.2)
-                    : AppColors.bgElevated,
+                color: color.withValues(alpha: unlocked ? 0.2 : 0.12),
                 shape: BoxShape.circle,
+                border: Border.all(
+                  color: color.withValues(alpha: unlocked ? 0.7 : 0.3),
+                  width: 1.5,
+                ),
               ),
               child: Icon(
                 unlocked ? achievementIcon(a.iconKey) : Icons.lock_outline,
-                color: unlocked ? color : AppColors.textMuted,
+                color: unlocked ? color : color.withValues(alpha: 0.6),
               ),
             ),
             const SizedBox(width: 12),
@@ -88,11 +101,28 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
               ),
             ),
             const SizedBox(width: 8),
-            Text(
-              '+${a.rewardXp}',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: unlocked ? color : AppColors.textMuted,
+            // Rarity-tinted reward pill.
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              decoration: BoxDecoration(
+                color: color.withValues(alpha: unlocked ? 0.22 : 0.12),
+                borderRadius: BorderRadius.circular(AppRadius.pill),
+                border: Border.all(color: color.withValues(alpha: 0.4)),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.bolt, size: 13, color: color),
+                  const SizedBox(width: 1),
+                  Text(
+                    '+${a.rewardXp}',
+                    style: TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 12,
+                      color: color,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
