@@ -68,7 +68,7 @@ class _WelcomeScreenState extends ConsumerState<WelcomeScreen> {
               const SizedBox(height: 12),
               HeroButton(
                 label: l.welcomeSignUp,
-                isOutlined: true,
+                variant: HeroButtonVariant.secondary,
                 onPressed: _loading ? null : () => context.go('/auth/sign-up'),
               ),
               const SizedBox(height: 24),

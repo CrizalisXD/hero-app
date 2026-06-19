@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/l10n/l10n.dart';
+import '../../../../../core/widgets/hero_button.dart';
 import '../../application/goal_creation_notifier.dart';
 import '../../domain/models/goal_create_answers.dart';
 
@@ -237,14 +238,10 @@ class _GoalCreateScreenState extends ConsumerState<GoalCreateScreen> {
             const SizedBox(height: 32),
 
             // ── Submit ────────────────────────────────────────────
-            FilledButton(
+            HeroButton(
+              label: l.goalCreateContinue,
+              isLoading: isLoading,
               onPressed: isLoading ? null : _submit,
-              child: isLoading
-                  ? const SizedBox.square(
-                      dimension: 20,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : Text(l.goalCreateContinue),
             ),
 
             if (isLoading) ...[

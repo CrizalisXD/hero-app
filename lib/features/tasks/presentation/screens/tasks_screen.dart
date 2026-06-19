@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_button.dart';
 import '../../../home/application/home_notifier.dart';
 import '../../../home/presentation/widgets/level_up_overlay.dart';
 import '../../../rewards/application/achievements_notifier.dart';
@@ -337,10 +339,12 @@ class _EmptyView extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          TextButton.icon(
+          HeroButton(
+            label: context.l10n.createTask,
+            icon: Icons.add,
+            variant: HeroButtonVariant.ghost,
+            fullWidth: false,
             onPressed: onCreateTap,
-            icon: const Icon(Icons.add),
-            label: Text(context.l10n.createTask),
           ),
         ],
       ),
@@ -359,11 +363,15 @@ class _ErrorView extends StatelessWidget {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          const Icon(Icons.error_outline, size: 48, color: Colors.red),
+          const Icon(Icons.error_outline, size: 48, color: AppColors.error),
           const SizedBox(height: 8),
           Text(message),
           const SizedBox(height: 16),
-          ElevatedButton(onPressed: onRetry, child: Text(context.l10n.homeRetry)),
+          HeroButton(
+            label: context.l10n.homeRetry,
+            fullWidth: false,
+            onPressed: onRetry,
+          ),
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../core/l10n/l10n.dart';
+import '../../../../../core/widgets/hero_button.dart';
 import '../../../energy/data/energy_service.dart';
 import '../../../energy/presentation/energy_guard.dart';
 import '../../application/goal_creation_notifier.dart';
@@ -55,9 +56,11 @@ class GoalPlanReviewScreen extends ConsumerWidget {
               children: [
                 Text(l.goalConfirmError, textAlign: TextAlign.center),
                 const SizedBox(height: 16),
-                OutlinedButton(
+                HeroButton(
+                  label: l.goalPlanReviewBack,
+                  variant: HeroButtonVariant.secondary,
+                  fullWidth: false,
                   onPressed: () => context.go('/goals/new'),
-                  child: Text(l.goalPlanReviewBack),
                 ),
               ],
             ),
@@ -148,7 +151,9 @@ class GoalPlanReviewScreen extends ConsumerWidget {
               const SizedBox(height: 32),
 
               // ── Actions ───────────────────────────────────────────
-              FilledButton(
+              HeroButton(
+                label: l.goalPlanReviewConfirm,
+                isLoading: isConfirming,
                 onPressed: isConfirming
                     ? null
                     : () async {
@@ -166,27 +171,23 @@ class GoalPlanReviewScreen extends ConsumerWidget {
                             .read(goalCreationProvider.notifier)
                             .confirm();
                       },
-                child: isConfirming
-                    ? const SizedBox.square(
-                        dimension: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      )
-                    : Text(l.goalPlanReviewConfirm),
               ),
               const SizedBox(height: 12),
-              OutlinedButton(
+              HeroButton(
+                label: l.goalPlanReviewRegenerate,
+                variant: HeroButtonVariant.secondary,
                 onPressed: isConfirming
                     ? null
                     : () => ref
                         .read(goalCreationProvider.notifier)
                         .regenerate(),
-                child: Text(l.goalPlanReviewRegenerate),
               ),
               const SizedBox(height: 8),
-              TextButton(
+              HeroButton(
+                label: l.goalPlanReviewBack,
+                variant: HeroButtonVariant.ghost,
                 onPressed:
                     isConfirming ? null : () => context.go('/goals/new'),
-                child: Text(l.goalPlanReviewBack),
               ),
               const SizedBox(height: 16),
             ],

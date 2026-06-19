@@ -1,26 +1,20 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_radius.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../categories/domain/models/category_id.dart';
 
-const _categoryColors = {
-  CategoryId.strength: Color(0xFFE54B4B),
-  CategoryId.mind: Color(0xFF7F77DD),
-  CategoryId.endurance: Color(0xFFE5A54B),
-  CategoryId.health: Color(0xFF4BE57F),
-  CategoryId.social: Color(0xFF4BB5E5),
-  CategoryId.finance: Color(0xFFE5D14B),
-  CategoryId.creativity: Color(0xFFE54BB5),
-};
-
+/// Material icon per category. SVG-style vector icons (no emoji) so the chip
+/// reads cleanly at every size — see UI/UX "no-emoji-icons" guideline.
 const _categoryIcons = {
-  CategoryId.strength: '💪',
-  CategoryId.mind: '🧠',
-  CategoryId.endurance: '🏃',
-  CategoryId.health: '❤️',
-  CategoryId.social: '🤝',
-  CategoryId.finance: '💰',
-  CategoryId.creativity: '🎨',
+  CategoryId.strength: Icons.fitness_center,
+  CategoryId.mind: Icons.psychology_alt,
+  CategoryId.endurance: Icons.directions_run,
+  CategoryId.health: Icons.favorite,
+  CategoryId.social: Icons.groups,
+  CategoryId.finance: Icons.savings,
+  CategoryId.creativity: Icons.palette,
 };
 
 class CategoryChip extends StatelessWidget {
@@ -33,13 +27,15 @@ class CategoryChip extends StatelessWidget {
 
   final CategoryId category;
   final bool small;
+
   /// Override font size. If null, uses [small] to pick 11 or 12.
   final double? fontSize;
 
   @override
   Widget build(BuildContext context) {
-    final color = _categoryColors[category] ?? const Color(0xFF7F77DD);
-    final icon = _categoryIcons[category] ?? '❓';
+    // Single source of truth for category colors (matches categories.json).
+    final color = AppColors.categoryColor(category.wire);
+    final icon = _categoryIcons[category] ?? Icons.help_outline;
     final label = _categoryLabel(context, category);
     final fs = fontSize ?? (small ? 11.0 : 12.0);
     final padding = fs <= 11
@@ -50,13 +46,13 @@ class CategoryChip extends StatelessWidget {
       padding: padding,
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.15),
-        borderRadius: BorderRadius.circular(20),
+        borderRadius: BorderRadius.circular(AppRadius.pill),
         border: Border.all(color: color.withValues(alpha: 0.4), width: 1),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Text(icon, style: TextStyle(fontSize: fs)),
+          Icon(icon, size: fs + 2, color: color),
           const SizedBox(width: 4),
           Text(
             label,

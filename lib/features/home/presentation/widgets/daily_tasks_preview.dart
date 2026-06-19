@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../core/l10n/l10n.dart';
+import '../../../../../core/widgets/hero_button.dart';
+import '../../../../../core/widgets/hero_card.dart';
 import '../../../habits/domain/models/habit.dart';
 import '../../../habits/presentation/widgets/streak_badge.dart';
 import '../../../tasks/presentation/widgets/category_chip.dart';
@@ -26,13 +28,7 @@ class DailyTasksPreview extends StatelessWidget {
 
     final shown = habits.take(3).toList();
 
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.bgCard,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.border),
-      ),
+    return HeroCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -43,9 +39,12 @@ class DailyTasksPreview extends StatelessWidget {
                 style: const TextStyle(fontWeight: FontWeight.w600),
               ),
               const Spacer(),
-              TextButton(
+              HeroButton(
+                label: l.homePreviewMore,
+                variant: HeroButtonVariant.ghost,
+                size: HeroButtonSize.sm,
+                fullWidth: false,
                 onPressed: () => context.go('/habits'),
-                child: Text(l.homePreviewMore),
               ),
             ],
           ),
@@ -57,9 +56,7 @@ class DailyTasksPreview extends StatelessWidget {
               child: Row(
                 children: [
                   Icon(
-                    done
-                        ? Icons.check_circle
-                        : Icons.radio_button_unchecked,
+                    done ? Icons.check_circle : Icons.radio_button_unchecked,
                     color: done ? AppColors.success : AppColors.border,
                     size: 20,
                   ),

@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../core/l10n/l10n.dart';
+import '../../../../../core/widgets/hero_button.dart';
+import '../../../../../core/widgets/hero_card.dart';
 import '../../../rewards/application/achievements_notifier.dart';
 import '../../../rewards/presentation/widgets/achievement_unlocked_sheet.dart';
 import '../../../tasks/application/tasks_notifier.dart';
@@ -50,13 +52,7 @@ class TodayFocusPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.bgCard,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.border),
-      ),
+    return HeroCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -68,9 +64,12 @@ class TodayFocusPanel extends ConsumerWidget {
               ),
               const Spacer(),
               if (tasks.isEmpty)
-                TextButton(
+                HeroButton(
+                  label: l.homeFocusAddTask,
+                  variant: HeroButtonVariant.ghost,
+                  size: HeroButtonSize.sm,
+                  fullWidth: false,
                   onPressed: () => context.go('/tasks'),
-                  child: Text(l.homeFocusAddTask),
                 ),
             ],
           ),
@@ -80,7 +79,7 @@ class TodayFocusPanel extends ConsumerWidget {
               l.homeFocusEmpty,
               style: const TextStyle(
                 fontSize: 13,
-                color: Color(0xB3FFFFFF),
+                color: AppColors.textSecondary,
               ),
             )
           else
@@ -109,24 +108,31 @@ class _TaskRow extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: task.isDone ? null : onComplete,
-            child: Container(
-              height: 22,
-              width: 22,
-              decoration: BoxDecoration(
-                color: task.isDone ? AppColors.success : Colors.transparent,
-                border: Border.all(
-                  color:
-                      task.isDone ? AppColors.success : AppColors.border,
-                  width: 1.5,
+            behavior: HitTestBehavior.opaque,
+            child: SizedBox(
+              // >=44px touch target around the 22px visual circle.
+              width: 44,
+              height: 44,
+              child: Center(
+                child: Container(
+                  height: 22,
+                  width: 22,
+                  decoration: BoxDecoration(
+                    color: task.isDone ? AppColors.success : Colors.transparent,
+                    border: Border.all(
+                      color: task.isDone ? AppColors.success : AppColors.border,
+                      width: 1.5,
+                    ),
+                    shape: BoxShape.circle,
+                  ),
+                  child: task.isDone
+                      ? const Icon(Icons.check, size: 14, color: Colors.white)
+                      : null,
                 ),
-                shape: BoxShape.circle,
               ),
-              child: task.isDone
-                  ? const Icon(Icons.check, size: 14, color: Colors.white)
-                  : null,
             ),
           ),
-          const SizedBox(width: 10),
+          const SizedBox(width: 4),
           Expanded(
             child: Text(
               task.title,

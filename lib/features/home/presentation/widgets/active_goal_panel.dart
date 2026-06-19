@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../app/theme/app_colors.dart';
+import '../../../../../app/theme/app_spacing.dart';
 import '../../../../../core/l10n/l10n.dart';
+import '../../../../../core/widgets/animated_fill_bar.dart';
+import '../../../../../core/widgets/hero_button.dart';
+import '../../../../../core/widgets/hero_card.dart';
 import '../../../goals/domain/models/goal.dart';
 import '../../../goals/domain/models/goal_progress.dart';
 import '../../../tasks/presentation/widgets/category_chip.dart';
@@ -22,83 +26,74 @@ class ActiveGoalPanel extends StatelessWidget {
     final l = context.l10n;
 
     if (goal == null) {
-      return Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.border),
-        ),
+      return HeroCard(
         child: Row(
           children: [
             Expanded(child: Text(l.homeActiveGoalNone)),
-            TextButton(
+            const SizedBox(width: AppSpacing.s),
+            HeroButton(
+              label: l.homeActiveGoalStart,
+              variant: HeroButtonVariant.ghost,
+              size: HeroButtonSize.sm,
+              fullWidth: false,
               onPressed: () => context.go('/goals/new'),
-              child: Text(l.homeActiveGoalStart),
             ),
           ],
         ),
       );
     }
 
-    return InkWell(
+    final categoryColor = AppColors.categoryColor(goal!.mainCategory.wire);
+
+    return HeroCard.hero(
       onTap: () => context.go('/goals/${goal!.id}'),
-      borderRadius: BorderRadius.circular(14),
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(14),
-          border: Border.all(color: AppColors.border),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Text(
-                  l.homeActiveGoal,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Color(0xB3FFFFFF),
-                  ),
-                ),
-                const Spacer(),
-                CategoryChip(category: goal!.mainCategory),
-              ],
-            ),
-            const SizedBox(height: 6),
-            Text(
-              goal!.title,
-              style: const TextStyle(
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            if (progress != null) ...[
-              const SizedBox(height: 12),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(4),
-                child: LinearProgressIndicator(
-                  value: progress!.taskProgress,
-                  backgroundColor: AppColors.bgElevated,
-                  minHeight: 6,
-                ),
-              ),
-              const SizedBox(height: 4),
+      gradient: LinearGradient(
+        colors: [categoryColor.withValues(alpha: 0.7), AppColors.accent],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
               Text(
-                l.homeActiveGoalProgress(
-                  progress!.tasksDone,
-                  progress!.tasksTotal,
-                ),
+                l.homeActiveGoal,
                 style: const TextStyle(
-                  fontSize: 11,
-                  color: Color(0xB3FFFFFF),
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
                 ),
               ),
+              const Spacer(),
+              CategoryChip(category: goal!.mainCategory),
             ],
+          ),
+          const SizedBox(height: 6),
+          Text(
+            goal!.title,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          if (progress != null) ...[
+            const SizedBox(height: AppSpacing.m),
+            AnimatedFillBar(
+              progress: progress!.taskProgress,
+              height: 6,
+              color: categoryColor,
+            ),
+            const SizedBox(height: 4),
+            Text(
+              l.homeActiveGoalProgress(
+                progress!.tasksDone,
+                progress!.tasksTotal,
+              ),
+              style: const TextStyle(
+                fontSize: 11,
+                color: AppColors.textSecondary,
+              ),
+            ),
           ],
-        ),
+        ],
       ),
     );
   }

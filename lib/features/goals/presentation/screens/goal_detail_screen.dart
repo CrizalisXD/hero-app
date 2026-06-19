@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../../app/theme/app_colors.dart';
 import '../../../../../core/l10n/l10n.dart';
+import '../../../../../core/widgets/hero_button.dart';
 import '../../../../core/services/supabase_service.dart';
 import '../../../habits/application/habits_notifier.dart';
 import '../../../habits/domain/models/habit.dart';
@@ -215,7 +217,7 @@ class _TasksSection extends ConsumerWidget {
                 style: t.isDone
                     ? const TextStyle(
                         decoration: TextDecoration.lineThrough,
-                        color: Colors.grey,
+                        color: AppColors.textMuted,
                       )
                     : null,
               ),
@@ -284,8 +286,8 @@ class _HabitsSection extends ConsumerWidget {
                     ? Icons.do_disturb_alt_outlined
                     : Icons.add_circle_outline,
                 color: h.type == HabitType.bad
-                    ? Colors.orange
-                    : Colors.purpleAccent,
+                    ? AppColors.badHabit
+                    : AppColors.accent,
               ),
               title: Text(h.title),
               subtitle: Text(
@@ -294,13 +296,14 @@ class _HabitsSection extends ConsumerWidget {
                     : l.habitStreakDays(h.currentStreak),
                 style: const TextStyle(fontSize: 11),
               ),
-              trailing: TextButton(
+              trailing: HeroButton(
+                label: h.type == HabitType.bad
+                    ? l.habitSlipAction
+                    : l.habitCheckinAction,
+                variant: HeroButtonVariant.ghost,
+                size: HeroButtonSize.sm,
+                fullWidth: false,
                 onPressed: () => _checkin(context, ref, h),
-                child: Text(
-                  h.type == HabitType.bad
-                      ? l.habitSlipAction
-                      : l.habitCheckinAction,
-                ),
               ),
             ),
           )
@@ -380,7 +383,7 @@ class _MilestonesSectionState extends ConsumerState<_MilestonesSection> {
                       style: m.isDone
                           ? const TextStyle(
                               decoration: TextDecoration.lineThrough,
-                              color: Colors.grey,
+                              color: AppColors.textMuted,
                             )
                           : null,
                     ),
@@ -389,7 +392,7 @@ class _MilestonesSectionState extends ConsumerState<_MilestonesSection> {
                     '+${m.xpReward} XP',
                     style: const TextStyle(
                       fontSize: 11,
-                      color: Colors.amber,
+                      color: AppColors.accent,
                     ),
                   ),
                 ],
@@ -421,10 +424,10 @@ class _StatusBadge extends StatelessWidget {
       GoalStatus.abandoned => l.goalStatusAbandoned,
     };
     final color = switch (status) {
-      GoalStatus.active => Colors.green,
-      GoalStatus.completed => Colors.blue,
-      GoalStatus.paused => Colors.orange,
-      GoalStatus.abandoned => Colors.grey,
+      GoalStatus.active => AppColors.success,
+      GoalStatus.completed => AppColors.info,
+      GoalStatus.paused => AppColors.warning,
+      GoalStatus.abandoned => AppColors.textMuted,
     };
     return Chip(
       label: Text(label, style: TextStyle(color: color, fontSize: 11)),

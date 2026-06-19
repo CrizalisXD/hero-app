@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
+import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../domain/models/task.dart';
 import 'category_chip.dart';
@@ -46,7 +47,7 @@ class TaskListItem extends StatelessWidget {
               children: [
                 SlidableAction(
                   onPressed: (_) => onComplete(),
-                  backgroundColor: Colors.green,
+                  backgroundColor: AppColors.success,
                   foregroundColor: Colors.white,
                   icon: Icons.check,
                   label: l.taskCompleteAction,
@@ -62,14 +63,14 @@ class TaskListItem extends StatelessWidget {
           if (task.isDone)
             SlidableAction(
               onPressed: (_) => onUncomplete(),
-              backgroundColor: Colors.blueGrey,
+              backgroundColor: AppColors.info,
               foregroundColor: Colors.white,
               icon: Icons.undo,
               label: l.commonUndo,
             ),
           SlidableAction(
             onPressed: (_) => onDelete(),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
             foregroundColor: Colors.white,
             icon: Icons.delete_outline,
             label: l.commonDelete,
@@ -90,11 +91,11 @@ class TaskListItem extends StatelessWidget {
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               color: task.isDone
-                  ? const Color(0xFF7F77DD)
+                  ? AppColors.accent
                   : Colors.transparent,
               border: Border.all(
                 color: task.isDone
-                    ? const Color(0xFF7F77DD)
+                    ? AppColors.accent
                     : theme.colorScheme.outline,
                 width: 2,
               ),
@@ -133,8 +134,7 @@ class TaskListItem extends StatelessWidget {
         trailing: Text(
           '+${task.xpReward} XP',
           style: TextStyle(
-            color: const Color(0xFF7F77DD)
-                .withValues(alpha: task.isDone ? 0.4 : 0.9),
+            color: AppColors.accent.withValues(alpha: task.isDone ? 0.4 : 0.9),
             fontWeight: FontWeight.w600,
             fontSize: 12,
           ),
