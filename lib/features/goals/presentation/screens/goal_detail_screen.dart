@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../core/l10n/l10n.dart';
+import '../../../../../core/widgets/animated_fill_bar.dart';
 import '../../../../../core/widgets/hero_button.dart';
 import '../../../../core/services/supabase_service.dart';
 import '../../../habits/application/habits_notifier.dart';
@@ -103,7 +104,11 @@ class _GoalDetailBody extends ConsumerWidget {
             style: theme.textTheme.bodyMedium,
           ),
           const SizedBox(height: 4),
-          LinearProgressIndicator(value: taskPercent),
+          AnimatedFillBar(
+            progress: taskPercent,
+            height: 8,
+            color: AppColors.categoryColor(goal.mainCategory.wire),
+          ),
           const SizedBox(height: 12),
           Text(
             l.goalDetailProgressMilestones(milestonesDone, milestonesTotal),
@@ -112,9 +117,19 @@ class _GoalDetailBody extends ConsumerWidget {
 
           if (goal.targetDate != null) ...[
             const SizedBox(height: 20),
-            Text(
-              '📅 ${_formatDate(goal.targetDate!)}',
-              style: theme.textTheme.bodySmall,
+            Row(
+              children: [
+                const Icon(
+                  Icons.event_outlined,
+                  size: 14,
+                  color: AppColors.textSecondary,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  _formatDate(goal.targetDate!),
+                  style: theme.textTheme.bodySmall,
+                ),
+              ],
             ),
           ],
 
@@ -122,8 +137,9 @@ class _GoalDetailBody extends ConsumerWidget {
 
           // ── Expandable children ─────────────────────────────────
           childrenAsync.when(
-            loading: () =>
-                const Padding(padding: EdgeInsets.all(24), child: Center(child: CircularProgressIndicator())),
+            loading: () => const Padding(
+                padding: EdgeInsets.all(24),
+                child: Center(child: CircularProgressIndicator())),
             error: (e, _) => Padding(
               padding: const EdgeInsets.all(16),
               child: Text('$e'),
@@ -175,9 +191,8 @@ class _TasksSection extends ConsumerWidget {
     Task task,
   ) async {
     try {
-      final outcome = await ref
-          .read(tasksNotifierProvider.notifier)
-          .completeTask(task.id);
+      final outcome =
+          await ref.read(tasksNotifierProvider.notifier).completeTask(task.id);
       if (!context.mounted) return;
       ref.invalidate(goalChildrenProvider(goalId));
       ref.invalidate(goalsNotifierProvider);
@@ -209,9 +224,7 @@ class _TasksSection extends ConsumerWidget {
             (t) => CheckboxListTile(
               dense: true,
               value: t.isDone,
-              onChanged: t.isDone
-                  ? null
-                  : (_) => _complete(context, ref, t),
+              onChanged: t.isDone ? null : (_) => _complete(context, ref, t),
               title: Text(
                 t.title,
                 style: t.isDone
@@ -247,9 +260,8 @@ class _HabitsSection extends ConsumerWidget {
     Habit habit,
   ) async {
     try {
-      final res = await ref
-          .read(habitsNotifierProvider.notifier)
-          .checkin(habit.id);
+      final res =
+          await ref.read(habitsNotifierProvider.notifier).checkin(habit.id);
       if (!context.mounted) return;
       ref.invalidate(goalChildrenProvider(goalId));
       ref.invalidate(goalsNotifierProvider);
@@ -258,9 +270,7 @@ class _HabitsSection extends ConsumerWidget {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              isBad
-                  ? context.l10n.habitSlipSnack
-                  : '+${res.totalXp} XP',
+              isBad ? context.l10n.habitSlipSnack : '+${res.totalXp} XP',
             ),
             duration: const Duration(seconds: 1),
           ),
@@ -335,7 +345,8 @@ class _MilestonesSectionState extends ConsumerState<_MilestonesSection> {
         'complete_milestone',
         params: {'p_milestone_id': m.id},
       );
-      final map = raw is Map ? Map<String, dynamic>.from(raw) : <String, dynamic>{};
+      final map =
+          raw is Map ? Map<String, dynamic>.from(raw) : <String, dynamic>{};
       if (map['ok'] == true && map['duplicate'] != true && mounted) {
         final xp = (map['xp_gained'] as num?)?.toInt() ?? 0;
         ScaffoldMessenger.of(context).showSnackBar(
@@ -372,9 +383,8 @@ class _MilestonesSectionState extends ConsumerState<_MilestonesSection> {
             (m) => CheckboxListTile(
               dense: true,
               value: m.isDone,
-              onChanged: m.isDone || _busy.contains(m.id)
-                  ? null
-                  : (_) => _complete(m),
+              onChanged:
+                  m.isDone || _busy.contains(m.id) ? null : (_) => _complete(m),
               title: Row(
                 children: [
                   Expanded(

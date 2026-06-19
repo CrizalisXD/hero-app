@@ -9,7 +9,7 @@ import '../../../categories/domain/models/category_id.dart';
 /// reads cleanly at every size — see UI/UX "no-emoji-icons" guideline.
 const _categoryIcons = {
   CategoryId.strength: Icons.fitness_center,
-  CategoryId.mind: Icons.psychology_alt,
+  CategoryId.mind: Icons.psychology,
   CategoryId.endurance: Icons.directions_run,
   CategoryId.health: Icons.favorite,
   CategoryId.social: Icons.groups,
