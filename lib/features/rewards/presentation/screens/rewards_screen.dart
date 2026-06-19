@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../core/widgets/hero_card.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../application/achievement_l10n.dart';
 import '../../application/achievements_notifier.dart';
@@ -41,15 +42,9 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
     final color = _rarityColor(a.rarity);
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: Container(
+      child: HeroCard(
         padding: const EdgeInsets.all(12),
-        decoration: BoxDecoration(
-          color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: unlocked ? color.withValues(alpha: 0.5) : AppColors.border,
-          ),
-        ),
+        borderColor: unlocked ? color.withValues(alpha: 0.5) : null,
         child: Row(
           children: [
             Container(
@@ -86,7 +81,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
                     l10nAchievementBody(c, a.descriptionKey),
                     style: const TextStyle(
                       fontSize: 12,
-                      color: Color(0xB3FFFFFF),
+                      color: AppColors.textSecondary,
                     ),
                   ),
                 ],

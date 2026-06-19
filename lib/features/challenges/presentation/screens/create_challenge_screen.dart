@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/services/supabase_service.dart';
+import '../../../../core/widgets/hero_button.dart';
 import '../../application/challenges_notifier.dart';
 
 /// Minimal author-your-own-challenge form. Calls the
@@ -179,18 +180,10 @@ class _CreateChallengeScreenState
               onTap: _pickEndAt,
             ),
             const SizedBox(height: 24),
-            FilledButton(
+            HeroButton(
+              label: l.challengeCreateSubmit,
+              isLoading: _saving,
               onPressed: _saving ? null : _submit,
-              child: _saving
-                  ? const SizedBox(
-                      height: 18,
-                      width: 18,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : Text(l.challengeCreateSubmit),
             ),
           ],
         ),

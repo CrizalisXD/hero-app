@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/animated_fill_bar.dart';
+import '../../../../core/widgets/hero_button.dart';
+import '../../../../core/widgets/hero_card.dart';
 import '../../../categories/domain/models/category_id.dart';
 import '../../../home/data/avatar_repository.dart';
 import '../../../home/presentation/widgets/hero_avatar_panel.dart';
@@ -36,16 +39,18 @@ class ProfileScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               _CategoriesCard(categories: p.categories),
               const SizedBox(height: 16),
-              FilledButton.tonalIcon(
+              HeroButton(
+                label: l.profileChangeAvatarColor,
+                icon: Icons.palette_outlined,
+                variant: HeroButtonVariant.secondary,
                 onPressed: () => context.push('/avatar'),
-                icon: const Icon(Icons.palette_outlined),
-                label: Text(l.profileChangeAvatarColor),
               ),
               const SizedBox(height: 8),
-              OutlinedButton.icon(
+              HeroButton(
+                label: l.profileEditDisplayName,
+                icon: Icons.edit_outlined,
+                variant: HeroButtonVariant.secondary,
                 onPressed: () => _editName(context, ref, p.displayName),
-                icon: const Icon(Icons.edit_outlined),
-                label: Text(l.profileEditDisplayName),
               ),
             ],
           ),
@@ -104,13 +109,7 @@ class _HeaderCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: AppColors.bgCard,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: AppColors.border),
-      ),
+    return HeroCard(
       child: Column(
         children: [
           Row(
@@ -141,7 +140,7 @@ class _HeaderCard extends StatelessWidget {
                           profile.email!,
                           style: const TextStyle(
                             fontSize: 12,
-                            color: Color(0xB3FFFFFF),
+                            color: AppColors.textSecondary,
                           ),
                         ),
                       ),
@@ -150,7 +149,7 @@ class _HeaderCard extends StatelessWidget {
                       l.homeLevel(profile.level),
                       style: const TextStyle(
                         fontSize: 13,
-                        color: Color(0xCCFFFFFF),
+                        color: AppColors.textSecondary,
                       ),
                     ),
                     const SizedBox(height: 2),
@@ -158,7 +157,7 @@ class _HeaderCard extends StatelessWidget {
                       l.profileXpTotal(profile.xpTotal),
                       style: const TextStyle(
                         fontSize: 11,
-                        color: Color(0x99FFFFFF),
+                        color: AppColors.textMuted,
                       ),
                     ),
                   ],
@@ -188,26 +187,17 @@ class _XpBar extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: Stack(
-            children: [
-              Container(height: 10, color: AppColors.bgElevated),
-              FractionallySizedBox(
-                widthFactor: v,
-                child: Container(
-                  height: 10,
-                  decoration:
-                      const BoxDecoration(gradient: AppColors.xpGradient),
-                ),
-              ),
-            ],
-          ),
+        AnimatedFillBar(
+          progress: v,
+          height: 10,
+          gradient: AppColors.xpGradient,
+          radius: 8,
+          duration: const Duration(milliseconds: 700),
         ),
         const SizedBox(height: 4),
         Text(
           l.homeXpProgress(current, toNext),
-          style: const TextStyle(fontSize: 11, color: Color(0xB3FFFFFF)),
+          style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
         ),
       ],
     );
@@ -230,30 +220,20 @@ class _EnergyBar extends StatelessWidget {
         Text(l.homeEnergy, style: const TextStyle(fontSize: 12)),
         const SizedBox(width: 8),
         Expanded(
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(6),
-            child: Stack(
-              children: [
-                Container(height: 6, color: AppColors.bgElevated),
-                FractionallySizedBox(
-                  widthFactor: v,
-                  child: Container(
-                    height: 6,
-                    decoration: BoxDecoration(
-                      gradient: v < 0.25
-                          ? AppColors.energyLowGradient
-                          : AppColors.energyGradient,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+          child: AnimatedFillBar(
+            progress: v,
+            height: 6,
+            gradient: v < 0.25
+                ? AppColors.energyLowGradient
+                : AppColors.energyGradient,
+            glowColorOverride: v < 0.25 ? AppColors.error : AppColors.warning,
+            radius: 6,
           ),
         ),
         const SizedBox(width: 8),
         Text(
           l.homeEnergyValue(current, max),
-          style: const TextStyle(fontSize: 11, color: Color(0xB3FFFFFF)),
+          style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
         ),
       ],
     );
@@ -272,13 +252,7 @@ class _StatsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.bgCard,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.border),
-      ),
+    return HeroCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -378,13 +352,7 @@ class _CategoriesCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final byCat = {for (final c in categories) c.category: c};
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.bgCard,
-        borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: AppColors.border),
-      ),
+    return HeroCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -433,7 +401,7 @@ class _CategoryRow extends StatelessWidget {
                   l.homeLevel(progress.level),
                   style: const TextStyle(
                     fontSize: 12,
-                    color: Color(0xCCFFFFFF),
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ),
@@ -441,19 +409,16 @@ class _CategoryRow extends StatelessWidget {
                 '${progress.xpTotal} XP',
                 style: const TextStyle(
                   fontSize: 11,
-                  color: Color(0x99FFFFFF),
+                  color: AppColors.textMuted,
                 ),
               ),
             ],
           ),
           const SizedBox(height: 4),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(4),
-            child: LinearProgressIndicator(
-              value: progressV,
-              backgroundColor: AppColors.bgElevated,
-              minHeight: 4,
-            ),
+          AnimatedFillBar(
+            progress: progressV,
+            height: 4,
+            color: AppColors.categoryColor(progress.category.wire),
           ),
         ],
       ),

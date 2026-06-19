@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_button.dart';
 import '../../application/social_notifiers.dart';
 import '../../data/supabase_social_repository.dart';
 import '../../domain/models/public_profile.dart';
@@ -75,7 +76,7 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
             child: Text(l.blockCancel),
           ),
           TextButton(
-            style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
             onPressed: () => Navigator.pop(context, true),
             child: Text(l.blockConfirm),
           ),
@@ -191,9 +192,10 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
           l.publicProfileAchievementsCount(p.achievementsCount),
         ),
         const SizedBox(height: 32),
-        FilledButton.icon(
-          icon: const Icon(Icons.person_add_alt),
-          label: Text(l.socialAddFriend),
+        HeroButton(
+          label: l.socialAddFriend,
+          icon: Icons.person_add_alt,
+          isLoading: _busy,
           onPressed: _busy ? null : _sendRequest,
         ),
       ],

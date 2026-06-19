@@ -86,11 +86,11 @@ class _FriendRequestTileState extends ConsumerState<FriendRequestTile> {
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-            icon: const Icon(Icons.check, color: Colors.green),
+            icon: const Icon(Icons.check, color: AppColors.success),
             onPressed: _busy ? null : _accept,
           ),
           IconButton(
-            icon: const Icon(Icons.close, color: Colors.redAccent),
+            icon: const Icon(Icons.close, color: AppColors.error),
             onPressed: _busy ? null : _decline,
           ),
         ],

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_radius.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_card.dart';
+import '../../../../core/widgets/xp_badge.dart';
 import '../../application/challenge_l10n.dart';
 import '../../domain/models/challenge.dart';
 import '../../domain/models/challenge_metric_type.dart';
@@ -44,18 +47,11 @@ class ChallengeCard extends StatelessWidget {
     final completed = participant?.status == ChallengeStatus.completed;
     final metric = participant?.metricType ?? ChallengeMetricType.count;
 
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          color: AppColors.bgCard,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: completed ? AppColors.success : AppColors.border,
-          ),
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: HeroCard(
+        onTap: onTap,
+        borderColor: completed ? AppColors.success : null,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -71,14 +67,7 @@ class ChallengeCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 8),
-                Text(
-                  '+$rewardXp XP',
-                  style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.accent,
-                  ),
-                ),
+                XpBadge(xp: rewardXp),
               ],
             ),
             if (bodyKey != null) ...[
@@ -87,7 +76,7 @@ class ChallengeCard extends StatelessWidget {
                 challengeBody(context, bodyKey),
                 style: const TextStyle(
                   fontSize: 12,
-                  color: Color(0xB3FFFFFF),
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],
@@ -104,7 +93,7 @@ class ChallengeCard extends StatelessWidget {
                 ),
                 style: const TextStyle(
                   fontSize: 11,
-                  color: Color(0xB3FFFFFF),
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],
@@ -119,7 +108,7 @@ class ChallengeCard extends StatelessWidget {
                     ),
                     decoration: BoxDecoration(
                       color: AppColors.success.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(4),
+                      borderRadius: BorderRadius.circular(AppRadius.xs),
                     ),
                     child: Text(
                       l.challengesCompletedBadge,
@@ -135,7 +124,7 @@ class ChallengeCard extends StatelessWidget {
                     l.challengesDaysLeft(daysLeft),
                     style: const TextStyle(
                       fontSize: 11,
-                      color: Color(0xB3FFFFFF),
+                      color: AppColors.textSecondary,
                     ),
                   ),
               ],

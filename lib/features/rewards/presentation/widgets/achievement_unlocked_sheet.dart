@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_button.dart';
 import '../../application/achievement_l10n.dart';
 import '../../domain/models/achievement.dart';
 import '../../domain/models/unlocked_achievement.dart';
@@ -102,7 +103,7 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
           const SizedBox(height: 18),
           Text(
             l.achievementUnlockedTitle,
-            style: const TextStyle(fontSize: 13, color: Color(0xB3FFFFFF)),
+            style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
           ),
           const SizedBox(height: 6),
           Text(
@@ -113,7 +114,7 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
           const SizedBox(height: 6),
           Text(
             l10nAchievementBody(context, widget.a.descriptionKey),
-            style: const TextStyle(fontSize: 13, color: Color(0xB3FFFFFF)),
+            style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
             textAlign: TextAlign.center,
           ),
           if (widget.a.rewardXp > 0) ...[
@@ -134,9 +135,9 @@ class _BodyState extends State<_Body> with SingleTickerProviderStateMixin {
             ),
           ],
           const SizedBox(height: 24),
-          FilledButton(
+          HeroButton(
+            label: l.achievementClose,
             onPressed: () => Navigator.of(context).pop(),
-            child: Text(l.achievementClose),
           ),
         ],
       ),

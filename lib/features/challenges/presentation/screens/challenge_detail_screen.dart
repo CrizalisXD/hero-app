@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_button.dart';
 import '../../../rewards/application/achievements_notifier.dart';
 import '../../../rewards/presentation/widgets/achievement_unlocked_sheet.dart';
 import '../../application/challenge_l10n.dart';
@@ -127,7 +128,7 @@ class ChallengeDetailScreen extends ConsumerWidget {
                 const SizedBox(height: 8),
                 Text(
                   challengeBody(context, bodyKey),
-                  style: const TextStyle(color: Color(0xB3FFFFFF)),
+                  style: const TextStyle(color: AppColors.textSecondary),
                 ),
               ],
               const SizedBox(height: 24),
@@ -172,14 +173,15 @@ class ChallengeDetailScreen extends ConsumerWidget {
                   ),
                 )
               else if (isJoined)
-                OutlinedButton(
+                HeroButton(
+                  label: l.challengesLeave,
+                  variant: HeroButtonVariant.secondary,
                   onPressed: () => _leave(context, ref),
-                  child: Text(l.challengesLeave),
                 )
               else
-                FilledButton(
+                HeroButton(
+                  label: l.challengesJoin,
                   onPressed: () => _join(context, ref),
-                  child: Text(l.challengesJoin),
                 ),
             ],
           );

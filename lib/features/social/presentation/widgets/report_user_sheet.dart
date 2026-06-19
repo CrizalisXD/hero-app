@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_button.dart';
 import '../../data/supabase_social_repository.dart';
 
 /// Bottom sheet: pick reason → optional details → submit.
@@ -125,9 +126,10 @@ class _BodyState extends ConsumerState<_Body> {
               ),
             ),
             const SizedBox(height: 16),
-            FilledButton(
+            HeroButton(
+              label: l.reportSubmit,
+              isLoading: _sending,
               onPressed: _sending ? null : _submit,
-              child: Text(l.reportSubmit),
             ),
           ],
         ),
