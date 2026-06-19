@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../data/user_consents_repository.dart';
 
@@ -65,7 +66,7 @@ class _PrivacySettingsScreenState
             style: const TextStyle(
               fontWeight: FontWeight.w600,
               fontSize: 13,
-              color: Color(0xB3FFFFFF),
+              color: AppColors.textSecondary,
             ),
           ),
         ),

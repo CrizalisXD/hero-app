@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/notifications/local_notifications_service.dart';
 import '../../data/notification_settings_repository.dart';
@@ -77,7 +78,7 @@ class _NotificationSettingsScreenState
       children: [
         if (!_permission)
           Container(
-            color: const Color(0x33F39C12),
+            color: AppColors.warning.withValues(alpha: 0.2),
             padding: const EdgeInsets.all(12),
             child: Row(
               children: [

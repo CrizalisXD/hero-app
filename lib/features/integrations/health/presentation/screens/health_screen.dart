@@ -4,6 +4,8 @@ import 'package:intl/intl.dart';
 
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../core/l10n/l10n.dart';
+import '../../../../../core/widgets/hero_button.dart';
+import '../../../../../core/widgets/hero_card.dart';
 import '../../../../settings/data/user_consents_repository.dart';
 import '../../application/health_connection_notifier.dart';
 
@@ -47,42 +49,35 @@ class HealthScreen extends ConsumerWidget {
             const SizedBox(height: 6),
             Text(
               l.healthConnectBody,
-              style: const TextStyle(color: Color(0xB3FFFFFF)),
+              style: const TextStyle(color: AppColors.textSecondary),
             ),
             const SizedBox(height: 20),
             _StatusCard(state: s),
             const SizedBox(height: 24),
             if (!s.connected)
-              FilledButton(
+              HeroButton(
+                label: l.healthConnectButton,
+                isLoading: s.busy,
                 onPressed: s.busy ? null : () => _connect(context, ref),
-                child: s.busy
-                    ? const SizedBox(
-                        height: 16,
-                        width: 16,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : Text(l.healthConnectButton),
               )
             else ...[
-              FilledButton(
+              HeroButton(
+                label: l.healthSyncNow,
                 onPressed: s.busy
                     ? null
                     : () => ref
                         .read(healthConnectionProvider.notifier)
                         .syncNow(),
-                child: Text(l.healthSyncNow),
               ),
               const SizedBox(height: 8),
-              OutlinedButton(
+              HeroButton(
+                label: l.healthDisconnectButton,
+                variant: HeroButtonVariant.secondary,
                 onPressed: s.busy
                     ? null
                     : () => ref
                         .read(healthConnectionProvider.notifier)
                         .disconnect(),
-                child: Text(l.healthDisconnectButton),
               ),
             ],
           ],
@@ -99,15 +94,8 @@ class _StatusCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: AppColors.bgCard,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: state.connected ? AppColors.success : AppColors.border,
-        ),
-      ),
+    return HeroCard(
+      borderColor: state.connected ? AppColors.success : null,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -145,7 +133,7 @@ class _StatusCard extends StatelessWidget {
                   ),
                   style: const TextStyle(
                     fontSize: 11,
-                    color: Color(0xB3FFFFFF),
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ),

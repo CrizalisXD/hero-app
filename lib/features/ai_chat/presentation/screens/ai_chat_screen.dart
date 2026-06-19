@@ -93,7 +93,7 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
                             l.aiChatEmptyBody,
                             textAlign: TextAlign.center,
                             style: const TextStyle(
-                              color: Color(0xB3FFFFFF),
+                              color: AppColors.textSecondary,
                             ),
                           ),
                         ],
@@ -136,7 +136,7 @@ class _AiChatScreenState extends ConsumerState<AiChatScreen> {
                             Text(
                               l.aiChatThinking,
                               style: const TextStyle(
-                                color: Color(0xB3FFFFFF),
+                                color: AppColors.textSecondary,
                               ),
                             ),
                           ],

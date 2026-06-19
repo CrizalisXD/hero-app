@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_button.dart';
 import '../../data/account_lifecycle_repository.dart';
 
 class AiMemorySettingsScreen extends ConsumerWidget {
@@ -56,15 +58,13 @@ class AiMemorySettingsScreen extends ConsumerWidget {
           const SizedBox(height: 4),
           Text(
             l.aiMemoryEnabledBody,
-            style: const TextStyle(color: Color(0xB3FFFFFF)),
+            style: const TextStyle(color: AppColors.textSecondary),
           ),
           const SizedBox(height: 24),
-          OutlinedButton.icon(
-            icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
-            label: Text(
-              l.aiMemoryClear,
-              style: const TextStyle(color: Colors.redAccent),
-            ),
+          HeroButton(
+            label: l.aiMemoryClear,
+            icon: Icons.delete_outline,
+            variant: HeroButtonVariant.danger,
             onPressed: () => _clear(context, ref),
           ),
         ],

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../auth/application/auth_notifier.dart';
 import '../../../auth/domain/models/auth_session.dart';
@@ -31,10 +32,10 @@ class AccountSettingsScreen extends ConsumerWidget {
             ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.logout, color: Colors.redAccent),
+            leading: const Icon(Icons.logout, color: AppColors.error),
             title: Text(
               l.accountSignOut,
-              style: const TextStyle(color: Colors.redAccent),
+              style: const TextStyle(color: AppColors.error),
             ),
             onTap: () async {
               final ok = await showDialog<bool>(

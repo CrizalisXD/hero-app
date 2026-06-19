@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../app/theme/app_colors.dart';
 import '../../../core/l10n/l10n.dart';
 import '../data/energy_service.dart';
 
@@ -43,7 +44,7 @@ class EnergyGuard {
     return showDialog<void>(
       context: context,
       builder: (ctx) => AlertDialog(
-        icon: const Icon(Icons.bolt, color: Colors.orangeAccent, size: 32),
+        icon: const Icon(Icons.bolt, color: AppColors.warning, size: 32),
         title: Text(l.energyNotEnoughTitle),
         content: Text(l.energyNotEnoughBody(have, needed)),
         actions: [

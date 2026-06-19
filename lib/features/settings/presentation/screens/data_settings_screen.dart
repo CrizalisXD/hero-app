@@ -7,7 +7,9 @@ import 'package:intl/intl.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_button.dart';
 import '../../../auth/application/auth_notifier.dart';
 import '../../data/account_lifecycle_repository.dart';
 
@@ -67,7 +69,7 @@ class _DataSettingsScreenState extends ConsumerState<DataSettingsScreen> {
             child: Text(l.accountDeleteCancel),
           ),
           TextButton(
-            style: TextButton.styleFrom(foregroundColor: Colors.redAccent),
+            style: TextButton.styleFrom(foregroundColor: AppColors.error),
             onPressed: () => Navigator.pop(context, true),
             child: Text(l.accountDeleteConfirmAction),
           ),
@@ -105,11 +107,11 @@ class _DataSettingsScreenState extends ConsumerState<DataSettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          OutlinedButton.icon(
-            icon: const Icon(Icons.download_outlined),
-            label: _exporting
-                ? Text(l.dataExportPreparing)
-                : Text(l.dataExportDownload),
+          HeroButton(
+            label: _exporting ? l.dataExportPreparing : l.dataExportDownload,
+            icon: Icons.download_outlined,
+            variant: HeroButtonVariant.secondary,
+            isLoading: _exporting,
             onPressed: _exporting ? null : _export,
           ),
           const SizedBox(height: 32),
@@ -117,14 +119,15 @@ class _DataSettingsScreenState extends ConsumerState<DataSettingsScreen> {
             l.accountDeleteSection,
             style: const TextStyle(
               fontWeight: FontWeight.w600,
-              color: Colors.redAccent,
+              color: AppColors.error,
             ),
           ),
           const SizedBox(height: 12),
-          OutlinedButton.icon(
-            style: OutlinedButton.styleFrom(foregroundColor: Colors.redAccent),
-            icon: const Icon(Icons.delete_outline),
-            label: Text(l.accountDelete),
+          HeroButton(
+            label: l.accountDelete,
+            icon: Icons.delete_outline,
+            variant: HeroButtonVariant.danger,
+            isLoading: _deleting,
             onPressed: _deleting ? null : _delete,
           ),
         ],

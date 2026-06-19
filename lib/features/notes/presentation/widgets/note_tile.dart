@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../domain/models/note.dart';
 import '../../domain/models/note_visibility.dart';
@@ -51,7 +52,7 @@ class NoteTile extends StatelessWidget {
       background: Container(
         alignment: Alignment.centerRight,
         padding: const EdgeInsets.only(right: 16),
-        color: Colors.red.withValues(alpha: 0.8),
+        color: AppColors.error.withValues(alpha: 0.8),
         child: const Icon(Icons.delete_outline, color: Colors.white),
       ),
       onDismissed: (_) => onDelete!(),

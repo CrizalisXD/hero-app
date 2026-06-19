@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../core/l10n/l10n.dart';
+import '../../../../../core/widgets/hero_button.dart';
 import '../../../categories/application/xp_engine.dart';
 import '../../../categories/domain/models/xp_inputs.dart';
 import '../../../habits/application/habits_notifier.dart';
@@ -138,24 +139,21 @@ class _AiSuggestionCardState extends ConsumerState<AiSuggestionCard> {
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
               if (!_added) ...[
-                TextButton(
+                HeroButton(
+                  label: l.aiSuggestionDismiss,
+                  variant: HeroButtonVariant.ghost,
+                  size: HeroButtonSize.sm,
+                  fullWidth: false,
                   onPressed:
                       _busy ? null : () => setState(() => _dismissed = true),
-                  child: Text(l.aiSuggestionDismiss),
                 ),
                 const SizedBox(width: 8),
-                FilledButton(
+                HeroButton(
+                  label: l.aiSuggestionAdd,
+                  size: HeroButtonSize.sm,
+                  fullWidth: false,
+                  isLoading: _busy,
                   onPressed: _busy ? null : _add,
-                  child: _busy
-                      ? const SizedBox(
-                          height: 14,
-                          width: 14,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : Text(l.aiSuggestionAdd),
                 ),
               ] else
                 const Row(

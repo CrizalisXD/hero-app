@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_button.dart';
 import '../../../home/application/home_notifier.dart';
 import '../../application/avatar_notifier.dart';
 import '../../domain/models/avatar.dart';
@@ -72,18 +73,10 @@ class _AvatarScreenState extends ConsumerState<AvatarScreen> {
                 onSelect: (String hex) => setState(() => _dirtyColor = hex),
               ),
               const SizedBox(height: 24),
-              ElevatedButton(
+              HeroButton(
+                label: l.avatarSave,
+                isLoading: _saving,
                 onPressed: (_dirtyColor == null || _saving) ? null : _save,
-                child: _saving
-                    ? const SizedBox(
-                        height: 18,
-                        width: 18,
-                        child: CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.white,
-                        ),
-                      )
-                    : Text(l.avatarSave),
               ),
             ],
           );

@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../../core/l10n/l10n.dart';
+import '../../../../../core/widgets/hero_button.dart';
 import '../../../../settings/data/user_consents_repository.dart';
 import '../../data/device_calendar_service.dart';
 
@@ -89,18 +90,10 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
         padding: const EdgeInsets.all(20),
         children: [
           if (!_hasPerm)
-            FilledButton(
+            HeroButton(
+              label: l.calendarConnectButton,
+              isLoading: _busy,
               onPressed: _busy ? null : _connect,
-              child: _busy
-                  ? const SizedBox(
-                      height: 16,
-                      width: 16,
-                      child: CircularProgressIndicator(
-                        strokeWidth: 2,
-                        color: Colors.white,
-                      ),
-                    )
-                  : Text(l.calendarConnectButton),
             )
           else ...[
             Text(

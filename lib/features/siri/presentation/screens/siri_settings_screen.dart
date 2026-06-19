@@ -3,7 +3,11 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_radius.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_button.dart';
+import '../../../../core/widgets/hero_card.dart';
 
 class SiriSettingsScreen extends StatelessWidget {
   const SiriSettingsScreen({super.key});
@@ -20,8 +24,8 @@ class SiriSettingsScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: const Color(0x33F39C12),
-                borderRadius: BorderRadius.circular(8),
+                color: AppColors.warning.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(AppRadius.s),
               ),
               child: Text(l.siriAndroidComingSoon),
             ),
@@ -33,7 +37,7 @@ class SiriSettingsScreen extends StatelessWidget {
             const SizedBox(height: 6),
             Text(
               l.siriSettingsHowBody,
-              style: const TextStyle(color: Color(0xB3FFFFFF)),
+              style: const TextStyle(color: AppColors.textSecondary),
             ),
             const SizedBox(height: 16),
             _ExampleTile(text: l.siriExampleAddTask),
@@ -42,9 +46,10 @@ class SiriSettingsScreen extends StatelessWidget {
             _ExampleTile(text: l.siriExampleShowToday),
             _ExampleTile(text: l.siriExampleCreateHabit),
             const SizedBox(height: 16),
-            OutlinedButton.icon(
-              icon: const Icon(Icons.settings_outlined),
-              label: Text(l.siriSettingsOpenSystem),
+            HeroButton(
+              label: l.siriSettingsOpenSystem,
+              icon: Icons.settings_outlined,
+              variant: HeroButtonVariant.secondary,
               onPressed: () async {
                 final uri = Uri.parse('app-settings:');
                 if (await canLaunchUrl(uri)) {
@@ -67,13 +72,8 @@ class _ExampleTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Container(
+      child: HeroCard(
         padding: const EdgeInsets.all(10),
-        decoration: BoxDecoration(
-          color: const Color(0xFF16161E),
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: const Color(0x1AFFFFFF)),
-        ),
         child: Text(
           text,
           style: const TextStyle(
