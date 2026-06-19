@@ -2,7 +2,11 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../app/theme/app_colors.dart';
 
-/// Glassmorphic container used throughout the RPG HUD.
+/// Glassmorphic container.
+///
+/// Deprecated: the Hero design system uses solid surfaces (no blur). Use
+/// [HeroCard] instead. Kept only so any remaining references still compile.
+@Deprecated('Use HeroCard — the design system is solid-surface (no glass).')
 class GlassPanel extends StatelessWidget {
   final Widget child;
   final EdgeInsets? padding;

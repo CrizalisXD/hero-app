@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../app/theme/app_colors.dart';
+import '../../app/theme/app_radius.dart';
 
+/// Small reward pill showing an XP gain, e.g. "+25 XP".
+///
+/// Styled as a "hero moment": accent gradient fill, a spark icon and a soft
+/// glow so XP rewards feel earned rather than incidental.
 class XpBadge extends StatelessWidget {
   final int xp;
   final double fontSize;
@@ -14,18 +19,32 @@ class XpBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
       decoration: BoxDecoration(
-        color: AppColors.accentDim,
-        borderRadius: BorderRadius.circular(6),
+        gradient: AppColors.accentGradient,
+        borderRadius: BorderRadius.circular(AppRadius.s),
+        boxShadow: [
+          BoxShadow(
+            color: AppColors.accent.withValues(alpha: 0.35),
+            blurRadius: 8,
+            spreadRadius: -2,
+          ),
+        ],
       ),
-      child: Text(
-        '+$xp XP',
-        style: TextStyle(
-          fontSize: fontSize,
-          fontWeight: FontWeight.w500,
-          color: AppColors.accent,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.bolt, size: fontSize + 2, color: Colors.white),
+          const SizedBox(width: 1),
+          Text(
+            '+$xp XP',
+            style: TextStyle(
+              fontSize: fontSize,
+              fontWeight: FontWeight.w700,
+              color: Colors.white,
+            ),
+          ),
+        ],
       ),
     );
   }

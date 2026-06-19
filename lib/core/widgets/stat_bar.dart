@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../app/theme/app_colors.dart';
+import 'animated_fill_bar.dart';
 
 /// Horizontal progress bar with label + numeric value.
 ///
-/// Used for category XP, energy and any 0..max gauges.
+/// Used for category XP, energy and any 0..max gauges. The fill is delegated to
+/// [AnimatedFillBar] so motion + glow + reduced-motion behave consistently.
 class StatBar extends StatelessWidget {
   final String label;
   final int value;
@@ -22,7 +24,7 @@ class StatBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final progress = (value / maxValue).clamp(0.0, 1.0);
+    final progress = maxValue == 0 ? 0.0 : value / maxValue;
 
     return Row(
       children: [
@@ -37,22 +39,9 @@ class StatBar extends StatelessWidget {
           ),
         ),
         Expanded(
-          child: Container(
-            height: 8,
-            decoration: BoxDecoration(
-              color: AppColors.bgElevated,
-              borderRadius: BorderRadius.circular(4),
-            ),
-            child: FractionallySizedBox(
-              alignment: Alignment.centerLeft,
-              widthFactor: progress,
-              child: Container(
-                decoration: BoxDecoration(
-                  color: color,
-                  borderRadius: BorderRadius.circular(4),
-                ),
-              ),
-            ),
+          child: AnimatedFillBar(
+            progress: progress,
+            color: color,
           ),
         ),
         if (showValue) ...[

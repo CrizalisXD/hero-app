@@ -1,11 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../app/theme/app_colors.dart';
+import '../../app/theme/app_radius.dart';
+import '../../app/theme/app_spacing.dart';
 
-/// Card with press-scale + optional gradient border.
+/// The single surface primitive of the Hero design system.
 ///
-/// Tappable cards animate to 0.97 on press for haptic-feel feedback,
-/// matching the gamified RPG identity of Hero.
+/// Solid (no glass/blur) card with press-scale + optional gradient border.
+/// Tappable cards animate to 0.97 on press for haptic-feel feedback, matching
+/// the gamified RPG identity of Hero.
+///
+/// Use the default constructor for ordinary content and [HeroCard.hero] for
+/// "hero moments" (active goal, unlocked reward, rare challenge) where a glowing
+/// gradient border draws the eye.
 class HeroCard extends StatefulWidget {
   final Widget child;
   final EdgeInsets? padding;
@@ -14,6 +21,10 @@ class HeroCard extends StatefulWidget {
   final Color? borderColor;
   final Gradient? borderGradient;
   final Gradient? backgroundGradient;
+  final double radius;
+
+  /// When true, a soft accent glow is drawn behind the card.
+  final bool glow;
   final bool haptic;
 
   const HeroCard({
@@ -25,8 +36,25 @@ class HeroCard extends StatefulWidget {
     this.borderColor,
     this.borderGradient,
     this.backgroundGradient,
+    this.radius = AppRadius.l,
+    this.glow = false,
     this.haptic = true,
   });
+
+  /// Highlighted card with a gradient border + glow for reward / focus moments.
+  const HeroCard.hero({
+    super.key,
+    required this.child,
+    this.padding,
+    this.onTap,
+    this.onLongPress,
+    Gradient gradient = AppColors.accentGradient,
+    this.backgroundGradient,
+    this.radius = AppRadius.l,
+    this.glow = true,
+    this.haptic = true,
+  })  : borderGradient = gradient,
+        borderColor = null;
 
   @override
   State<HeroCard> createState() => _HeroCardState();
@@ -42,13 +70,30 @@ class _HeroCardState extends State<HeroCard> {
 
   @override
   Widget build(BuildContext context) {
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
     final tappable = widget.onTap != null || widget.onLongPress != null;
-    final radius = BorderRadius.circular(14);
+    final radius = BorderRadius.circular(widget.radius);
+
+    final List<BoxShadow> shadows = _pressed
+        ? const []
+        : [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.20),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+            if (widget.glow)
+              BoxShadow(
+                color: AppColors.accent.withValues(alpha: 0.30),
+                blurRadius: 18,
+                spreadRadius: -4,
+              ),
+          ];
 
     Widget content = AnimatedContainer(
-      duration: const Duration(milliseconds: 180),
+      duration: Duration(milliseconds: reduceMotion ? 0 : 180),
       curve: Curves.easeOut,
-      padding: widget.padding ?? const EdgeInsets.all(14),
+      padding: widget.padding ?? const EdgeInsets.all(AppSpacing.l),
       decoration: BoxDecoration(
         color: widget.backgroundGradient == null ? AppColors.bgCard : null,
         gradient: widget.backgroundGradient,
@@ -56,36 +101,33 @@ class _HeroCardState extends State<HeroCard> {
         border: widget.borderGradient == null
             ? Border.all(color: widget.borderColor ?? AppColors.border)
             : null,
-        boxShadow: _pressed
-            ? null
-            : [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: 0.20),
-                  blurRadius: 8,
-                  offset: const Offset(0, 2),
-                ),
-              ],
+        boxShadow: widget.borderGradient == null ? shadows : null,
       ),
       child: widget.child,
     );
 
     if (widget.borderGradient != null) {
-      content = Container(
+      content = DecoratedBox(
         decoration: BoxDecoration(
           borderRadius: radius,
           gradient: widget.borderGradient,
+          boxShadow: shadows,
         ),
-        padding: const EdgeInsets.all(1.2),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(13),
-          child: content,
+        child: Padding(
+          padding: const EdgeInsets.all(1.2),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(
+              (widget.radius - 1.2).clamp(0, widget.radius),
+            ),
+            child: content,
+          ),
         ),
       );
     }
 
     return AnimatedScale(
       scale: _pressed ? 0.97 : 1.0,
-      duration: const Duration(milliseconds: 120),
+      duration: Duration(milliseconds: reduceMotion ? 0 : 120),
       curve: Curves.easeOut,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
