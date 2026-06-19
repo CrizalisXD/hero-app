@@ -36,8 +36,8 @@ class HabitListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final isBad = habit.type == HabitType.bad;
-    final accentColor = isBad ? Colors.orange.shade400 : AppColors.accent;
-    final doneColor = isBad ? Colors.red.shade400 : AppColors.success;
+    final accentColor = isBad ? AppColors.warning : AppColors.accent;
+    final doneColor = isBad ? AppColors.error : AppColors.success;
 
     return Slidable(
       key: ValueKey('habit-${habit.id}'),
@@ -50,7 +50,7 @@ class HabitListItem extends StatelessWidget {
               children: [
                 SlidableAction(
                   onPressed: (_) => onCheckin(),
-                  backgroundColor: isBad ? Colors.orange : Colors.green,
+                  backgroundColor: isBad ? AppColors.warning : AppColors.success,
                   foregroundColor: Colors.white,
                   icon: isBad ? Icons.do_disturb_alt : Icons.check,
                   label: isBad ? l.habitSlipAction : l.habitCheckinAction,
@@ -67,7 +67,7 @@ class HabitListItem extends StatelessWidget {
           if (checkedToday)
             SlidableAction(
               onPressed: (_) => onUncheckin(),
-              backgroundColor: Colors.blueGrey,
+              backgroundColor: AppColors.info,
               foregroundColor: Colors.white,
               icon: Icons.undo,
               label: l.commonUndo,
@@ -75,14 +75,14 @@ class HabitListItem extends StatelessWidget {
           else
             SlidableAction(
               onPressed: (_) => onSkip(),
-              backgroundColor: Colors.amber.shade700,
+              backgroundColor: AppColors.warning,
               foregroundColor: Colors.white,
               icon: Icons.skip_next,
               label: l.habitSkipAction,
             ),
           SlidableAction(
             onPressed: (_) => onDelete(),
-            backgroundColor: Colors.red,
+            backgroundColor: AppColors.error,
             foregroundColor: Colors.white,
             icon: Icons.delete_outline,
             label: l.commonDelete,

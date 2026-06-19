@@ -2,7 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../../app/theme/app_colors.dart';
 import '../../../../../core/l10n/l10n.dart';
+import '../../../../../core/widgets/animated_fill_bar.dart';
+import '../../../../../core/widgets/hero_card.dart';
+import '../../../tasks/presentation/widgets/category_chip.dart';
 import '../../application/goals_notifier.dart';
 import '../../domain/models/goal.dart';
 
@@ -42,9 +46,9 @@ class GoalsScreen extends ConsumerWidget {
             onRefresh: () =>
                 ref.read(goalsNotifierProvider.notifier).reload(),
             child: ListView.separated(
-              padding: const EdgeInsets.only(bottom: 96),
+              padding: const EdgeInsets.only(top: 8, bottom: 96),
               itemCount: view.goals.length,
-              separatorBuilder: (_, __) => const Divider(height: 1),
+              separatorBuilder: (_, __) => const SizedBox.shrink(),
               itemBuilder: (_, i) {
                 final goal = view.goals[i];
                 final progress = view.progressFor(goal.id);
@@ -53,8 +57,8 @@ class GoalsScreen extends ConsumerWidget {
                   direction: DismissDirection.endToStart,
                   background: Container(
                     alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.only(right: 16),
-                    color: Colors.red.withValues(alpha: 0.8),
+                    padding: const EdgeInsets.only(right: 32),
+                    color: AppColors.error.withValues(alpha: 0.8),
                     child: const Icon(
                       Icons.delete_outline,
                       color: Colors.white,
@@ -102,41 +106,59 @@ class _GoalTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
     final theme = Theme.of(context);
-    final progress = tasksTotal == 0
-        ? 0.0
-        : tasksDone / tasksTotal;
+    final progress = tasksTotal == 0 ? 0.0 : tasksDone / tasksTotal;
+    final categoryColor = AppColors.categoryColor(goal.mainCategory.wire);
 
-    return ListTile(
-      onTap: onTap,
-      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      title: Text(
-        goal.title,
-        style: theme.textTheme.titleMedium,
-        maxLines: 2,
-        overflow: TextOverflow.ellipsis,
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
+      child: HeroCard(
+        onTap: onTap,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: Text(
+                    goal.title,
+                    style: theme.textTheme.titleMedium,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 8),
+                _StatusChip(status: goal.status),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                CategoryChip(category: goal.mainCategory, small: true),
+              ],
+            ),
+            const SizedBox(height: 10),
+            AnimatedFillBar(
+              progress: progress,
+              height: 6,
+              color: categoryColor,
+            ),
+            const SizedBox(height: 4),
+            Row(
+              children: [
+                Text(
+                  l.goalDetailProgressTasks(tasksDone, tasksTotal),
+                  style: theme.textTheme.bodySmall,
+                ),
+                const SizedBox(width: 12),
+                Text(
+                  l.goalDetailProgressMilestones(milestonesDone, milestonesTotal),
+                  style: theme.textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
-      subtitle: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 6),
-          LinearProgressIndicator(value: progress, minHeight: 4),
-          const SizedBox(height: 4),
-          Row(
-            children: [
-              Text(
-                l.goalDetailProgressTasks(tasksDone, tasksTotal),
-                style: theme.textTheme.bodySmall,
-              ),
-              const SizedBox(width: 12),
-              Text(
-                l.goalDetailProgressMilestones(milestonesDone, milestonesTotal),
-                style: theme.textTheme.bodySmall,
-              ),
-            ],
-          ),
-        ],
-      ),
-      trailing: _StatusChip(status: goal.status),
     );
   }
 }
@@ -155,10 +177,10 @@ class _StatusChip extends StatelessWidget {
       GoalStatus.abandoned => l.goalStatusAbandoned,
     };
     final color = switch (status) {
-      GoalStatus.active => Colors.green,
-      GoalStatus.completed => Colors.blue,
-      GoalStatus.paused => Colors.orange,
-      GoalStatus.abandoned => Colors.grey,
+      GoalStatus.active => AppColors.success,
+      GoalStatus.completed => AppColors.info,
+      GoalStatus.paused => AppColors.warning,
+      GoalStatus.abandoned => AppColors.textMuted,
     };
     return Chip(
       label: Text(label, style: TextStyle(color: color, fontSize: 11)),
