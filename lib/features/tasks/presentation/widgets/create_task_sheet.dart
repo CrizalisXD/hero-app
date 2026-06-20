@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_radius.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_button.dart';
 import '../../../categories/application/category_classifier_service.dart';
 import '../../../categories/application/xp_engine.dart';
 import '../../../categories/data/categories_assets_repository.dart';
@@ -116,10 +119,19 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
     });
   }
 
+  static const _monthsShort = [
+    'янв', 'фев', 'мар', 'апр', 'мая', 'июн',
+    'июл', 'авг', 'сен', 'окт', 'ноя', 'дек',
+  ];
+
   static String _formatDueAt(DateTime d) {
     String two(int v) => v.toString().padLeft(2, '0');
-    return '${d.year}-${two(d.month)}-${two(d.day)} '
-        '${two(d.hour)}:${two(d.minute)}';
+    final now = DateTime.now();
+    final isToday =
+        d.year == now.year && d.month == now.month && d.day == now.day;
+    final time = '${two(d.hour)}:${two(d.minute)}';
+    if (isToday) return time;
+    return '${d.day} ${_monthsShort[d.month - 1]}, $time';
   }
 
   // ─── submit ────────────────────────────────────────────────────────────────
@@ -232,10 +244,7 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
           TextField(
             controller: _titleCtrl,
             focusNode: _focusNode,
-            decoration: InputDecoration(
-              hintText: l.tasksCreateHint,
-              border: const OutlineInputBorder(),
-            ),
+            decoration: InputDecoration(hintText: l.tasksCreateHint),
             textInputAction: TextInputAction.done,
             onSubmitted: (_) => _submit(),
           ),
@@ -256,18 +265,11 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
           const SizedBox(height: 14),
 
           // Submit
-          FilledButton(
+          HeroButton(
+            label: l.createTask,
+            icon: Icons.add_task,
+            isLoading: _submitting,
             onPressed: _submitting ? null : _submit,
-            child: _submitting
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      color: Colors.white,
-                    ),
-                  )
-                : Text(l.createTask),
           ),
         ],
       ),
@@ -317,24 +319,55 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
   }
 
   Widget _buildDueDateRow(AppLocalizations l, ThemeData theme) {
+    final hasDate = _dueAt != null;
     return Row(
       children: [
         Icon(Icons.event, color: theme.hintColor, size: 18),
         const SizedBox(width: 8),
-        Text(
-          l.createTaskDueDateLabel,
-          style: theme.textTheme.bodySmall,
-        ),
+        Text(l.createTaskDueDateLabel, style: theme.textTheme.bodySmall),
         const Spacer(),
-        if (_dueAt != null)
-          TextButton(
+        if (hasDate)
+          IconButton(
+            visualDensity: VisualDensity.compact,
+            iconSize: 18,
+            color: AppColors.textMuted,
+            icon: const Icon(Icons.close),
+            tooltip: l.createTaskDueDateClear,
             onPressed: () => setState(() => _dueAt = null),
-            child: Text(l.createTaskDueDateClear),
           ),
-        TextButton(
-          onPressed: _pickDueAt,
-          child: Text(
-            _dueAt == null ? '—' : _formatDueAt(_dueAt!),
+        InkWell(
+          onTap: _pickDueAt,
+          borderRadius: BorderRadius.circular(AppRadius.pill),
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+            decoration: BoxDecoration(
+              color: hasDate ? AppColors.accentDim : AppColors.bgElevated,
+              borderRadius: BorderRadius.circular(AppRadius.pill),
+              border: Border.all(
+                color: hasDate
+                    ? AppColors.accent.withValues(alpha: 0.5)
+                    : AppColors.border,
+              ),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                  hasDate ? Icons.schedule : Icons.add,
+                  size: 15,
+                  color: hasDate ? AppColors.accent : AppColors.textSecondary,
+                ),
+                const SizedBox(width: 6),
+                Text(
+                  hasDate ? _formatDueAt(_dueAt!) : l.createTaskDueDateLabel,
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: hasDate ? AppColors.accent : AppColors.textSecondary,
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ],

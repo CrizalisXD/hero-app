@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../app/theme/app_radius.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../domain/models/task.dart';
 import 'category_chip.dart';
@@ -121,11 +122,28 @@ class TaskListItem extends StatelessWidget {
               CategoryChip(category: task.mainCategory, small: true),
               if (task.dueAt != null) ...[
                 const SizedBox(width: 8),
-                Icon(Icons.schedule, size: 12, color: mutedColor),
-                const SizedBox(width: 2),
-                Text(
-                  _shortDueAt(task.dueAt!),
-                  style: TextStyle(fontSize: 11, color: mutedColor),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppColors.bgElevated,
+                    borderRadius: BorderRadius.circular(AppRadius.pill),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(Icons.schedule, size: 11, color: mutedColor),
+                      const SizedBox(width: 4),
+                      Text(
+                        _shortDueAt(task.dueAt!),
+                        style: TextStyle(
+                          fontSize: 11,
+                          fontWeight: FontWeight.w500,
+                          color: mutedColor,
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ],
@@ -143,16 +161,21 @@ class TaskListItem extends StatelessWidget {
     );
   }
 
+  static const _monthsShort = [
+    'янв', 'фев', 'мар', 'апр', 'мая', 'июн',
+    'июл', 'авг', 'сен', 'окт', 'ноя', 'дек',
+  ];
+
   static String _shortDueAt(DateTime d) {
     String two(int v) => v.toString().padLeft(2, '0');
     final local = d.toLocal();
     final now = DateTime.now();
+    final time = '${two(local.hour)}:${two(local.minute)}';
     if (local.year == now.year &&
         local.month == now.month &&
         local.day == now.day) {
-      return '${two(local.hour)}:${two(local.minute)}';
+      return time;
     }
-    return '${two(local.day)}.${two(local.month)} '
-        '${two(local.hour)}:${two(local.minute)}';
+    return '${local.day} ${_monthsShort[local.month - 1]}, $time';
   }
 }

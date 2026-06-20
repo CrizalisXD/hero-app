@@ -124,5 +124,65 @@ class AppTheme {
           ),
           behavior: SnackBarBehavior.floating,
         ),
+        // Tabs: accent label indicator, no harsh full-width divider line.
+        tabBarTheme: const TabBarThemeData(
+          indicatorColor: AppColors.accent,
+          indicatorSize: TabBarIndicatorSize.label,
+          dividerColor: Colors.transparent,
+          labelColor: AppColors.textPrimary,
+          unselectedLabelColor: AppColors.textMuted,
+          labelStyle: TextStyle(fontWeight: FontWeight.w700, fontSize: 15),
+          unselectedLabelStyle:
+              TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
+        ),
+        // Branded date picker (dark surface + purple accent + rounded).
+        datePickerTheme: DatePickerThemeData(
+          backgroundColor: AppColors.bgSheet,
+          surfaceTintColor: Colors.transparent,
+          headerBackgroundColor: AppColors.bgElevated,
+          headerForegroundColor: AppColors.textPrimary,
+          elevation: 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          weekdayStyle: const TextStyle(
+            color: AppColors.textMuted,
+            fontWeight: FontWeight.w600,
+          ),
+          todayBorder: const BorderSide(color: AppColors.accent),
+          todayForegroundColor:
+              const WidgetStatePropertyAll(AppColors.accent),
+          dayForegroundColor: WidgetStateProperty.resolveWith(
+            (s) => s.contains(WidgetState.selected)
+                ? Colors.white
+                : AppColors.textPrimary,
+          ),
+          dayBackgroundColor: WidgetStateProperty.resolveWith(
+            (s) => s.contains(WidgetState.selected) ? AppColors.accent : null,
+          ),
+          yearForegroundColor: WidgetStateProperty.resolveWith(
+            (s) => s.contains(WidgetState.selected)
+                ? Colors.white
+                : AppColors.textPrimary,
+          ),
+          yearBackgroundColor: WidgetStateProperty.resolveWith(
+            (s) => s.contains(WidgetState.selected) ? AppColors.accent : null,
+          ),
+        ),
+        // Branded time picker to match.
+        timePickerTheme: TimePickerThemeData(
+          backgroundColor: AppColors.bgSheet,
+          hourMinuteColor: AppColors.bgElevated,
+          hourMinuteTextColor: AppColors.textPrimary,
+          dayPeriodColor: AppColors.accentDim,
+          dayPeriodTextColor: AppColors.textPrimary,
+          dialBackgroundColor: AppColors.bgElevated,
+          dialHandColor: AppColors.accent,
+          dialTextColor: AppColors.textPrimary,
+          entryModeIconColor: AppColors.accent,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+        ),
       );
 }
