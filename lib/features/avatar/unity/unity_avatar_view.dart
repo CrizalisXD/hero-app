@@ -1,14 +1,20 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_unity_widget/flutter_unity_widget.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../../app/theme/app_colors.dart';
 import 'avatar_stage_config.dart';
 import 'unity_avatar_bridge.dart';
 
 /// Embeds the Unity 3D hero into the [HeroAvatarStage] slot.
 ///
-/// Self-contained: owns a [UnityAvatarBridge], pushes the [config] on create,
-/// and routes an avatar tap (reported by Unity) to the avatar screen.
+/// Perceived-perf details:
+///   • a branded loading overlay covers the slot until Unity has rendered, so
+///     Home never shows a black/empty box while the engine cold-starts;
+///   • `unloadOnDispose: false` keeps Unity warm across tab switches, so
+///     returning to Home doesn't re-boot the engine.
 class UnityAvatarView extends StatefulWidget {
   const UnityAvatarView({super.key, required this.config});
 
@@ -20,12 +26,16 @@ class UnityAvatarView extends StatefulWidget {
 
 class _UnityAvatarViewState extends State<UnityAvatarView> {
   final _bridge = UnityAvatarBridge();
+  StreamSubscription<AvatarEvent>? _sub;
+  bool _loading = true;
 
   @override
   void initState() {
     super.initState();
-    _bridge.events.listen((e) {
-      if (e is AvatarTapped && mounted) {
+    _sub = _bridge.events.listen((e) {
+      if (e is AvatarReady && mounted) {
+        setState(() => _loading = false);
+      } else if (e is AvatarTapped && mounted) {
         GoRouter.of(context).push('/avatar');
       }
     });
@@ -34,7 +44,6 @@ class _UnityAvatarViewState extends State<UnityAvatarView> {
   @override
   void didUpdateWidget(covariant UnityAvatarView old) {
     super.didUpdateWidget(old);
-    // Re-push config when level/color changes.
     if (old.config.level != widget.config.level ||
         old.config.primaryColor != widget.config.primaryColor) {
       _bridge.sendConfig(widget.config);
@@ -43,21 +52,75 @@ class _UnityAvatarViewState extends State<UnityAvatarView> {
 
   @override
   void dispose() {
+    _sub?.cancel();
     _bridge.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return UnityWidget(
-      onUnityCreated: (c) {
-        debugPrint('[unity] UnityWidget created — sending config');
-        _bridge.attach(c);
-        _bridge.sendConfig(widget.config);
-      },
-      onUnityMessage: _bridge.onUnityMessage,
-      onUnityUnloaded: () => debugPrint('[unity] unloaded'),
-      fullscreen: false,
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        UnityWidget(
+          onUnityCreated: (c) {
+            debugPrint('[unity] UnityWidget created — sending config');
+            _bridge.attach(c);
+            _bridge.sendConfig(widget.config);
+            // Reveal Unity once the first frame has had a moment to render,
+            // even if the scene never sends avatar:ready.
+            Future.delayed(const Duration(milliseconds: 600), () {
+              if (mounted) setState(() => _loading = false);
+            });
+          },
+          onUnityMessage: _bridge.onUnityMessage,
+          onUnityUnloaded: () => debugPrint('[unity] unloaded'),
+          unloadOnDispose: false,
+          fullscreen: false,
+        ),
+        AnimatedOpacity(
+          opacity: _loading ? 1 : 0,
+          duration: const Duration(milliseconds: 350),
+          child: IgnorePointer(
+            ignoring: !_loading,
+            child: const _UnityLoadingOverlay(),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+/// Cheap branded overlay shown during Unity cold-start.
+class _UnityLoadingOverlay extends StatelessWidget {
+  const _UnityLoadingOverlay();
+
+  @override
+  Widget build(BuildContext context) {
+    return ColoredBox(
+      color: AppColors.bg,
+      child: Center(
+        child: Container(
+          height: 120,
+          width: 120,
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            gradient: RadialGradient(
+              colors: [
+                AppColors.accent.withValues(alpha: 0.18),
+                Colors.transparent,
+              ],
+            ),
+          ),
+          child: const Center(
+            child: SizedBox(
+              height: 26,
+              width: 26,
+              child: CircularProgressIndicator(strokeWidth: 2),
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
