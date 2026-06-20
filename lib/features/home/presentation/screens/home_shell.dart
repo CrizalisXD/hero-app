@@ -50,9 +50,16 @@ class HomeShell extends ConsumerWidget {
         .watch(featureFlagResolverOrFallbackProvider)
         .isEnabled(FeatureFlagKey.socialEnabled);
 
+    // Home is the immersive "hero stage" — navigation is the orbital bubbles,
+    // so the bottom bar is hidden there. Other tabs keep it for quick switching.
+    final isHome = loc == '/home';
+
     return Scaffold(
+      extendBody: true,
       body: child,
-      bottomNavigationBar: NavigationBar(
+      bottomNavigationBar: isHome
+          ? null
+          : NavigationBar(
         selectedIndex: _indexOf(loc, socialOn: socialOn),
         onDestinationSelected: (i) => _onTap(context, i, socialOn: socialOn),
         destinations: [
