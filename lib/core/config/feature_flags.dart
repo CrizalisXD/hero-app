@@ -17,9 +17,12 @@ class FeatureFlags {
     'HERO_STOIC_ENABLED',
     defaultValue: false,
   );
+  // Unity 3D avatar is now the default hero renderer (the iOS boot crash is
+  // fixed). Pass --dart-define=HERO_UNITY_AVATAR_ENABLED=false to fall back to
+  // the 2D placeholder (e.g. on a build without the Unity export).
   static const bool unityAvatarEnabled = bool.fromEnvironment(
     'HERO_UNITY_AVATAR_ENABLED',
-    defaultValue: false,
+    defaultValue: true,
   );
   static const bool avatarPhotoAiEnabled = bool.fromEnvironment(
     'HERO_AVATAR_PHOTO_AI_ENABLED',
