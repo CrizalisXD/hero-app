@@ -18,6 +18,11 @@ dependencies:
   flutter_riverpod: ^2.5.1
   flutter_secure_storage: ^9.2.2
   flutter_slidable: ^4.0.0
+  # Unity 3D avatar embed — matches the Unity 6 (fuw-6000.0) export tooling.
+  flutter_unity_widget:
+    git:
+      url: https://github.com/juicycleff/flutter-unity-view-widget.git
+      ref: v6000.0.0
   freezed_annotation: ^2.4.4
   go_router: ^14.2.0
   google_fonts: ^6.2.1

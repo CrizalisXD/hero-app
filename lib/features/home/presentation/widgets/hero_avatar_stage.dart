@@ -5,6 +5,8 @@ import 'package:go_router/go_router.dart';
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../core/feature_flags/feature_flag_keys.dart';
 import '../../../../../core/feature_flags/feature_flag_providers.dart';
+import '../../../avatar/unity/avatar_stage_config.dart';
+import '../../../avatar/unity/unity_avatar_view.dart';
 import '../../data/avatar_repository.dart';
 
 /// The central "hero stage" of the Home screen.
@@ -34,9 +36,17 @@ class HeroAvatarStage extends ConsumerWidget {
         .watch(featureFlagResolverOrFallbackProvider)
         .isEnabled(FeatureFlagKey.unityAvatarEnabled);
 
-    // Unity renderer is not wired yet — the flag reserves the seam. When the
-    // Unity module lands, return the lazy Unity view here.
-    // if (unityOn) return _UnityAvatar(avatar: avatar, level: level);
+    // Unity 3D renderer — behind the flag. Falls back to the placeholder until
+    // Unity signals ready (the placeholder shows during cold start anyway).
+    if (unityOn) {
+      return UnityAvatarView(
+        config: AvatarStageConfig(
+          primaryColor: avatar.primaryColor,
+          level: level,
+          renderer: 'unity',
+        ),
+      );
+    }
 
     return GestureDetector(
       onTap: () => GoRouter.of(context).push('/avatar'),
