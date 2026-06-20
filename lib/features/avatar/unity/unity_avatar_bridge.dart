@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter_unity_widget/flutter_unity_widget.dart';
 
 import 'avatar_bridge.dart';
@@ -33,6 +34,7 @@ class UnityAvatarBridge implements AvatarBridge {
   /// Raw handler for [UnityWidget.onUnityMessage].
   void onUnityMessage(dynamic message) {
     final m = message.toString();
+    debugPrint('[unity] message: $m');
     if (m == 'avatar:ready') {
       _ready = true;
       _events.add(const AvatarReady());

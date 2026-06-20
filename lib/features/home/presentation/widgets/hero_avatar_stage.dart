@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../../app/theme/app_colors.dart';
-import '../../../../../core/feature_flags/feature_flag_keys.dart';
-import '../../../../../core/feature_flags/feature_flag_providers.dart';
+import '../../../../../core/config/feature_flags.dart';
 import '../../../avatar/unity/avatar_stage_config.dart';
 import '../../../avatar/unity/unity_avatar_view.dart';
 import '../../data/avatar_repository.dart';
@@ -20,7 +18,7 @@ import '../../data/avatar_repository.dart';
 ///
 /// Pick is by feature flag, so enabling Unity is a config switch — no Home
 /// layout changes required.
-class HeroAvatarStage extends ConsumerWidget {
+class HeroAvatarStage extends StatelessWidget {
   const HeroAvatarStage({
     super.key,
     required this.avatar,
@@ -31,10 +29,11 @@ class HeroAvatarStage extends ConsumerWidget {
   final int level;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final unityOn = ref
-        .watch(featureFlagResolverOrFallbackProvider)
-        .isEnabled(FeatureFlagKey.unityAvatarEnabled);
+  Widget build(BuildContext context) {
+    // Unity is a compile-time capability (the framework is linked into the
+    // build or not), so gate it on the build-time flag directly — the
+    // `--dart-define=HERO_UNITY_AVATAR_ENABLED=true` is the single switch.
+    const unityOn = FeatureFlags.unityAvatarEnabled;
 
     // Unity 3D renderer — behind the flag. Falls back to the placeholder until
     // Unity signals ready (the placeholder shows during cold start anyway).
@@ -56,7 +55,7 @@ class HeroAvatarStage extends ConsumerWidget {
   }
 }
 
-class _PlaceholderAvatar extends StatelessWidget {
+class _PlaceholderAvatar extends StatefulWidget {
   const _PlaceholderAvatar({
     required this.avatar,
     required this.level,
@@ -67,6 +66,29 @@ class _PlaceholderAvatar extends StatelessWidget {
   final int level;
   final bool unityOn;
 
+  @override
+  State<_PlaceholderAvatar> createState() => _PlaceholderAvatarState();
+}
+
+class _PlaceholderAvatarState extends State<_PlaceholderAvatar>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _ctrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 3200),
+    )..repeat(reverse: true);
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
   Color _parseColor(String hex) {
     final s = hex.replaceFirst('#', '');
     return Color(int.parse('ff$s', radix: 16));
@@ -74,82 +96,122 @@ class _PlaceholderAvatar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = _parseColor(avatar.primaryColor);
-    final tier = AppColors.levelTierGradient(level);
+    final color = _parseColor(widget.avatar.primaryColor);
+    final tier = AppColors.levelTierGradient(widget.level);
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
 
     return LayoutBuilder(
       builder: (context, c) {
         final stage = c.biggest;
         final medallion = (stage.shortestSide * 0.62).clamp(140.0, 260.0);
-        return Stack(
-          alignment: Alignment.center,
-          children: [
-            // Soft pedestal glow under the hero.
-            Positioned(
-              bottom: stage.height * 0.10,
-              child: Container(
-                width: medallion * 1.1,
-                height: medallion * 0.34,
+
+        final medallionStack = SizedBox(
+          width: medallion,
+          height: medallion,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
                 decoration: BoxDecoration(
                   shape: BoxShape.circle,
-                  gradient: RadialGradient(
-                    colors: [
-                      color.withValues(alpha: 0.35),
-                      Colors.transparent,
-                    ],
-                  ),
-                ),
-              ),
-            ),
-            // Aura glow behind the medallion.
-            Container(
-              width: medallion * 1.25,
-              height: medallion * 1.25,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                gradient: RadialGradient(
-                  colors: [
-                    AppColors.accent.withValues(alpha: 0.22),
-                    Colors.transparent,
+                  gradient: SweepGradient(colors: [...tier, tier.first]),
+                  boxShadow: [
+                    BoxShadow(
+                      color: tier.first.withValues(alpha: 0.4),
+                      blurRadius: 28,
+                      spreadRadius: -6,
+                    ),
                   ],
                 ),
               ),
-            ),
-            // Tier ring + body silhouette.
-            SizedBox(
-              width: medallion,
-              height: medallion,
-              child: Stack(
+              Container(
+                margin: const EdgeInsets.all(4),
+                decoration: const BoxDecoration(
+                  color: AppColors.bgCard,
+                  shape: BoxShape.circle,
+                ),
                 alignment: Alignment.center,
-                children: [
-                  Container(
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      gradient: SweepGradient(colors: [...tier, tier.first]),
-                      boxShadow: [
-                        BoxShadow(
-                          color: tier.first.withValues(alpha: 0.4),
-                          blurRadius: 28,
-                          spreadRadius: -6,
-                        ),
+                child: Icon(
+                  Icons.person,
+                  size: medallion * 0.6,
+                  color: color,
+                ),
+              ),
+            ],
+          ),
+        );
+
+        return Stack(
+          alignment: Alignment.center,
+          children: [
+            // Soft pedestal glow under the hero (static "ground shadow").
+            Positioned(
+              bottom: stage.height * 0.10,
+              child: AnimatedBuilder(
+                animation: _ctrl,
+                builder: (context, child) {
+                  final t = reduceMotion ? 0.5 : Curves.easeInOut.transform(
+                    _ctrl.value,
+                  );
+                  // Shadow shrinks slightly as the hero floats up.
+                  final scale = 1.0 - 0.08 * t;
+                  return Transform.scale(
+                    scaleX: scale,
+                    child: child,
+                  );
+                },
+                child: Container(
+                  width: medallion * 1.1,
+                  height: medallion * 0.30,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: RadialGradient(
+                      colors: [
+                        color.withValues(alpha: 0.32),
+                        Colors.transparent,
                       ],
                     ),
                   ),
-                  Container(
-                    margin: const EdgeInsets.all(4),
-                    decoration: const BoxDecoration(
-                      color: AppColors.bgCard,
-                      shape: BoxShape.circle,
-                    ),
-                    alignment: Alignment.center,
-                    child: Icon(
-                      Icons.person,
-                      size: medallion * 0.6,
-                      color: color,
-                    ),
-                  ),
-                ],
+                ),
               ),
+            ),
+            // Floating group: aura + medallion gently breathe up/down.
+            AnimatedBuilder(
+              animation: _ctrl,
+              builder: (context, child) {
+                final t = reduceMotion
+                    ? 0.5
+                    : Curves.easeInOut.transform(_ctrl.value);
+                final dy = -8.0 * t; // float up to 8px
+                final auraScale = 1.0 + 0.05 * t;
+                final auraAlpha = 0.18 + 0.10 * t;
+                return Transform.translate(
+                  offset: Offset(0, dy),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Transform.scale(
+                        scale: auraScale,
+                        child: Container(
+                          width: medallion * 1.25,
+                          height: medallion * 1.25,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: RadialGradient(
+                              colors: [
+                                AppColors.accent.withValues(alpha: auraAlpha),
+                                Colors.transparent,
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                      child!,
+                    ],
+                  ),
+                );
+              },
+              child: medallionStack,
             ),
             // Tiny hint that this is the avatar / future 3D stage.
             Positioned(
@@ -158,7 +220,7 @@ class _PlaceholderAvatar extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(
-                    unityOn ? Icons.view_in_ar : Icons.brush_outlined,
+                    widget.unityOn ? Icons.view_in_ar : Icons.brush_outlined,
                     size: 12,
                     color: AppColors.textMuted,
                   ),

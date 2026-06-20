@@ -51,10 +51,12 @@ class _UnityAvatarViewState extends State<UnityAvatarView> {
   Widget build(BuildContext context) {
     return UnityWidget(
       onUnityCreated: (c) {
+        debugPrint('[unity] UnityWidget created — sending config');
         _bridge.attach(c);
         _bridge.sendConfig(widget.config);
       },
       onUnityMessage: _bridge.onUnityMessage,
+      onUnityUnloaded: () => debugPrint('[unity] unloaded'),
       fullscreen: false,
     );
   }
