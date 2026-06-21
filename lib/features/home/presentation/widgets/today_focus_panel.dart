@@ -30,12 +30,15 @@ class TodayFocusPanel extends ConsumerWidget {
           content: Text('${context.l10n.taskCompleted} +${res.categoryXp} XP'),
         ),
       );
-      // Refresh Home immediately so XP/energy/today list reflect the result
-      // without a manual pull-to-refresh.
-      ref.invalidate(homeNotifierProvider);
+      // Reflect the result everywhere immediately: silent Home refresh (no
+      // skeleton / no Unity reload) + invalidate the Tasks-screen caches so
+      // the Today/All tabs aren't stale when opened.
+      await ref.read(homeNotifierProvider.notifier).silentRefresh();
+      ref.invalidate(todayTasksNotifierProvider);
+      ref.invalidate(tasksNotifierProvider);
       if (res.levelsGained > 0 && context.mounted) {
         await LevelUpOverlay.show(context, newLevel: res.levelAfter);
-        ref.invalidate(homeNotifierProvider);
+        await ref.read(homeNotifierProvider.notifier).silentRefresh();
       }
       if (res.unlockedAchievements.isNotEmpty && context.mounted) {
         await AchievementUnlockedSheet.showAll(

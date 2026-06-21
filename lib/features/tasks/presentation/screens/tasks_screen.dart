@@ -163,10 +163,11 @@ class _TodayTab extends ConsumerWidget {
           ),
         ),
       );
-      ref.invalidate(homeNotifierProvider);
+      await ref.read(homeNotifierProvider.notifier).silentRefresh();
+      ref.invalidate(tasksNotifierProvider);
       if (result.levelsGained > 0 && context.mounted) {
         await LevelUpOverlay.show(context, newLevel: result.levelAfter);
-        ref.invalidate(homeNotifierProvider);
+        await ref.read(homeNotifierProvider.notifier).silentRefresh();
       }
       if (result.unlockedAchievements.isNotEmpty && context.mounted) {
         await AchievementUnlockedSheet.showAll(
@@ -275,10 +276,11 @@ class _AllTab extends ConsumerWidget {
             ),
           ),
         );
-      ref.invalidate(homeNotifierProvider);
+      await ref.read(homeNotifierProvider.notifier).silentRefresh();
+      ref.invalidate(todayTasksNotifierProvider);
       if (result.levelsGained > 0 && context.mounted) {
         await LevelUpOverlay.show(context, newLevel: result.levelAfter);
-        ref.invalidate(homeNotifierProvider);
+        await ref.read(homeNotifierProvider.notifier).silentRefresh();
       }
       if (result.unlockedAchievements.isNotEmpty && context.mounted) {
         await AchievementUnlockedSheet.showAll(
@@ -325,28 +327,31 @@ class _TaskList extends StatelessWidget {
 class _EmptyView extends StatelessWidget {
   const _EmptyView({required this.label, required this.onCreateTap});
   final String label;
+
+  /// Kept for call-site compatibility; creating now lives in the bottom-right
+  /// FAB (consistent with the other screens), so the empty state is just a
+  /// calm hint.
   final VoidCallback onCreateTap;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     return Center(
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
+          const Icon(
+            Icons.checklist_rtl,
+            size: 44,
+            color: AppColors.textMuted,
+          ),
+          const SizedBox(height: 12),
           Text(
             label,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
+            textAlign: TextAlign.center,
+            style: const TextStyle(
+              fontSize: 15,
+              color: AppColors.textSecondary,
             ),
-          ),
-          const SizedBox(height: 16),
-          HeroButton(
-            label: context.l10n.createTask,
-            icon: Icons.add,
-            variant: HeroButtonVariant.ghost,
-            fullWidth: false,
-            onPressed: onCreateTap,
           ),
         ],
       ),

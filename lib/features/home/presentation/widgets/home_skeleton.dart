@@ -2,68 +2,52 @@ import 'package:flutter/material.dart';
 
 import '../../../../../app/theme/app_colors.dart';
 
+/// Home loading state.
+///
+/// Replaces the old grey box skeleton with a calm branded loader that matches
+/// the immersive hero home: a dark stage with a soft accent glow and a spinner.
 class HomeSkeleton extends StatelessWidget {
   const HomeSkeleton({super.key});
 
-  Widget _box({double w = double.infinity, double h = 16, double r = 8}) =>
-      Container(
-        width: w,
-        height: h,
-        decoration: BoxDecoration(
-          color: AppColors.bgElevated,
-          borderRadius: BorderRadius.circular(r),
+  @override
+  Widget build(BuildContext context) {
+    return const DecoratedBox(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [Color(0xFF15131F), AppColors.bg],
         ),
-      );
+      ),
+      child: Center(child: _GlowLoader()),
+    );
+  }
+}
+
+class _GlowLoader extends StatelessWidget {
+  const _GlowLoader();
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(20, 8, 20, 24),
-      children: [
-        Center(
-          child: Container(
-            width: 140,
-            height: 140,
-            decoration: const BoxDecoration(
-              color: AppColors.bgElevated,
-              shape: BoxShape.circle,
-            ),
-          ),
+    return Container(
+      height: 180,
+      width: 180,
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        gradient: RadialGradient(
+          colors: [
+            AppColors.accent.withValues(alpha: 0.18),
+            Colors.transparent,
+          ],
         ),
-        const SizedBox(height: 24),
-        _box(w: 160, h: 22),
-        const SizedBox(height: 12),
-        _box(h: 10),
-        const SizedBox(height: 6),
-        _box(w: 100, h: 11),
-        const SizedBox(height: 24),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: List.generate(
-            4,
-            (_) => Column(
-              children: [
-                Container(
-                  width: 56,
-                  height: 56,
-                  decoration: const BoxDecoration(
-                    color: AppColors.bgElevated,
-                    shape: BoxShape.circle,
-                  ),
-                ),
-                const SizedBox(height: 6),
-                _box(w: 48, h: 10),
-              ],
-            ),
-          ),
+      ),
+      child: const Center(
+        child: SizedBox(
+          height: 34,
+          width: 34,
+          child: CircularProgressIndicator(strokeWidth: 2.5),
         ),
-        const SizedBox(height: 20),
-        _box(h: 90, r: 14),
-        const SizedBox(height: 12),
-        _box(h: 80, r: 14),
-        const SizedBox(height: 12),
-        _box(h: 80, r: 14),
-      ],
+      ),
     );
   }
 }

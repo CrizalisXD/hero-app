@@ -24,6 +24,10 @@ class UnityAvatarView extends StatefulWidget {
   State<UnityAvatarView> createState() => _UnityAvatarViewState();
 }
 
+/// Fraction of the view width to nudge the Unity scene right so the avatar
+/// (framed left-of-centre in the scene) sits centred. Tune after re-exports.
+const double _shiftFraction = 0.16;
+
 class _UnityAvatarViewState extends State<UnityAvatarView> {
   final _bridge = UnityAvatarBridge();
   StreamSubscription<AvatarEvent>? _sub;
@@ -62,8 +66,13 @@ class _UnityAvatarViewState extends State<UnityAvatarView> {
     return Stack(
       fit: StackFit.expand,
       children: [
-        UnityWidget(
-          onUnityCreated: (c) {
+        // The avatar is framed left-of-centre in the Unity scene; nudge the
+        // whole Unity view right so the hero sits centred in the slot. Tune
+        // [_shiftFraction] if a re-export changes the framing.
+        FractionalTranslation(
+          translation: const Offset(_shiftFraction, 0),
+          child: UnityWidget(
+            onUnityCreated: (c) {
             debugPrint('[unity] UnityWidget created — sending config');
             _bridge.attach(c);
             _bridge.sendConfig(widget.config);
@@ -73,10 +82,11 @@ class _UnityAvatarViewState extends State<UnityAvatarView> {
               if (mounted) setState(() => _loading = false);
             });
           },
-          onUnityMessage: _bridge.onUnityMessage,
-          onUnityUnloaded: () => debugPrint('[unity] unloaded'),
-          unloadOnDispose: false,
-          fullscreen: false,
+            onUnityMessage: _bridge.onUnityMessage,
+            onUnityUnloaded: () => debugPrint('[unity] unloaded'),
+            unloadOnDispose: false,
+            fullscreen: false,
+          ),
         ),
         AnimatedOpacity(
           opacity: _loading ? 1 : 0,

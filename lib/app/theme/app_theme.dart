@@ -135,12 +135,12 @@ class AppTheme {
           unselectedLabelStyle:
               TextStyle(fontWeight: FontWeight.w500, fontSize: 15),
         ),
-        // Branded date picker (dark surface + purple accent + rounded).
+        // Branded date picker: purple header, readable circular selected day.
         datePickerTheme: DatePickerThemeData(
           backgroundColor: AppColors.bgSheet,
           surfaceTintColor: Colors.transparent,
-          headerBackgroundColor: AppColors.bgElevated,
-          headerForegroundColor: AppColors.textPrimary,
+          headerBackgroundColor: AppColors.accent,
+          headerForegroundColor: Colors.white,
           elevation: 0,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
@@ -149,13 +149,25 @@ class AppTheme {
             color: AppColors.textMuted,
             fontWeight: FontWeight.w600,
           ),
+          dayShape: const WidgetStatePropertyAll(CircleBorder()),
+          // Today = subtle accent fill + ring, so it reads without fighting
+          // the strong selected state.
           todayBorder: const BorderSide(color: AppColors.accent),
-          todayForegroundColor:
-              const WidgetStatePropertyAll(AppColors.accent),
-          dayForegroundColor: WidgetStateProperty.resolveWith(
+          todayBackgroundColor: WidgetStateProperty.resolveWith(
             (s) => s.contains(WidgetState.selected)
-                ? Colors.white
-                : AppColors.textPrimary,
+                ? AppColors.accent
+                : AppColors.accentDim,
+          ),
+          todayForegroundColor: WidgetStateProperty.resolveWith(
+            (s) =>
+                s.contains(WidgetState.selected) ? Colors.white : AppColors.accent,
+          ),
+          dayForegroundColor: WidgetStateProperty.resolveWith(
+            (s) => s.contains(WidgetState.disabled)
+                ? AppColors.textDisabled
+                : s.contains(WidgetState.selected)
+                    ? Colors.white
+                    : AppColors.textPrimary,
           ),
           dayBackgroundColor: WidgetStateProperty.resolveWith(
             (s) => s.contains(WidgetState.selected) ? AppColors.accent : null,
@@ -169,16 +181,40 @@ class AppTheme {
             (s) => s.contains(WidgetState.selected) ? AppColors.accent : null,
           ),
         ),
-        // Branded time picker to match.
+        // Branded time picker: accent-lit selected field, big readable digits.
         timePickerTheme: TimePickerThemeData(
           backgroundColor: AppColors.bgSheet,
-          hourMinuteColor: AppColors.bgElevated,
-          hourMinuteTextColor: AppColors.textPrimary,
-          dayPeriodColor: AppColors.accentDim,
-          dayPeriodTextColor: AppColors.textPrimary,
+          hourMinuteColor: WidgetStateColor.resolveWith(
+            (s) => s.contains(WidgetState.selected)
+                ? const Color(0x407F77DD)
+                : AppColors.bgElevated,
+          ),
+          hourMinuteTextColor: WidgetStateColor.resolveWith(
+            (s) => s.contains(WidgetState.selected)
+                ? AppColors.accentBright
+                : AppColors.textPrimary,
+          ),
+          hourMinuteTextStyle: const TextStyle(
+            fontSize: 40,
+            fontWeight: FontWeight.w700,
+          ),
+          dayPeriodColor: WidgetStateColor.resolveWith(
+            (s) => s.contains(WidgetState.selected)
+                ? AppColors.accent
+                : AppColors.bgElevated,
+          ),
+          dayPeriodTextColor: WidgetStateColor.resolveWith(
+            (s) => s.contains(WidgetState.selected)
+                ? Colors.white
+                : AppColors.textSecondary,
+          ),
           dialBackgroundColor: AppColors.bgElevated,
           dialHandColor: AppColors.accent,
-          dialTextColor: AppColors.textPrimary,
+          dialTextColor: WidgetStateColor.resolveWith(
+            (s) => s.contains(WidgetState.selected)
+                ? Colors.white
+                : AppColors.textPrimary,
+          ),
           entryModeIconColor: AppColors.accent,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),

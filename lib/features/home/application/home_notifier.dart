@@ -89,9 +89,23 @@ class HomeNotifier extends AsyncNotifier<HomeData> {
         .single();
   }
 
+  /// Full refresh with a loading state (shows the skeleton). Use for pull-to-
+  /// refresh and account switches.
   Future<void> refresh() async {
     state = const AsyncLoading();
     state = await AsyncValue.guard(_load);
+  }
+
+  /// Re-fetch in the background and swap the data in place — no loading
+  /// state, so Home doesn't flash the skeleton (and the embedded Unity avatar
+  /// isn't torn down + re-initialised). Use after in-app mutations / on resume.
+  Future<void> silentRefresh() async {
+    try {
+      final data = await _load();
+      state = AsyncData(data);
+    } catch (_) {
+      // Keep the current data on a transient failure.
+    }
   }
 }
 

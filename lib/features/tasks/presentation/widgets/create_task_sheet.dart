@@ -15,6 +15,7 @@ import '../../../categories/domain/models/category_id.dart';
 import '../../../categories/domain/models/xp_inputs.dart';
 import '../../../energy/data/energy_service.dart';
 import '../../../energy/presentation/energy_guard.dart';
+import '../../../home/application/home_notifier.dart';
 import '../../application/tasks_notifier.dart';
 import '../../domain/models/create_task_input.dart';
 import 'category_chip.dart';
@@ -198,6 +199,8 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
 
     if (task != null) {
       unawaited(ref.read(todayTasksNotifierProvider.notifier).refresh());
+      // New task should also appear on Home immediately (silent — no skeleton).
+      unawaited(ref.read(homeNotifierProvider.notifier).silentRefresh());
       if (context.mounted) Navigator.of(context).pop(task);
     } else {
       if (context.mounted) {

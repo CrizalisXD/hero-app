@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -54,7 +56,8 @@ class _HeroAppState extends ConsumerState<HeroApp>
   /// user never sees stale data after switching away (Health, external edits,
   /// time passing). Like "open app → it reconciles" in Health/Calendar apps.
   void _refreshOnResume() {
-    ref.invalidate(homeNotifierProvider);
+    // Silent so we don't tear down the embedded Unity avatar on every resume.
+    unawaited(ref.read(homeNotifierProvider.notifier).silentRefresh());
     ref.invalidate(habitsNotifierProvider);
     ref.invalidate(goalsNotifierProvider);
     // Foreground-pull Health if connected (no constant background polling).
