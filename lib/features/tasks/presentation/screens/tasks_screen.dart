@@ -163,6 +163,7 @@ class _TodayTab extends ConsumerWidget {
           ),
         ),
       );
+      ref.invalidate(homeNotifierProvider);
       if (result.levelsGained > 0 && context.mounted) {
         await LevelUpOverlay.show(context, newLevel: result.levelAfter);
         ref.invalidate(homeNotifierProvider);
@@ -274,6 +275,7 @@ class _AllTab extends ConsumerWidget {
             ),
           ),
         );
+      ref.invalidate(homeNotifierProvider);
       if (result.levelsGained > 0 && context.mounted) {
         await LevelUpOverlay.show(context, newLevel: result.levelAfter);
         ref.invalidate(homeNotifierProvider);

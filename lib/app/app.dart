@@ -2,7 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/l10n/locale_notifier.dart';
+import '../features/auth/application/auth_notifier.dart';
+import '../features/auth/domain/models/auth_session.dart';
+import '../features/goals/application/goals_notifier.dart';
+import '../features/habits/application/habits_notifier.dart';
+import '../features/home/application/home_notifier.dart';
 import '../features/integrations/calendar/application/calendar_sync_agent.dart';
+import '../features/integrations/health/application/health_connection_notifier.dart';
+import '../features/profile/application/profile_notifier.dart';
+import '../features/rewards/application/achievements_notifier.dart';
 import '../features/siri/application/siri_command_handler.dart';
 import '../features/tasks/application/tasks_notifier.dart';
 import '../l10n/generated/app_localizations.dart';
@@ -38,8 +46,42 @@ class _HeroAppState extends ConsumerState<HeroApp>
     if (state == AppLifecycleState.resumed) {
       _maybeHandleSiri();
       _maybeReconcileCalendar();
+      _refreshOnResume();
     }
   }
+
+  /// Pull fresh server state when the app returns to the foreground, so the
+  /// user never sees stale data after switching away (Health, external edits,
+  /// time passing). Like "open app → it reconciles" in Health/Calendar apps.
+  void _refreshOnResume() {
+    ref.invalidate(homeNotifierProvider);
+    ref.invalidate(habitsNotifierProvider);
+    ref.invalidate(goalsNotifierProvider);
+    // Foreground-pull Health if connected (no constant background polling).
+    final health = ref.read(healthConnectionProvider).valueOrNull;
+    if (health?.connected == true) {
+      ref.read(healthConnectionProvider.notifier).syncNow();
+    }
+  }
+
+  /// On any auth identity change (login / logout / account switch) drop every
+  /// user-scoped cache so the next screen loads the new user's data instead of
+  /// the previous account's — no manual pull-to-refresh needed.
+  void _invalidateUserScopedData() {
+    ref.invalidate(homeNotifierProvider);
+    ref.invalidate(tasksNotifierProvider);
+    ref.invalidate(todayTasksNotifierProvider);
+    ref.invalidate(habitsNotifierProvider);
+    ref.invalidate(goalsNotifierProvider);
+    ref.invalidate(profileNotifierProvider);
+    ref.invalidate(achievementsNotifierProvider);
+  }
+
+  String? _userId(AuthSession? s) => switch (s) {
+        GuestSession(:final userId) => userId,
+        EmailSession(:final userId) => userId,
+        _ => null,
+      };
 
   Future<void> _maybeHandleSiri() async {
     final context = rootNavigatorKey.currentContext;
@@ -66,6 +108,13 @@ class _HeroAppState extends ConsumerState<HeroApp>
   Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
     final localeAsync = ref.watch(localeNotifierProvider);
+
+    // Reset all user-scoped caches the moment the signed-in identity changes.
+    ref.listen<AuthSession>(authSessionControllerProvider, (prev, next) {
+      if (_userId(prev) != _userId(next)) {
+        _invalidateUserScopedData();
+      }
+    });
 
     return MaterialApp.router(
       title: 'Hero',

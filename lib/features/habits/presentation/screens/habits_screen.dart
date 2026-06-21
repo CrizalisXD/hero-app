@@ -48,6 +48,8 @@ class HabitsScreen extends ConsumerWidget {
             ),
           ),
         );
+      // Keep Home (XP / streaks / today list) in sync after a check-in.
+      ref.invalidate(homeNotifierProvider);
       if (res.unlockedAchievements.isNotEmpty && context.mounted) {
         await AchievementUnlockedSheet.showAll(
           context,

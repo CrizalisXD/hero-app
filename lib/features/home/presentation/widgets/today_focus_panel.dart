@@ -30,6 +30,9 @@ class TodayFocusPanel extends ConsumerWidget {
           content: Text('${context.l10n.taskCompleted} +${res.categoryXp} XP'),
         ),
       );
+      // Refresh Home immediately so XP/energy/today list reflect the result
+      // without a manual pull-to-refresh.
+      ref.invalidate(homeNotifierProvider);
       if (res.levelsGained > 0 && context.mounted) {
         await LevelUpOverlay.show(context, newLevel: res.levelAfter);
         ref.invalidate(homeNotifierProvider);
