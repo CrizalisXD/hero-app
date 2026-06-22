@@ -24,9 +24,10 @@ class UnityAvatarView extends StatefulWidget {
   State<UnityAvatarView> createState() => _UnityAvatarViewState();
 }
 
-/// Fraction of the view width to nudge the Unity scene right so the avatar
-/// (framed left-of-centre in the scene) sits centred. Tune after re-exports.
-const double _shiftFraction = 0.16;
+/// Fraction of the view width to nudge the Unity scene horizontally. The scene
+/// now centres the avatar itself, so this is 0; bump it only if a future
+/// export frames the hero off-centre.
+const double _shiftFraction = 0.0;
 
 class _UnityAvatarViewState extends State<UnityAvatarView> {
   final _bridge = UnityAvatarBridge();
