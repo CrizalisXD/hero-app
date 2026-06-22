@@ -235,13 +235,17 @@ class _HeroStage extends StatelessWidget {
     return Stack(
       clipBehavior: Clip.hardEdge,
       children: [
-        // Hero fills the whole stage, nudged down + scaled up a touch so it
-        // reads big and grounded near the bottom of the screen.
+        // Hero fills the whole stage. We scale it up anchored to the TOP edge
+        // (not the centre) so the embedded Unity surface never bleeds upward
+        // over the energy/XP bars — it grows downward instead, which also
+        // reads as bigger + grounded near the bottom. A small top inset keeps
+        // the head clear of the HUD.
         Positioned.fill(
           child: Transform.translate(
-            offset: const Offset(0, 40),
+            offset: const Offset(0, 24),
             child: Transform.scale(
-              scale: 1.18,
+              scale: 1.2,
+              alignment: Alignment.topCenter,
               child: HeroAvatarStage(
                 avatar: data.avatar,
                 level: data.character.level,
