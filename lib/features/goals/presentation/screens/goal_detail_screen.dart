@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -283,80 +285,103 @@ class _SectionCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    final separated = <Widget>[];
+    final body = <Widget>[];
     for (var i = 0; i < rows.length; i++) {
-      separated.add(rows[i]);
+      body.add(rows[i]);
       if (i != rows.length - 1) {
-        separated.add(
-          const Divider(height: 1, thickness: 1, color: AppColors.divider),
+        body.add(
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: AppSpacing.l),
+            child: Divider(height: 1, thickness: 1, color: AppColors.divider),
+          ),
         );
       }
     }
 
     return HeroCard(
-      padding: const EdgeInsets.all(AppSpacing.l),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                width: 36,
-                height: 36,
-                decoration: BoxDecoration(
-                  color: accent.withValues(alpha: 0.16),
-                  borderRadius: BorderRadius.circular(AppRadius.m),
-                ),
-                child: Icon(icon, size: 20, color: accent),
+      padding: EdgeInsets.zero,
+      // Clip so the full-bleed swipe action panes stay inside the rounded card.
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(AppRadius.l),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(
+                AppSpacing.l,
+                AppSpacing.l,
+                AppSpacing.l,
+                0,
               ),
-              const SizedBox(width: AppSpacing.m),
-              Expanded(
-                child: Text(
-                  title,
-                  style: theme.textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w700),
-                ),
-              ),
-              if (countLabel != null)
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.s,
-                    vertical: 3,
+              child: Row(
+                children: [
+                  Container(
+                    width: 36,
+                    height: 36,
+                    decoration: BoxDecoration(
+                      color: accent.withValues(alpha: 0.16),
+                      borderRadius: BorderRadius.circular(AppRadius.m),
+                    ),
+                    child: Icon(icon, size: 20, color: accent),
                   ),
-                  decoration: BoxDecoration(
-                    color: accent.withValues(alpha: 0.14),
-                    borderRadius: BorderRadius.circular(AppRadius.pill),
-                  ),
-                  child: Text(
-                    countLabel!,
-                    style: TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                      color: accent,
+                  const SizedBox(width: AppSpacing.m),
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: theme.textTheme.titleMedium
+                          ?.copyWith(fontWeight: FontWeight.w700),
                     ),
                   ),
-                ),
-            ],
-          ),
-          if (progress != null) ...[
-            const SizedBox(height: AppSpacing.m),
-            AnimatedFillBar(
-              progress: progress!,
-              height: 6,
-              color: accent,
-              radius: AppRadius.s,
+                  if (countLabel != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: AppSpacing.s,
+                        vertical: 3,
+                      ),
+                      decoration: BoxDecoration(
+                        color: accent.withValues(alpha: 0.14),
+                        borderRadius: BorderRadius.circular(AppRadius.pill),
+                      ),
+                      child: Text(
+                        countLabel!,
+                        style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color: accent,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
+            if (progress != null)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.l,
+                  AppSpacing.m,
+                  AppSpacing.l,
+                  0,
+                ),
+                child: AnimatedFillBar(
+                  progress: progress!,
+                  height: 6,
+                  color: accent,
+                  radius: AppRadius.s,
+                ),
+              ),
+            const SizedBox(height: AppSpacing.s),
+            ...body,
+            const SizedBox(height: AppSpacing.s),
           ],
-          const SizedBox(height: AppSpacing.s),
-          ...separated,
-        ],
+        ),
       ),
     );
   }
 }
 
-/// Tappable circular checkbox with a ≥44px hit target and a done/busy state.
-class _CheckCircle extends StatelessWidget {
+/// Tappable circular checkbox with a ≥44px hit target, a clear press animation
+/// (scale + haptic) and a done/busy state.
+class _CheckCircle extends StatefulWidget {
   const _CheckCircle({
     required this.done,
     required this.color,
@@ -370,46 +395,82 @@ class _CheckCircle extends StatelessWidget {
   final VoidCallback? onTap;
 
   @override
+  State<_CheckCircle> createState() => _CheckCircleState();
+}
+
+class _CheckCircleState extends State<_CheckCircle> {
+  bool _pressed = false;
+
+  bool get _enabled => widget.onTap != null && !widget.busy;
+
+  void _setPressed(bool v) {
+    if (!_enabled) return;
+    if (mounted) setState(() => _pressed = v);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    final enabled = onTap != null && !done && !busy;
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    final done = widget.done;
+    final color = widget.color;
+
     return Semantics(
       button: true,
       checked: done,
-      child: InkResponse(
-        onTap: enabled ? onTap : null,
-        radius: 24,
-        containedInkWell: true,
-        customBorder: const CircleBorder(),
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTapDown: (_) => _setPressed(true),
+        onTapUp: (_) => _setPressed(false),
+        onTapCancel: () => _setPressed(false),
+        onTap: !_enabled
+            ? null
+            : () {
+                HapticFeedback.selectionClick();
+                widget.onTap!();
+              },
         child: SizedBox(
           width: 44,
           height: 44,
           child: Center(
-            child: busy
-                ? SizedBox(
-                    width: 22,
-                    height: 22,
-                    child: CircularProgressIndicator(
-                      strokeWidth: 2,
-                      valueColor: AlwaysStoppedAnimation(color),
-                    ),
-                  )
-                : AnimatedContainer(
-                    duration: const Duration(milliseconds: 180),
-                    curve: Curves.easeOut,
-                    width: 26,
-                    height: 26,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: done ? color : Colors.transparent,
-                      border: Border.all(
-                        color: done ? color : AppColors.textMuted,
-                        width: 2,
+            child: AnimatedScale(
+              scale: _pressed ? 0.82 : 1.0,
+              duration: Duration(milliseconds: reduceMotion ? 0 : 120),
+              curve: Curves.easeOut,
+              child: widget.busy
+                  ? SizedBox(
+                      width: 22,
+                      height: 22,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation(color),
                       ),
+                    )
+                  : AnimatedContainer(
+                      duration: Duration(milliseconds: reduceMotion ? 0 : 180),
+                      curve: Curves.easeOut,
+                      width: 28,
+                      height: 28,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: done
+                            ? color
+                            : (_pressed
+                                ? color.withValues(alpha: 0.18)
+                                : Colors.transparent),
+                        border: Border.all(
+                          color: done || _pressed ? color : AppColors.textMuted,
+                          width: 2,
+                        ),
+                      ),
+                      child: done
+                          ? const Icon(
+                              Icons.check,
+                              size: 16,
+                              color: Colors.white,
+                            )
+                          : null,
                     ),
-                    child: done
-                        ? const Icon(Icons.check, size: 16, color: Colors.white)
-                        : null,
-                  ),
+            ),
           ),
         ),
       ),
@@ -424,13 +485,17 @@ class _TasksSection extends ConsumerWidget {
   final List<Task> tasks;
   final String goalId;
 
+  void _refresh(WidgetRef ref) {
+    ref.invalidate(goalChildrenProvider(goalId));
+    ref.invalidate(goalsNotifierProvider);
+  }
+
   Future<void> _complete(BuildContext context, WidgetRef ref, Task task) async {
     try {
       final outcome =
           await ref.read(tasksNotifierProvider.notifier).completeTask(task.id);
       if (!context.mounted) return;
-      ref.invalidate(goalChildrenProvider(goalId));
-      ref.invalidate(goalsNotifierProvider);
+      _refresh(ref);
       final r = outcome.result;
       if (r != null && !r.duplicate) {
         final xp = r.categoryXp + r.disciplineXp;
@@ -444,6 +509,20 @@ class _TasksSection extends ConsumerWidget {
     } catch (_) {}
   }
 
+  Future<void> _uncomplete(WidgetRef ref, Task task) async {
+    try {
+      await ref.read(tasksNotifierProvider.notifier).uncompleteTask(task.id);
+      _refresh(ref);
+    } catch (_) {}
+  }
+
+  Future<void> _delete(WidgetRef ref, Task task) async {
+    try {
+      await ref.read(tasksNotifierProvider.notifier).deleteTask(task.id);
+      _refresh(ref);
+    } catch (_) {}
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
@@ -454,20 +533,63 @@ class _TasksSection extends ConsumerWidget {
       title: l.goalDetailRelatedTasks,
       countLabel: '$done/${tasks.length}',
       progress: tasks.isEmpty ? 0 : done / tasks.length,
-      rows: tasks
-          .map(
-            (t) => _ItemRow(
-              leading: _CheckCircle(
-                done: t.isDone,
-                color: AppColors.accent,
-                onTap: () => _complete(context, ref, t),
+      rows: tasks.map((t) {
+        return Slidable(
+          key: ValueKey('goal-task-${t.id}'),
+          // Right-swipe → instant complete (only when pending).
+          startActionPane: t.isDone
+              ? null
+              : ActionPane(
+                  motion: const StretchMotion(),
+                  extentRatio: 0.25,
+                  dismissible: DismissiblePane(
+                    onDismissed: () => _complete(context, ref, t),
+                  ),
+                  children: [
+                    SlidableAction(
+                      onPressed: (_) => _complete(context, ref, t),
+                      backgroundColor: AppColors.success,
+                      foregroundColor: Colors.white,
+                      icon: Icons.check,
+                      label: l.taskCompleteAction,
+                    ),
+                  ],
+                ),
+          // Left-swipe → reveal Undo (if done) + Delete.
+          endActionPane: ActionPane(
+            motion: const StretchMotion(),
+            extentRatio: t.isDone ? 0.5 : 0.25,
+            children: [
+              if (t.isDone)
+                SlidableAction(
+                  onPressed: (_) => _uncomplete(ref, t),
+                  backgroundColor: AppColors.info,
+                  foregroundColor: Colors.white,
+                  icon: Icons.undo,
+                  label: l.commonUndo,
+                ),
+              SlidableAction(
+                onPressed: (_) => _delete(ref, t),
+                backgroundColor: AppColors.error,
+                foregroundColor: Colors.white,
+                icon: Icons.delete_outline,
+                label: l.commonDelete,
               ),
-              title: t.title,
+            ],
+          ),
+          child: _ItemRow(
+            leading: _CheckCircle(
               done: t.isDone,
-              subtitle: t.description,
+              color: AppColors.accent,
+              onTap: () =>
+                  t.isDone ? _uncomplete(ref, t) : _complete(context, ref, t),
             ),
-          )
-          .toList(),
+            title: t.title,
+            done: t.isDone,
+            subtitle: t.description,
+          ),
+        );
+      }).toList(),
     );
   }
 }
@@ -547,7 +669,10 @@ class _HabitRow extends StatelessWidget {
     final theme = Theme.of(context);
     final color = isBad ? AppColors.badHabit : AppColors.endurance;
     return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.s),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.l,
+        vertical: AppSpacing.s,
+      ),
       child: Row(
         children: [
           Icon(
@@ -650,22 +775,41 @@ class _MilestonesSectionState extends ConsumerState<_MilestonesSection> {
       title: l.goalDetailRelatedMilestones,
       countLabel: '$done/${widget.milestones.length}',
       progress: widget.milestones.isEmpty ? 0 : done / widget.milestones.length,
-      rows: widget.milestones
-          .map(
-            (m) => _ItemRow(
-              leading: _CheckCircle(
-                done: m.isDone,
-                color: AppColors.social,
-                busy: _busy.contains(m.id),
-                onTap: () => _complete(m),
-              ),
-              title: m.title,
+      rows: widget.milestones.map((m) {
+        final busy = _busy.contains(m.id);
+        return Slidable(
+          key: ValueKey('goal-ms-${m.id}'),
+          // Right-swipe → complete (milestones have no server-side undo).
+          startActionPane: m.isDone
+              ? null
+              : ActionPane(
+                  motion: const StretchMotion(),
+                  extentRatio: 0.25,
+                  dismissible: DismissiblePane(onDismissed: () => _complete(m)),
+                  children: [
+                    SlidableAction(
+                      onPressed: (_) => _complete(m),
+                      backgroundColor: AppColors.success,
+                      foregroundColor: Colors.white,
+                      icon: Icons.check,
+                      label: l.taskCompleteAction,
+                    ),
+                  ],
+                ),
+          child: _ItemRow(
+            leading: _CheckCircle(
               done: m.isDone,
-              subtitle: m.description,
-              trailing: m.isDone ? null : XpBadge(xp: m.xpReward),
+              color: AppColors.social,
+              busy: busy,
+              onTap: m.isDone ? null : () => _complete(m),
             ),
-          )
-          .toList(),
+            title: m.title,
+            done: m.isDone,
+            subtitle: m.description,
+            trailing: m.isDone ? null : XpBadge(xp: m.xpReward),
+          ),
+        );
+      }).toList(),
     );
   }
 }
@@ -690,40 +834,48 @@ class _ItemRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          leading,
-          const SizedBox(width: AppSpacing.s),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    decoration: done ? TextDecoration.lineThrough : null,
-                    color: done ? AppColors.textMuted : null,
-                  ),
-                ),
-                if (subtitle != null && subtitle!.isNotEmpty) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    subtitle!,
-                    style: theme.textTheme.bodySmall
-                        ?.copyWith(color: AppColors.textMuted),
-                  ),
-                ],
-              ],
-            ),
-          ),
-          if (trailing != null) ...[
+    return ColoredBox(
+      // Solid bg so the row hides the swipe action pane underneath it.
+      color: AppColors.bgCard,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(
+          AppSpacing.s,
+          2,
+          AppSpacing.l,
+          2,
+        ),
+        child: Row(
+          children: [
+            leading,
             const SizedBox(width: AppSpacing.s),
-            trailing!,
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      decoration: done ? TextDecoration.lineThrough : null,
+                      color: done ? AppColors.textMuted : null,
+                    ),
+                  ),
+                  if (subtitle != null && subtitle!.isNotEmpty) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      subtitle!,
+                      style: theme.textTheme.bodySmall
+                          ?.copyWith(color: AppColors.textMuted),
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            if (trailing != null) ...[
+              const SizedBox(width: AppSpacing.s),
+              trailing!,
+            ],
           ],
-        ],
+        ),
       ),
     );
   }
@@ -783,8 +935,10 @@ class _StatusBadge extends StatelessWidget {
       GoalStatus.abandoned => AppColors.textMuted,
     };
     return Container(
-      padding:
-          const EdgeInsets.symmetric(horizontal: AppSpacing.m, vertical: 5),
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppSpacing.m,
+        vertical: 5,
+      ),
       decoration: BoxDecoration(
         color: color.withValues(alpha: 0.14),
         borderRadius: BorderRadius.circular(AppRadius.pill),
