@@ -16,7 +16,23 @@ class HomeNotifier extends AsyncNotifier<HomeData> {
   @override
   Future<HomeData> build() => _load();
 
+  /// Load Home, but recover from the common "fresh/just-switched session beats
+  /// ensure_user_bootstrap" race: on the first failure, run the (idempotent)
+  /// bootstrap RPC and retry once before surfacing an error.
   Future<HomeData> _load() async {
+    try {
+      return await _fetch();
+    } catch (_) {
+      try {
+        await ref
+            .read(supabaseClientProvider)
+            .rpc<dynamic>('ensure_user_bootstrap');
+      } catch (_) {/* surface the original error below if this fails too */}
+      return await _fetch();
+    }
+  }
+
+  Future<HomeData> _fetch() async {
     final client = ref.read(supabaseClientProvider);
     final tasksRepo = ref.read(tasksRepositoryProvider);
     final habitsRepo = ref.read(habitsRepositoryProvider);
