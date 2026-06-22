@@ -44,14 +44,56 @@ public class AvatarController : MonoBehaviour
     [Tooltip("Fallback emote length if no Animation Event fires.")]
     [SerializeField] private float emoteFallbackSeconds = 1.5f;
 
+    [Header("Scene framing (done in code so it can't drift)")]
+    [Tooltip("Camera to drive. Leave empty to use Camera.main.")]
+    [SerializeField] private Camera sceneCamera;
+
+    [Tooltip("Solid background colour — kills the skybox. App bg is #0D0D12. "
+             + "Set alpha to 0 to try a transparent view.")]
+    [SerializeField] private Color backgroundColor = new Color(0.051f, 0.051f, 0.071f, 1f);
+
+    [Tooltip("Aim the camera at the avatar's centre so it's always centred.")]
+    [SerializeField] private bool autoCenter = true;
+
     private static readonly int IdleHash = Animator.StringToHash("idle");
 
     // ── Lifecycle ───────────────────────────────────────────────────────────
 
     private void Start()
     {
+        ConfigureScene();
         if (animator != null) animator.SetTrigger(IdleHash);
         Send("avatar:ready");
+    }
+
+    // Re-aim once more after the first frame, when skinned bounds are final.
+    private bool _framedOnce;
+    private void LateUpdate()
+    {
+        if (_framedOnce) return;
+        _framedOnce = true;
+        ConfigureScene();
+    }
+
+    /// Force a solid dark background (no skybox) and centre the avatar in frame.
+    /// Done in code so a scene tweak / re-export can't silently undo it.
+    private void ConfigureScene()
+    {
+        var cam = sceneCamera != null ? sceneCamera : Camera.main;
+        if (cam == null) return;
+
+        cam.clearFlags = CameraClearFlags.SolidColor;
+        cam.backgroundColor = backgroundColor;
+
+        if (!autoCenter) return;
+        var root = tintTarget != null ? tintTarget.transform.root : transform.root;
+        var rends = root.GetComponentsInChildren<Renderer>();
+        if (rends.Length == 0) return;
+        var b = rends[0].bounds;
+        for (int i = 1; i < rends.Length; i++) b.Encapsulate(rends[i].bounds);
+        // Keep the camera where it is (front view, distance) and just aim it at
+        // the avatar's centre — centres horizontally & vertically, any aspect.
+        cam.transform.LookAt(b.center);
     }
 
     // Tap on the avatar collider -> open avatar screen in Flutter.
