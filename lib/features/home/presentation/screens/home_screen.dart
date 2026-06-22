@@ -8,13 +8,10 @@ import '../../../../../core/widgets/animated_fill_bar.dart';
 import '../../application/home_notifier.dart';
 import '../../data/character_stats_repository.dart';
 import '../../domain/home_data.dart';
-import '../widgets/active_goal_panel.dart';
-import '../widgets/daily_tasks_preview.dart';
 import '../widgets/hero_avatar_stage.dart';
 import '../widgets/home_error_state.dart';
 import '../widgets/home_skeleton.dart';
 import '../widgets/orbital_bubble.dart';
-import '../widgets/today_focus_panel.dart';
 
 /// Immersive RPG home: a hero stage in the middle, quick-action bubbles
 /// orbiting around it, and a swipe-up sheet with the day's detail panels.
@@ -61,7 +58,6 @@ class _ImmersiveHome extends StatelessWidget {
             ],
           ),
         ),
-        _DetailsSheet(data: data),
       ],
     );
   }
@@ -237,18 +233,25 @@ class _HeroStage extends StatelessWidget {
     final habitsPending = habitsTotal - habitsDone;
 
     return Stack(
+      clipBehavior: Clip.hardEdge,
       children: [
-        // Avatar centered, lifted a bit so bubbles + sheet have room.
+        // Hero fills the whole stage, nudged down + scaled up a touch so it
+        // reads big and grounded near the bottom of the screen.
         Positioned.fill(
-          bottom: 80,
-          child: HeroAvatarStage(
-            avatar: data.avatar,
-            level: data.character.level,
+          child: Transform.translate(
+            offset: const Offset(0, 40),
+            child: Transform.scale(
+              scale: 1.18,
+              child: HeroAvatarStage(
+                avatar: data.avatar,
+                level: data.character.level,
+              ),
+            ),
           ),
         ),
-        // Orbital quick actions.
+        // Orbital quick actions around the hero.
         Align(
-          alignment: const Alignment(-0.82, -0.55),
+          alignment: const Alignment(-0.82, -0.5),
           child: OrbitalBubble(
             icon: Icons.task_alt,
             label: l.homeBubbleTasks,
@@ -257,7 +260,7 @@ class _HeroStage extends StatelessWidget {
           ),
         ),
         Align(
-          alignment: const Alignment(0.82, -0.55),
+          alignment: const Alignment(0.82, -0.5),
           child: OrbitalBubble(
             icon: Icons.local_fire_department,
             label: l.homeBubbleHabits,
@@ -267,7 +270,7 @@ class _HeroStage extends StatelessWidget {
           ),
         ),
         Align(
-          alignment: const Alignment(-0.82, 0.30),
+          alignment: const Alignment(-0.82, 0.62),
           child: OrbitalBubble(
             icon: Icons.flag,
             label: l.homeBubbleGoals,
@@ -276,7 +279,7 @@ class _HeroStage extends StatelessWidget {
           ),
         ),
         Align(
-          alignment: const Alignment(0.82, 0.30),
+          alignment: const Alignment(0.82, 0.62),
           child: OrbitalBubble(
             icon: Icons.smart_toy_outlined,
             label: l.homeBubbleCoach,
@@ -289,59 +292,3 @@ class _HeroStage extends StatelessWidget {
   }
 }
 
-// ── Swipe-up details sheet ───────────────────────────────────────────────
-
-class _DetailsSheet extends StatelessWidget {
-  const _DetailsSheet({required this.data});
-  final HomeData data;
-
-  @override
-  Widget build(BuildContext context) {
-    return DraggableScrollableSheet(
-      initialChildSize: 0.14,
-      minChildSize: 0.14,
-      maxChildSize: 0.82,
-      snap: true,
-      snapSizes: const [0.14, 0.82],
-      builder: (context, controller) {
-        return Container(
-          decoration: const BoxDecoration(
-            color: AppColors.bgSheet,
-            borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-            boxShadow: [
-              BoxShadow(color: Colors.black54, blurRadius: 24, spreadRadius: -4),
-            ],
-          ),
-          child: ListView(
-            controller: controller,
-            padding: const EdgeInsets.fromLTRB(16, 10, 16, 32),
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  decoration: BoxDecoration(
-                    color: AppColors.textMuted,
-                    borderRadius: BorderRadius.circular(999),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              TodayFocusPanel(tasks: data.todayTasks),
-              const SizedBox(height: 12),
-              ActiveGoalPanel(
-                goal: data.activeGoal,
-                progress: data.activeGoalProgress,
-              ),
-              const SizedBox(height: 12),
-              DailyTasksPreview(
-                habits: data.activeHabits,
-                checkedToday: data.habitsCheckedToday,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
