@@ -626,6 +626,14 @@ class _HabitsSection extends ConsumerWidget {
     } catch (_) {}
   }
 
+  Future<void> _uncheckin(WidgetRef ref, Habit habit) async {
+    try {
+      await ref.read(habitsNotifierProvider.notifier).uncheckin(habit.id);
+      ref.invalidate(goalChildrenProvider(goalId));
+      ref.invalidate(goalsNotifierProvider);
+    } catch (_) {}
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
@@ -635,14 +643,46 @@ class _HabitsSection extends ConsumerWidget {
       title: l.goalDetailRelatedHabits,
       rows: habits.map((h) {
         final isBad = h.type == HabitType.bad;
-        return _HabitRow(
-          isBad: isBad,
-          title: h.title,
-          streakLabel: isBad
-              ? l.habitDaysCleanLabel(h.currentStreak)
-              : l.habitStreakDays(h.currentStreak),
-          actionLabel: isBad ? l.habitSlipAction : l.habitCheckinAction,
-          onAction: () => _checkin(context, ref, h),
+        final actionLabel = isBad ? l.habitSlipAction : l.habitCheckinAction;
+        return Slidable(
+          key: ValueKey('goal-habit-${h.id}'),
+          // Right-swipe → check-in / mark slip.
+          startActionPane: ActionPane(
+            motion: const StretchMotion(),
+            extentRatio: 0.28,
+            children: [
+              SlidableAction(
+                onPressed: (_) => _checkin(context, ref, h),
+                backgroundColor: isBad ? AppColors.badHabit : AppColors.success,
+                foregroundColor: Colors.white,
+                icon: isBad ? Icons.do_disturb_alt_outlined : Icons.check,
+                label: actionLabel,
+              ),
+            ],
+          ),
+          // Left-swipe → undo today's check-in.
+          endActionPane: ActionPane(
+            motion: const StretchMotion(),
+            extentRatio: 0.28,
+            children: [
+              SlidableAction(
+                onPressed: (_) => _uncheckin(ref, h),
+                backgroundColor: AppColors.info,
+                foregroundColor: Colors.white,
+                icon: Icons.undo,
+                label: l.commonUndo,
+              ),
+            ],
+          ),
+          child: _HabitRow(
+            isBad: isBad,
+            title: h.title,
+            streakLabel: isBad
+                ? l.habitDaysCleanLabel(h.currentStreak)
+                : l.habitStreakDays(h.currentStreak),
+            actionLabel: actionLabel,
+            onAction: () => _checkin(context, ref, h),
+          ),
         );
       }).toList(),
     );
@@ -668,52 +708,56 @@ class _HabitRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final color = isBad ? AppColors.badHabit : AppColors.endurance;
-    return Padding(
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.l,
-        vertical: AppSpacing.s,
-      ),
-      child: Row(
-        children: [
-          Icon(
-            isBad ? Icons.do_disturb_alt_outlined : Icons.bolt,
-            size: 22,
-            color: color,
-          ),
-          const SizedBox(width: AppSpacing.m),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(title, style: theme.textTheme.bodyLarge),
-                const SizedBox(height: 2),
-                Row(
-                  children: [
-                    Icon(
-                      Icons.local_fire_department,
-                      size: 13,
-                      color: color.withValues(alpha: 0.9),
-                    ),
-                    const SizedBox(width: 3),
-                    Text(
-                      streakLabel,
-                      style: theme.textTheme.bodySmall
-                          ?.copyWith(color: AppColors.textMuted),
-                    ),
-                  ],
-                ),
-              ],
+    return ColoredBox(
+      // Solid bg so the row hides the swipe action pane underneath it.
+      color: AppColors.bgCard,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.l,
+          vertical: AppSpacing.s,
+        ),
+        child: Row(
+          children: [
+            Icon(
+              isBad ? Icons.do_disturb_alt_outlined : Icons.bolt,
+              size: 22,
+              color: color,
             ),
-          ),
-          const SizedBox(width: AppSpacing.s),
-          HeroButton(
-            label: actionLabel,
-            variant: HeroButtonVariant.secondary,
-            size: HeroButtonSize.sm,
-            fullWidth: false,
-            onPressed: onAction,
-          ),
-        ],
+            const SizedBox(width: AppSpacing.m),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(title, style: theme.textTheme.bodyLarge),
+                  const SizedBox(height: 2),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.local_fire_department,
+                        size: 13,
+                        color: color.withValues(alpha: 0.9),
+                      ),
+                      const SizedBox(width: 3),
+                      Text(
+                        streakLabel,
+                        style: theme.textTheme.bodySmall
+                            ?.copyWith(color: AppColors.textMuted),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: AppSpacing.s),
+            HeroButton(
+              label: actionLabel,
+              variant: HeroButtonVariant.secondary,
+              size: HeroButtonSize.sm,
+              fullWidth: false,
+              onPressed: onAction,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -765,6 +809,27 @@ class _MilestonesSectionState extends ConsumerState<_MilestonesSection> {
     if (mounted) setState(() => _busy.remove(m.id));
   }
 
+  Future<void> _uncomplete(Milestone m) async {
+    if (_busy.contains(m.id) || !m.isDone) return;
+    setState(() => _busy.add(m.id));
+    try {
+      final client = ref.read(supabaseClientProvider);
+      await client.rpc<dynamic>(
+        'uncomplete_milestone',
+        params: {'p_milestone_id': m.id},
+      );
+      ref.invalidate(goalChildrenProvider(widget.goalId));
+      ref.invalidate(goalsNotifierProvider);
+    } on PostgrestException catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('${e.code}: ${e.message}')),
+        );
+      }
+    } catch (_) {}
+    if (mounted) setState(() => _busy.remove(m.id));
+  }
+
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
@@ -779,7 +844,7 @@ class _MilestonesSectionState extends ConsumerState<_MilestonesSection> {
         final busy = _busy.contains(m.id);
         return Slidable(
           key: ValueKey('goal-ms-${m.id}'),
-          // Right-swipe → complete (milestones have no server-side undo).
+          // Right-swipe → complete.
           startActionPane: m.isDone
               ? null
               : ActionPane(
@@ -796,12 +861,28 @@ class _MilestonesSectionState extends ConsumerState<_MilestonesSection> {
                     ),
                   ],
                 ),
+          // Left-swipe → undo (when done).
+          endActionPane: m.isDone
+              ? ActionPane(
+                  motion: const StretchMotion(),
+                  extentRatio: 0.3,
+                  children: [
+                    SlidableAction(
+                      onPressed: (_) => _uncomplete(m),
+                      backgroundColor: AppColors.info,
+                      foregroundColor: Colors.white,
+                      icon: Icons.undo,
+                      label: l.commonUndo,
+                    ),
+                  ],
+                )
+              : null,
           child: _ItemRow(
             leading: _CheckCircle(
               done: m.isDone,
               color: AppColors.social,
               busy: busy,
-              onTap: m.isDone ? null : () => _complete(m),
+              onTap: () => m.isDone ? _uncomplete(m) : _complete(m),
             ),
             title: m.title,
             done: m.isDone,

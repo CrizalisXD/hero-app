@@ -230,7 +230,7 @@
   },
   "goalPlanStepTask": "Задача",
   "goalPlanStepHabit": "Привычка",
-  "goalPlanStepMilestone": "Веха",
+  "goalPlanStepMilestone": "Этап",
   "goalPlanReviewConfirm": "Поехали",
   "goalPlanReviewRegenerate": "Перегенерировать",
   "goalPlanReviewBack": "Поправить ответы",
@@ -248,7 +248,7 @@
       "total": { "type": "int" }
     }
   },
-  "goalDetailProgressMilestones": "Вехи: {done}/{total}",
+  "goalDetailProgressMilestones": "Этапы: {done}/{total}",
   "@goalDetailProgressMilestones": {
     "placeholders": {
       "done":  { "type": "int" },
@@ -257,7 +257,7 @@
   },
   "goalDetailRelatedTasks": "Задачи",
   "goalDetailRelatedHabits": "Привычки",
-  "goalDetailRelatedMilestones": "Вехи",
+  "goalDetailRelatedMilestones": "Этапы",
 
   "goalStatusActive": "Активная",
   "goalStatusCompleted": "Готово",
