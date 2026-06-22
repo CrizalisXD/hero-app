@@ -55,7 +55,10 @@ class HomeShell extends ConsumerWidget {
     final isHome = loc == '/home';
 
     return Scaffold(
-      extendBody: true,
+      // Only Home is full-bleed (its bubbles are the nav). Other tabs keep a
+      // normal body so their bottom-right FAB ('add') isn't hidden behind the
+      // navigation bar.
+      extendBody: isHome,
       body: child,
       bottomNavigationBar: isHome
           ? null
