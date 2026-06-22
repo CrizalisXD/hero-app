@@ -36,7 +36,7 @@ class ActiveGoalPanel extends StatelessWidget {
               variant: HeroButtonVariant.ghost,
               size: HeroButtonSize.sm,
               fullWidth: false,
-              onPressed: () => context.go('/goals/new'),
+              onPressed: () => context.push('/goals/new'),
             ),
           ],
         ),

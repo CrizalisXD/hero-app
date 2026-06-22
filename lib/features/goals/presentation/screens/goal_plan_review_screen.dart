@@ -13,6 +13,18 @@ import '../../domain/models/ai_plan_step.dart';
 class GoalPlanReviewScreen extends ConsumerWidget {
   const GoalPlanReviewScreen({super.key});
 
+  /// Go back to the create form. Prefer popping the pushed review screen (keeps
+  /// the form beneath it with a working back button) — only fall back to the
+  /// goals list if there's nothing to pop, so the user can never get stranded
+  /// on a back-button-less screen.
+  void _backToForm(BuildContext context) {
+    if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/goals');
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
@@ -25,7 +37,7 @@ class GoalPlanReviewScreen extends ConsumerWidget {
     // of yanking them back to the form.
     if (state is GoalCreationIdle) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (context.mounted) context.go('/goals/new');
+        if (context.mounted) _backToForm(context);
       });
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
@@ -60,7 +72,7 @@ class GoalPlanReviewScreen extends ConsumerWidget {
                   label: l.goalPlanReviewBack,
                   variant: HeroButtonVariant.secondary,
                   fullWidth: false,
-                  onPressed: () => context.go('/goals/new'),
+                  onPressed: () => _backToForm(context),
                 ),
               ],
             ),
@@ -70,23 +82,19 @@ class GoalPlanReviewScreen extends ConsumerWidget {
     }
 
     if (state is GoalCreationDone) {
-      // Confirmed — navigate to the new goal's detail screen.
+      // Confirmed — land the user on the goals LIST (per product: after
+      // creating a goal, exit the create flow to the list, not deeper into a
+      // detail screen). `go('/goals')` also collapses the pushed
+      // /goals/new + /goals/review stack, so there's no way back into the
+      // half-finished flow.
       //
-      // RACE CONDITION FIX: previously we called reset() BEFORE
-      // context.go(). reset() flips state synchronously to Idle, which
-      // makes Riverpod fire a rebuild before the navigation actually
-      // executes. The Idle branch's postFrame redirect to /goals/new
-      // would then race the /goals/{id} navigation — and the user
-      // would land on the empty "Новая цель" form.
-      //
-      // Now: capture goalId, navigate FIRST. The state machine reset
-      // is deferred to a microtask so it lands after navigation has
-      // unmounted this screen — no rebuild here, no redirect race.
-      final goalId = state.result.goalId;
+      // Navigate FIRST, then reset the state machine on a delay so the reset
+      // (which flips state to Idle) lands after this screen has unmounted —
+      // otherwise the Idle branch above could fire a competing redirect.
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (!context.mounted) return;
         ref.read(goalsNotifierProvider.notifier).onGoalCreated();
-        context.go('/goals/$goalId');
+        context.go('/goals');
         Future.delayed(const Duration(milliseconds: 250), () {
           ref.read(goalCreationProvider.notifier).reset();
         });
@@ -105,7 +113,7 @@ class GoalPlanReviewScreen extends ConsumerWidget {
         title: Text(l.goalPlanReviewTitle),
         leading: isConfirming
             ? null
-            : BackButton(onPressed: () => context.go('/goals/new')),
+            : BackButton(onPressed: () => _backToForm(context)),
       ),
       body: Stack(
         children: [
@@ -187,7 +195,7 @@ class GoalPlanReviewScreen extends ConsumerWidget {
                 label: l.goalPlanReviewBack,
                 variant: HeroButtonVariant.ghost,
                 onPressed:
-                    isConfirming ? null : () => context.go('/goals/new'),
+                    isConfirming ? null : () => _backToForm(context),
               ),
               const SizedBox(height: 16),
             ],
