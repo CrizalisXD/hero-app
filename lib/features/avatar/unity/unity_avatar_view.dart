@@ -2,7 +2,6 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_unity_widget/flutter_unity_widget.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../../app/theme/app_colors.dart';
 import 'avatar_stage_config.dart';
@@ -40,9 +39,9 @@ class _UnityAvatarViewState extends State<UnityAvatarView> {
     _sub = _bridge.events.listen((e) {
       if (e is AvatarReady && mounted) {
         setState(() => _loading = false);
-      } else if (e is AvatarTapped && mounted) {
-        GoRouter.of(context).push('/avatar');
       }
+      // Tapping the hero is intentionally a no-op: the avatar screen/route was
+      // removed, so a tap no longer navigates anywhere.
     });
   }
 

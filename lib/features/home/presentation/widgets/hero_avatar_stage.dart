@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../core/config/feature_flags.dart';
@@ -47,11 +46,9 @@ class HeroAvatarStage extends StatelessWidget {
       );
     }
 
-    return GestureDetector(
-      onTap: () => GoRouter.of(context).push('/avatar'),
-      behavior: HitTestBehavior.opaque,
-      child: _PlaceholderAvatar(avatar: avatar, level: level, unityOn: unityOn),
-    );
+    // Tapping the hero no longer navigates anywhere — the avatar screen/route
+    // was removed.
+    return _PlaceholderAvatar(avatar: avatar, level: level, unityOn: unityOn);
   }
 }
 

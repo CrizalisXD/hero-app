@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
@@ -39,13 +38,6 @@ class ProfileScreen extends ConsumerWidget {
               const SizedBox(height: 16),
               _CategoriesCard(categories: p.categories),
               const SizedBox(height: 16),
-              HeroButton(
-                label: l.profileChangeAvatarColor,
-                icon: Icons.palette_outlined,
-                variant: HeroButtonVariant.secondary,
-                onPressed: () => context.push('/avatar'),
-              ),
-              const SizedBox(height: 8),
               HeroButton(
                 label: l.profileEditDisplayName,
                 icon: Icons.edit_outlined,
