@@ -45,15 +45,23 @@ class SupabaseGoalsRepository implements GoalsRepository {
   @override
   Future<GoalConfirmResult> confirmPlan({
     required AiPlan plan,
-    required String goalTitle,
-    String? goalDescription,
+    required GoalCreateAnswers answers,
   }) async {
+    // target_date is derived from the chosen period (now + planPeriodDays).
+    // Kept for backwards compat: ai-chat's system prompt still reads it.
+    final targetDate = DateTime.now().add(
+      Duration(days: answers.planPeriodDays),
+    );
     final payload = <String, dynamic>{
-      'goal_title': goalTitle,
-      if (goalDescription != null && goalDescription.isNotEmpty)
-        'goal_description': goalDescription,
+      'goal_title': answers.title,
+      if (answers.description != null && answers.description!.isNotEmpty)
+        'goal_description': answers.description,
       'main_category': plan.mainCategory,
       'secondary_categories': plan.secondaryCategories,
+      'archetype': answers.archetype.wire,
+      'plan_mode': answers.planMode.wire,
+      'plan_period_days': answers.planPeriodDays,
+      'target_date': targetDate.toIso8601String().split('T').first,
       'steps': plan.steps
           .where((s) => s.enabled)
           .map((s) => s.toJson())
@@ -114,6 +122,35 @@ class SupabaseGoalsRepository implements GoalsRepository {
         .eq('id', goalId)
         .eq('user_id', _uid);
   }
+
+  @override
+  Future<void> updateStatus(String goalId, GoalStatus status) async {
+    await _client
+        .from('goals')
+        .update({'status': _statusWire(status)})
+        .eq('id', goalId)
+        .eq('user_id', _uid);
+  }
+
+  @override
+  Future<void> extendGoal(String goalId, DateTime targetDate) async {
+    await _client
+        .from('goals')
+        .update({
+          'target_date': targetDate.toIso8601String().split('T').first,
+          'status': _statusWire(GoalStatus.extended),
+        })
+        .eq('id', goalId)
+        .eq('user_id', _uid);
+  }
+
+  String _statusWire(GoalStatus s) => switch (s) {
+        GoalStatus.active => 'active',
+        GoalStatus.completed => 'completed',
+        GoalStatus.paused => 'paused',
+        GoalStatus.abandoned => 'abandoned',
+        GoalStatus.extended => 'extended',
+      };
 
   @override
   Future<GoalProgress?> progressOf(String goalId) async {

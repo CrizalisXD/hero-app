@@ -164,6 +164,9 @@ class SupabaseTasksRepository implements TasksRepository {
           'duration': task.duration.wire,
           'importance': task.importance.wire,
           'due_date': task.dueDate?.toIso8601String().split('T').first,
+          'due_at': task.dueAt?.toUtc().toIso8601String(),
+          'is_recurring': task.isRecurring,
+          'recurrence': task.recurrence,
         })
         .eq('id', task.id)
         .select()

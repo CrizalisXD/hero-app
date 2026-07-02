@@ -105,6 +105,16 @@ class _NotificationSettingsScreenState
           onChanged: (v) => _update(s.copyWith(habits: v)),
         ),
         SwitchListTile.adaptive(
+          title: Text(l.notifGoals),
+          value: s.goals,
+          onChanged: (v) => _update(s.copyWith(goals: v)),
+        ),
+        SwitchListTile.adaptive(
+          title: Text(l.notifRoutines),
+          value: s.routines,
+          onChanged: (v) => _update(s.copyWith(routines: v)),
+        ),
+        SwitchListTile.adaptive(
           title: Text(l.notifCoach),
           value: s.aiCoach,
           onChanged: (v) => _update(s.copyWith(aiCoach: v)),

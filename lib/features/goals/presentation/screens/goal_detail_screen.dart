@@ -9,6 +9,7 @@ import '../../../../../app/theme/app_colors.dart';
 import '../../../../../app/theme/app_radius.dart';
 import '../../../../../app/theme/app_spacing.dart';
 import '../../../../../core/l10n/l10n.dart';
+import '../../../../../core/notifications/widgets/reminder_sheet.dart';
 import '../../../../../core/widgets/animated_fill_bar.dart';
 import '../../../../../core/widgets/hero_button.dart';
 import '../../../../../core/widgets/hero_card.dart';
@@ -20,6 +21,7 @@ import '../../../habits/domain/models/habit_type.dart';
 import '../../../tasks/application/tasks_notifier.dart';
 import '../../../tasks/domain/models/task.dart';
 import '../../application/goal_children_notifier.dart';
+import '../../application/goal_creation_notifier.dart';
 import '../../application/goals_notifier.dart';
 import '../../domain/models/goal.dart';
 import '../../domain/models/goal_progress.dart';
@@ -34,10 +36,25 @@ class GoalDetailScreen extends ConsumerWidget {
     final l = context.l10n;
     final goalsState = ref.watch(goalsNotifierProvider);
 
+    Goal? currentGoal;
+    final view = goalsState.value;
+    if (view != null) {
+      for (final g in view.goals) {
+        if (g.id == goalId) {
+          currentGoal = g;
+          break;
+        }
+      }
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l.goalDetailTitle),
         leading: BackButton(onPressed: () => context.go('/goals')),
+        actions: [
+          if (currentGoal != null)
+            _GoalActionsMenu(goal: currentGoal),
+        ],
       ),
       body: goalsState.when(
         loading: () => const Center(child: CircularProgressIndicator()),
@@ -1008,12 +1025,14 @@ class _StatusBadge extends StatelessWidget {
       GoalStatus.completed => l.goalStatusCompleted,
       GoalStatus.paused => l.goalStatusPaused,
       GoalStatus.abandoned => l.goalStatusAbandoned,
+      GoalStatus.extended => l.goalStatusExtended,
     };
     final color = switch (status) {
       GoalStatus.active => AppColors.success,
       GoalStatus.completed => AppColors.info,
       GoalStatus.paused => AppColors.warning,
       GoalStatus.abandoned => AppColors.textMuted,
+      GoalStatus.extended => AppColors.accent,
     };
     return Container(
       padding: const EdgeInsets.symmetric(
@@ -1033,6 +1052,88 @@ class _StatusBadge extends StatelessWidget {
           fontWeight: FontWeight.w700,
         ),
       ),
+    );
+  }
+}
+
+// ── Goal actions menu (extend / rebuild / pause-resume) ──────────────────────
+
+enum _GoalAction { extend, rebuild, pauseResume, reminder }
+
+class _GoalActionsMenu extends ConsumerWidget {
+  const _GoalActionsMenu({required this.goal});
+  final Goal goal;
+
+  Future<void> _extend(BuildContext context, WidgetRef ref) async {
+    final now = DateTime.now();
+    final initial = goal.targetDate != null && goal.targetDate!.isAfter(now)
+        ? goal.targetDate!.add(const Duration(days: 30))
+        : now.add(const Duration(days: 30));
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: now.add(const Duration(days: 1)),
+      lastDate: now.add(const Duration(days: 1095)),
+    );
+    if (picked == null) return;
+    await ref.read(goalsNotifierProvider.notifier).extendGoal(goal.id, picked);
+  }
+
+  void _rebuild(BuildContext context, WidgetRef ref) {
+    ref.read(goalCreationProvider.notifier).startArchetypePick(
+          title: goal.title,
+          description: goal.description,
+        );
+    context.push('/goals/archetype');
+  }
+
+  Future<void> _pauseResume(WidgetRef ref) async {
+    final next = goal.status == GoalStatus.paused
+        ? GoalStatus.active
+        : GoalStatus.paused;
+    await ref.read(goalsNotifierProvider.notifier).setStatus(goal.id, next);
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l = context.l10n;
+    final isPaused = goal.status == GoalStatus.paused;
+    return PopupMenuButton<_GoalAction>(
+      onSelected: (action) {
+        switch (action) {
+          case _GoalAction.extend:
+            _extend(context, ref);
+          case _GoalAction.rebuild:
+            _rebuild(context, ref);
+          case _GoalAction.pauseResume:
+            _pauseResume(ref);
+          case _GoalAction.reminder:
+            ReminderSheet.show(
+              context,
+              entityType: 'goal',
+              entityId: goal.id,
+              entityTitle: goal.title,
+            );
+        }
+      },
+      itemBuilder: (_) => [
+        PopupMenuItem(
+          value: _GoalAction.reminder,
+          child: Text(l.reminderAction),
+        ),
+        PopupMenuItem(
+          value: _GoalAction.extend,
+          child: Text(l.goalActionExtend),
+        ),
+        PopupMenuItem(
+          value: _GoalAction.rebuild,
+          child: Text(l.goalActionRebuild),
+        ),
+        PopupMenuItem(
+          value: _GoalAction.pauseResume,
+          child: Text(isPaused ? l.goalActionResume : l.goalActionPause),
+        ),
+      ],
     );
   }
 }

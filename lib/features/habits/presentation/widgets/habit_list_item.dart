@@ -3,6 +3,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/notifications/widgets/reminder_sheet.dart';
 import '../../../tasks/presentation/widgets/category_chip.dart';
 import '../../domain/models/habit.dart';
 import '../../domain/models/habit_type.dart';
@@ -59,11 +60,22 @@ class HabitListItem extends StatelessWidget {
             ),
       endActionPane: ActionPane(
         motion: const StretchMotion(),
-        // Wider extent when there are 2 actions (delete + skip OR
-        // delete + undo) vs 1 (delete only when nothing else applies).
-        extentRatio: 0.55,
+        // Reminder + (skip|undo) + delete.
+        extentRatio: 0.78,
         dismissible: DismissiblePane(onDismissed: onDelete),
         children: [
+          SlidableAction(
+            onPressed: (ctx) => ReminderSheet.show(
+              ctx,
+              entityType: 'habit',
+              entityId: habit.id,
+              entityTitle: habit.title,
+            ),
+            backgroundColor: AppColors.accent,
+            foregroundColor: Colors.white,
+            icon: Icons.notifications_none,
+            label: l.reminderAction,
+          ),
           if (checkedToday)
             SlidableAction(
               onPressed: (_) => onUncheckin(),

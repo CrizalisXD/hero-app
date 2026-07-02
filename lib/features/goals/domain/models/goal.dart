@@ -1,12 +1,15 @@
 import '../../../categories/domain/models/category_id.dart';
 import '../../../categories/domain/models/xp_inputs.dart';
+import 'goal_archetype.dart';
+import 'goal_plan_mode.dart';
 
-enum GoalStatus { active, completed, paused, abandoned }
+enum GoalStatus { active, completed, paused, abandoned, extended }
 
 GoalStatus _parseGoalStatus(String? s) => switch (s) {
       'completed' => GoalStatus.completed,
       'paused' => GoalStatus.paused,
       'abandoned' => GoalStatus.abandoned,
+      'extended' => GoalStatus.extended,
       _ => GoalStatus.active,
     };
 
@@ -27,6 +30,9 @@ class Goal {
     this.targetDate,
     this.aiGenerated = false,
     this.isDeleted = false,
+    this.archetype = GoalArchetype.custom,
+    this.planMode = GoalPlanMode.ai,
+    this.planPeriodDays = 30,
     required this.createdAt,
   });
 
@@ -43,6 +49,9 @@ class Goal {
   final DateTime? targetDate;
   final bool aiGenerated;
   final bool isDeleted;
+  final GoalArchetype archetype;
+  final GoalPlanMode planMode;
+  final int planPeriodDays;
   final DateTime createdAt;
 
   factory Goal.fromJson(Map<String, dynamic> j) {
@@ -68,6 +77,9 @@ class Goal {
           : DateTime.tryParse(j['target_date'] as String),
       aiGenerated: j['ai_generated'] as bool? ?? false,
       isDeleted: j['is_deleted'] as bool? ?? false,
+      archetype: GoalArchetype.fromWire(j['archetype'] as String?),
+      planMode: GoalPlanMode.fromWire(j['plan_mode'] as String?),
+      planPeriodDays: (j['plan_period_days'] as num?)?.toInt() ?? 30,
       createdAt: DateTime.parse(j['created_at'] as String),
     );
   }

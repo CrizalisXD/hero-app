@@ -7,6 +7,8 @@ class NotificationSettings {
   const NotificationSettings({
     required this.tasks,
     required this.habits,
+    required this.goals,
+    required this.routines,
     required this.aiCoach,
     required this.social,
     required this.challenges,
@@ -17,6 +19,8 @@ class NotificationSettings {
 
   final bool tasks;
   final bool habits;
+  final bool goals;
+  final bool routines;
   final bool aiCoach;
   final bool social;
   final bool challenges;
@@ -29,6 +33,8 @@ class NotificationSettings {
   NotificationSettings copyWith({
     bool? tasks,
     bool? habits,
+    bool? goals,
+    bool? routines,
     bool? aiCoach,
     bool? social,
     bool? challenges,
@@ -39,6 +45,8 @@ class NotificationSettings {
     return NotificationSettings(
       tasks: tasks ?? this.tasks,
       habits: habits ?? this.habits,
+      goals: goals ?? this.goals,
+      routines: routines ?? this.routines,
       aiCoach: aiCoach ?? this.aiCoach,
       social: social ?? this.social,
       challenges: challenges ?? this.challenges,
@@ -54,6 +62,8 @@ class NotificationSettings {
     return NotificationSettings(
       tasks: j['tasks_enabled'] as bool? ?? true,
       habits: j['habits_enabled'] as bool? ?? true,
+      goals: j['goals_enabled'] as bool? ?? true,
+      routines: j['routines_enabled'] as bool? ?? true,
       aiCoach: j['ai_coach_enabled'] as bool? ?? true,
       social: j['social_enabled'] as bool? ?? true,
       challenges: j['challenges_enabled'] as bool? ?? true,
@@ -66,6 +76,8 @@ class NotificationSettings {
   Map<String, dynamic> toUpdate() => {
         'tasks_enabled': tasks,
         'habits_enabled': habits,
+        'goals_enabled': goals,
+        'routines_enabled': routines,
         'ai_coach_enabled': aiCoach,
         'social_enabled': social,
         'challenges_enabled': challenges,

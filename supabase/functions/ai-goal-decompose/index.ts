@@ -15,6 +15,21 @@ const ALLOWED_IMPORTANCE  = ['low', 'normal', 'high'] as const
 const ALLOWED_FREQUENCY   = ['daily', 'weekly'] as const
 const ALLOWED_TYPE        = ['task', 'habit', 'milestone'] as const
 
+// Phase 19 — per-archetype guidance fed into the system prompt so the
+// plan structure matches the kind of goal the user picked. Unknown /
+// missing archetypes fall through to 'custom'.
+const ARCHETYPE_INSTRUCTIONS: Record<string, string> = {
+  skill_learning:    'Focus on progressive skill milestones. Include learning tasks and practice habits.',
+  habit_building:    'Focus on daily habits with streaks. Minimize one-off tasks.',
+  fitness_health:    'Include workout habits, recovery tasks, nutrition milestones.',
+  project_creation:  'Include project phases as milestones. Tasks should be concrete deliverables.',
+  money_purchase:    'Include savings habits, budget tracking tasks, milestone at target amount.',
+  event_preparation: 'Work backwards from the event date. Include preparation milestones.',
+  relationship_goal: 'Include communication habits and meaningful interaction tasks.',
+  life_change:       'Include mindset habits, reflection tasks, lifestyle milestones.',
+  custom:            'Use best judgment for goal structure.',
+}
+
 function bad(message: string, status = 400) {
   return new Response(
     JSON.stringify({ ok: false, error: message }),
@@ -29,8 +44,12 @@ function ok(body: any) {
   )
 }
 
-function systemPrompt(locale: string, profile: any): string {
+function systemPrompt(locale: string, profile: any, archetype?: string): string {
   const isRu = locale === 'ru'
+  const archetypeKey = archetype && archetype in ARCHETYPE_INSTRUCTIONS ? archetype : ''
+  const archetypeHint = archetypeKey
+    ? `\nGoal archetype: ${archetypeKey}. ${ARCHETYPE_INSTRUCTIONS[archetypeKey]} Tailor questions and plan structure accordingly.`
+    : ''
   const hasProfile = profile && Object.keys(profile).length > 0
   const profileLines = hasProfile
     ? [
@@ -45,7 +64,7 @@ function systemPrompt(locale: string, profile: any): string {
     isRu
       ? 'Ты — опытный планировщик целей и коуч в приложении Hero (RPG про реальную жизнь). Тебе дают цель пользователя — построй живой, продуманный план, который реально приведёт к результату.'
       : 'You are an experienced goal planner and coach in Hero (a real-life RPG app). Given a user goal, build a vivid, well-thought-out plan that will actually lead to the result.',
-    `User profile: ${profileLines}`,
+    `User profile: ${profileLines}${archetypeHint}`,
     isRu
       ? 'Принципы планирования:'
       : 'Planning principles:',
@@ -110,6 +129,23 @@ serve(async (req) => {
   const title = (payload.goal_title ?? '').toString().trim().slice(0, 200)
   if (title.length < 2) return bad('title_too_short')
 
+  // Phase 19 — archetype tailors the prompt; plan_mode='own' skips the AI
+  // entirely and returns an empty plan for the user to fill in manually.
+  const archetype = (payload.archetype ?? 'custom').toString()
+  const planMode  = (payload.plan_mode ?? 'ai').toString()
+
+  if (planMode === 'own') {
+    return ok({
+      ok: true,
+      summary: '',
+      main_category: 'mind',
+      secondary_categories: [],
+      estimated_weeks: null,
+      steps: [],
+      warnings: [],
+    })
+  }
+
   // Load user profile for personalisation.
   // Gated by ai_can_use_onboarding consent: opt-out default (default ON,
   // only stripped when user explicitly toggled it OFF). Same logic as
@@ -145,7 +181,7 @@ serve(async (req) => {
         max_tokens:      1500,
         response_format: { type: 'json_object' },
         messages: [
-          { role: 'system', content: systemPrompt(locale, profile) },
+          { role: 'system', content: systemPrompt(locale, profile, archetype) },
           {
             role: 'user',
             content: JSON.stringify({

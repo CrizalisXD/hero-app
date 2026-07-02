@@ -9,6 +9,7 @@ import '../../../energy/presentation/energy_guard.dart';
 import '../../application/goal_creation_notifier.dart';
 import '../../application/goals_notifier.dart';
 import '../../domain/models/ai_plan_step.dart';
+import '../../domain/models/goal_plan_mode.dart';
 
 class GoalPlanReviewScreen extends ConsumerWidget {
   const GoalPlanReviewScreen({super.key});
@@ -107,6 +108,12 @@ class GoalPlanReviewScreen extends ConsumerWidget {
     final plan = state is GoalCreationReview
         ? state.plan
         : (state as GoalCreationConfirming).plan;
+    final planMode =
+        state is GoalCreationReview ? state.answers.planMode : GoalPlanMode.ai;
+    final isManual =
+        planMode == GoalPlanMode.own || planMode == GoalPlanMode.mixed;
+    final canRegenerate = planMode != GoalPlanMode.own;
+    final enabledStepCount = plan.steps.where((s) => s.enabled).length;
 
     return Scaffold(
       appBar: AppBar(
@@ -121,27 +128,51 @@ class GoalPlanReviewScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(16),
             children: [
               // ── Summary ───────────────────────────────────────────
-              Text(
-                l.goalPlanReviewSummary,
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-              const SizedBox(height: 8),
-              Text(plan.summary),
-              if (plan.estimatedWeeks != null) ...[
-                const SizedBox(height: 8),
+              if (plan.summary.isNotEmpty) ...[
                 Text(
-                  l.goalPlanReviewEstimated(plan.estimatedWeeks!),
-                  style: Theme.of(context).textTheme.bodySmall,
+                  l.goalPlanReviewSummary,
+                  style: Theme.of(context).textTheme.titleSmall,
                 ),
+                const SizedBox(height: 8),
+                Text(plan.summary),
+                if (plan.estimatedWeeks != null) ...[
+                  const SizedBox(height: 8),
+                  Text(
+                    l.goalPlanReviewEstimated(plan.estimatedWeeks!),
+                    style: Theme.of(context).textTheme.bodySmall,
+                  ),
+                ],
+                const SizedBox(height: 24),
               ],
-              const SizedBox(height: 24),
 
               // ── Steps ──────────────────────────────────────────────
-              Text(
-                l.goalPlanReviewSteps,
-                style: Theme.of(context).textTheme.titleSmall,
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l.goalPlanReviewSteps,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ),
+                  if (isManual && !isConfirming)
+                    TextButton.icon(
+                      icon: const Icon(Icons.add, size: 18),
+                      label: Text(l.goalPlanAddStep),
+                      onPressed: () => _showAddStepSheet(context, ref),
+                    ),
+                ],
               ),
               const SizedBox(height: 8),
+              if (plan.steps.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24),
+                  child: Center(
+                    child: Text(
+                      l.goalPlanEmptyOwn,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
+                ),
               ...plan.steps.asMap().entries.map((entry) {
                 final idx = entry.key;
                 final step = entry.value;
@@ -153,6 +184,11 @@ class GoalPlanReviewScreen extends ConsumerWidget {
                       : (v) => ref
                           .read(goalCreationProvider.notifier)
                           .toggleStep(idx, enabled: v),
+                  onDelete: (isManual && !isConfirming)
+                      ? () => ref
+                          .read(goalCreationProvider.notifier)
+                          .removeStep(idx)
+                      : null,
                 );
               }),
 
@@ -162,7 +198,7 @@ class GoalPlanReviewScreen extends ConsumerWidget {
               HeroButton(
                 label: l.goalPlanReviewConfirm,
                 isLoading: isConfirming,
-                onPressed: isConfirming
+                onPressed: (isConfirming || enabledStepCount == 0)
                     ? null
                     : () async {
                         // Energy gate before we materialise the plan
@@ -175,27 +211,25 @@ class GoalPlanReviewScreen extends ConsumerWidget {
                           EnergyCosts.goal,
                         );
                         if (!paid || !context.mounted) return;
-                        await ref
-                            .read(goalCreationProvider.notifier)
-                            .confirm();
+                        await ref.read(goalCreationProvider.notifier).confirm();
                       },
               ),
-              const SizedBox(height: 12),
-              HeroButton(
-                label: l.goalPlanReviewRegenerate,
-                variant: HeroButtonVariant.secondary,
-                onPressed: isConfirming
-                    ? null
-                    : () => ref
-                        .read(goalCreationProvider.notifier)
-                        .regenerate(),
-              ),
+              if (canRegenerate) ...[
+                const SizedBox(height: 12),
+                HeroButton(
+                  label: l.goalPlanReviewRegenerate,
+                  variant: HeroButtonVariant.secondary,
+                  onPressed: isConfirming
+                      ? null
+                      : () =>
+                          ref.read(goalCreationProvider.notifier).regenerate(),
+                ),
+              ],
               const SizedBox(height: 8),
               HeroButton(
                 label: l.goalPlanReviewBack,
                 variant: HeroButtonVariant.ghost,
-                onPressed:
-                    isConfirming ? null : () => _backToForm(context),
+                onPressed: isConfirming ? null : () => _backToForm(context),
               ),
               const SizedBox(height: 16),
             ],
@@ -222,11 +256,13 @@ class _StepTile extends StatelessWidget {
     required this.step,
     required this.enabled,
     required this.onToggle,
+    this.onDelete,
   });
 
   final AiPlanStep step;
   final bool enabled;
   final ValueChanged<bool>? onToggle;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -248,11 +284,16 @@ class _StepTile extends StatelessWidget {
         value: enabled,
         onChanged: onToggle != null ? (v) => onToggle!(v ?? false) : null,
         controlAffinity: ListTileControlAffinity.leading,
+        secondary: onDelete != null
+            ? IconButton(
+                icon: const Icon(Icons.delete_outline),
+                onPressed: onDelete,
+              )
+            : null,
         title: Row(
           children: [
             Container(
-              padding:
-                  const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
               decoration: BoxDecoration(
                 color: typeColor.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(4),
@@ -285,6 +326,123 @@ class _StepTile extends StatelessWidget {
                     ?.copyWith(color: Colors.grey),
               )
             : null,
+      ),
+    );
+  }
+}
+
+// ── Add-step sheet (own / mixed modes) ───────────────────────────────────────
+
+Future<void> _showAddStepSheet(BuildContext context, WidgetRef ref) async {
+  final step = await showModalBottomSheet<AiPlanStep>(
+    context: context,
+    isScrollControlled: true,
+    builder: (_) => const _AddStepSheet(),
+  );
+  if (step != null) {
+    ref.read(goalCreationProvider.notifier).addStep(step);
+  }
+}
+
+class _AddStepSheet extends StatefulWidget {
+  const _AddStepSheet();
+
+  @override
+  State<_AddStepSheet> createState() => _AddStepSheetState();
+}
+
+class _AddStepSheetState extends State<_AddStepSheet> {
+  final _titleCtrl = TextEditingController();
+  AiPlanStepType _type = AiPlanStepType.task;
+  String _frequency = 'daily';
+
+  @override
+  void dispose() {
+    _titleCtrl.dispose();
+    super.dispose();
+  }
+
+  void _save() {
+    final title = _titleCtrl.text.trim();
+    if (title.isEmpty) return;
+    final step = AiPlanStep(
+      type: _type,
+      title: title,
+      frequency: _type == AiPlanStepType.habit ? _frequency : null,
+      difficulty: _type == AiPlanStepType.habit ? 'easy' : 'normal',
+      duration: _type == AiPlanStepType.habit ? 'short' : 'medium',
+      xpReward: _type == AiPlanStepType.milestone ? 50 : 20,
+    );
+    Navigator.of(context).pop(step);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l = context.l10n;
+    final insets = MediaQuery.of(context).viewInsets;
+    return Padding(
+      padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + insets.bottom),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l.goalPlanAddStep,
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _titleCtrl,
+            autofocus: true,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: InputDecoration(labelText: l.goalPlanStepTitleLabel),
+          ),
+          const SizedBox(height: 16),
+          Text(l.goalPlanStepTypeLabel,
+              style: Theme.of(context).textTheme.bodySmall,),
+          const SizedBox(height: 8),
+          SegmentedButton<AiPlanStepType>(
+            segments: [
+              ButtonSegment(
+                value: AiPlanStepType.task,
+                label: Text(l.goalPlanStepTask),
+              ),
+              ButtonSegment(
+                value: AiPlanStepType.habit,
+                label: Text(l.goalPlanStepHabit),
+              ),
+              ButtonSegment(
+                value: AiPlanStepType.milestone,
+                label: Text(l.goalPlanStepMilestone),
+              ),
+            ],
+            selected: {_type},
+            onSelectionChanged: (s) => setState(() => _type = s.first),
+          ),
+          if (_type == AiPlanStepType.habit) ...[
+            const SizedBox(height: 16),
+            Text(l.goalPlanFrequencyLabel,
+                style: Theme.of(context).textTheme.bodySmall,),
+            const SizedBox(height: 8),
+            SegmentedButton<String>(
+              segments: [
+                ButtonSegment(
+                  value: 'daily',
+                  label: Text(l.createTaskRecurringDaily),
+                ),
+                ButtonSegment(
+                  value: 'weekly',
+                  label: Text(l.createTaskRecurringWeekly),
+                ),
+              ],
+              selected: {_frequency},
+              onSelectionChanged: (s) => setState(() => _frequency = s.first),
+            ),
+          ],
+          const SizedBox(height: 24),
+          HeroButton(label: l.commonSave, onPressed: _save),
+          const SizedBox(height: 8),
+        ],
       ),
     );
   }

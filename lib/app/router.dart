@@ -12,6 +12,7 @@ import '../features/auth/presentation/sign_up_screen.dart';
 import '../features/auth/presentation/splash_screen.dart';
 import '../features/auth/presentation/welcome_screen.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
+import '../features/goals/presentation/screens/goal_archetype_screen.dart';
 import '../features/goals/presentation/screens/goal_create_screen.dart';
 import '../features/goals/presentation/screens/goal_detail_screen.dart';
 import '../features/goals/presentation/screens/goal_plan_review_screen.dart';
@@ -319,6 +320,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         path: '/goals/new',
         builder: (_, __) => const GoalCreateScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/goals/archetype',
+        builder: (_, __) => const GoalArchetypeScreen(),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,

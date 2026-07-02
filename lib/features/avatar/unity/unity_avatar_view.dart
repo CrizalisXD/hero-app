@@ -107,27 +107,26 @@ class _UnityLoadingOverlay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ColoredBox(
-      color: AppColors.bg,
-      child: Center(
-        child: Container(
-          height: 120,
-          width: 120,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            gradient: RadialGradient(
-              colors: [
-                AppColors.accent.withValues(alpha: 0.18),
-                Colors.transparent,
-              ],
-            ),
+    // Transparent overlay (no opaque fill) so the Flutter background stays
+    // visible while Unity cold-starts — no black box.
+    return Center(
+      child: Container(
+        height: 120,
+        width: 120,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: RadialGradient(
+            colors: [
+              AppColors.accent.withValues(alpha: 0.18),
+              Colors.transparent,
+            ],
           ),
-          child: const Center(
-            child: SizedBox(
-              height: 26,
-              width: 26,
-              child: CircularProgressIndicator(strokeWidth: 2),
-            ),
+        ),
+        child: const Center(
+          child: SizedBox(
+            height: 26,
+            width: 26,
+            child: CircularProgressIndicator(strokeWidth: 2),
           ),
         ),
       ),

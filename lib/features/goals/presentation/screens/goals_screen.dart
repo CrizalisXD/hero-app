@@ -175,12 +175,14 @@ class _StatusChip extends StatelessWidget {
       GoalStatus.completed => l.goalStatusCompleted,
       GoalStatus.paused => l.goalStatusPaused,
       GoalStatus.abandoned => l.goalStatusAbandoned,
+      GoalStatus.extended => l.goalStatusExtended,
     };
     final color = switch (status) {
       GoalStatus.active => AppColors.success,
       GoalStatus.completed => AppColors.info,
       GoalStatus.paused => AppColors.warning,
       GoalStatus.abandoned => AppColors.textMuted,
+      GoalStatus.extended => AppColors.accent,
     };
     return Chip(
       label: Text(label, style: TextStyle(color: color, fontSize: 11)),

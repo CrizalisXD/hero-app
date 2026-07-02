@@ -61,6 +61,18 @@ class GoalsNotifier extends AsyncNotifier<GoalsView> {
       rethrow;
     }
   }
+
+  /// Sets a goal's status (e.g. pause / resume) and reloads the list.
+  Future<void> setStatus(String goalId, GoalStatus status) async {
+    await _repo.updateStatus(goalId, status);
+    await reload();
+  }
+
+  /// Extends a goal to a new target date and reloads the list.
+  Future<void> extendGoal(String goalId, DateTime targetDate) async {
+    await _repo.extendGoal(goalId, targetDate);
+    await reload();
+  }
 }
 
 final goalsNotifierProvider =

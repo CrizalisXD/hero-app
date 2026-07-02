@@ -9,10 +9,11 @@ abstract interface class GoalsRepository {
   Future<AiPlan> decomposePlan(GoalCreateAnswers answers);
 
   /// Calls `ai-goal-confirm` Edge Function → `create_goal_with_plan` RPC.
+  /// The full [answers] are forwarded so the goal record carries its
+  /// archetype, plan mode and period (target_date is derived from them).
   Future<GoalConfirmResult> confirmPlan({
     required AiPlan plan,
-    required String goalTitle,
-    String? goalDescription,
+    required GoalCreateAnswers answers,
   });
 
   /// Loads all non-deleted goals for the current user.
@@ -28,4 +29,10 @@ abstract interface class GoalsRepository {
   /// every list; child tasks/habits/milestones stay linked but the goal
   /// no longer surfaces.
   Future<void> deleteGoal(String goalId);
+
+  /// Updates a goal's lifecycle status (active / paused / extended / …).
+  Future<void> updateStatus(String goalId, GoalStatus status);
+
+  /// Pushes a goal's target date out and marks it as extended.
+  Future<void> extendGoal(String goalId, DateTime targetDate);
 }

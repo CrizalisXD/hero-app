@@ -47,7 +47,13 @@ serve(async (req) => {
   if (!ALLOWED_CATEGORIES.has(payload.main_category)) {
     return bad('invalid_main_category')
   }
-  if (!Array.isArray(payload.steps) || payload.steps.length === 0) {
+  // Phase 19 — 'own'/'mixed' plans may legitimately start with zero steps
+  // (user fills them in over time). Only AI plans must carry steps.
+  const planMode = (payload.plan_mode ?? 'ai').toString()
+  if (!Array.isArray(payload.steps)) {
+    payload.steps = []
+  }
+  if (planMode === 'ai' && payload.steps.length === 0) {
     return bad('no_steps')
   }
 

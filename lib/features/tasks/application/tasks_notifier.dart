@@ -84,6 +84,24 @@ class TasksNotifier extends AsyncNotifier<List<Task>> {
     }
   }
 
+  /// Persists an edit to an existing task and replaces it in the list.
+  /// Returns the updated task on success, or null on failure so the caller
+  /// can surface an error without throwing.
+  Future<Task?> updateTask(Task task) async {
+    final previous = state.valueOrNull;
+    try {
+      final updated = await _repo.updateTask(task);
+      if (previous != null) {
+        state = AsyncData(
+          previous.map((t) => t.id == updated.id ? updated : t).toList(),
+        );
+      }
+      return updated;
+    } catch (_) {
+      return null;
+    }
+  }
+
   Future<void> deleteTask(String taskId) async {
     final previous = state.valueOrNull ?? [];
     state = AsyncData(previous.where((t) => t.id != taskId).toList());
