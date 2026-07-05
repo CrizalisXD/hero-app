@@ -362,7 +362,8 @@ int stableNotificationIdFor(String uuid) => uuid.hashCode.abs();
 
 /// Like [stableNotificationIdFor] but offsets by entity type so a task and a
 /// habit whose uuids hash alike can't collide on the same notification id.
-/// Each type gets a 100k id band; the per-day fan-out (+1…+7) stays in-band.
+/// Each type gets a 100k id band. The base id is capped at band-8 so the
+/// per-day fan-out (+1…+7) can never overflow into the next band.
 int notificationIdFor(String uuid, String entityType) {
   final offset = switch (entityType) {
     'task' => 0,
@@ -371,5 +372,5 @@ int notificationIdFor(String uuid, String entityType) {
     'routine' => 300000,
     _ => 400000,
   };
-  return (uuid.hashCode.abs() % 100000) + offset;
+  return (uuid.hashCode.abs() % (100000 - 8)) + offset;
 }

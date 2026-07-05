@@ -18,7 +18,10 @@ class XpEngine {
     final d = _bundle.multipliers.difficulty[difficulty.wire] ?? 1.0;
     final u = _bundle.multipliers.duration[duration.wire] ?? 1.0;
     final i = _bundle.multipliers.importance[importance.wire] ?? 1.0;
-    return (baseXp * d * u * i).round();
+    final xp = (baseXp * d * u * i).round();
+    // A completed task must always be worth something — a malformed
+    // multiplier (e.g. 0 in categories.json) must not zero out rewards.
+    return xp < 1 ? 1 : xp;
   }
 
   int disciplineXpForTask({required bool isRecurring}) =>

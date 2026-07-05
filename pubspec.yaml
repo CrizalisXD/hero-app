@@ -20,10 +20,12 @@ dependencies:
   flutter_slidable: ^4.0.0
   # Unity 3D avatar embed — matches the Unity 6 (fuw-6000.0) export tooling.
   flutter_timezone: ^5.1.0
+  # ВЕНДОРЕНО (third_party/) с нашими iOS-патчами прозрачности
+  # (FLTUnityView.makeTreeTransparent и др.). Раньше жило git-веткой
+  # experimental/unity_6000 с правками ПРЯМО В PUB-CACHE — они молча
+  # терялись, когда ветка уезжала вперёд и pub тянул новый чекаут.
   flutter_unity_widget:
-    git:
-      url: https://github.com/juicycleff/flutter-unity-view-widget.git
-      ref: experimental/unity_6000
+    path: third_party/flutter_unity_widget
   freezed_annotation: ^2.4.4
   go_router: ^14.2.0
   google_fonts: ^6.2.1

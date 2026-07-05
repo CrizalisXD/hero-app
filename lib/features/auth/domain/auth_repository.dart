@@ -24,8 +24,13 @@ abstract class AuthRepository {
   /// MUST use auth.updateUser({email, password}) — NEVER auth.signUp(),
   /// which would create a fresh user_id and orphan the guest's data.
   ///
+  /// Returns [SignUpResult.needsEmailConfirmation] when the project has
+  /// email confirmation enabled — the email is only PENDING then, and the
+  /// account keeps its guest markers until the link is clicked (otherwise
+  /// signing out before confirming would strand the account forever).
+  ///
   /// Throws [AuthFailureException] if current session is not a guest.
-  Future<EmailSession> upgradeGuestToEmail({
+  Future<SignUpResult> upgradeGuestToEmail({
     required String email,
     required String password,
   });

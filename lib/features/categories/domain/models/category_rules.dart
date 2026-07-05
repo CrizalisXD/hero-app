@@ -30,17 +30,18 @@ class CategoryRules {
     required this.id,
     required this.color,
     required this.icon,
-    required this.baseXp,
     required this.keywordsRu,
     required this.keywordsEn,
     required this.excludeRu,
     required this.excludeEn,
   });
 
+  // [D4, XP_SYSTEM_TZ §3] base_xp здесь больше нет: источник истины —
+  // таблица `categories` в БД (categoryBaseXpProvider); JSON хранит
+  // только правила классификатора и клиентские множители превью.
   final CategoryId id;
   final String color;
   final String icon;
-  final int baseXp;
   final Map<String, int> keywordsRu;
   final Map<String, int> keywordsEn;
   final List<String> excludeRu;
@@ -76,19 +77,9 @@ class ClassifierConfig {
 class MetaStatsRules {
   const MetaStatsRules({
     required this.disciplineXp,
-    required this.streakRewards,
   });
 
+  // [D3, XP_SYSTEM_TZ §7] streak_rewards удалены: канон наград за стрик —
+  // ачивки streak_3/5/7/21 (XP + коины на сервере).
   final Map<String, int> disciplineXp;
-  final Map<String, StreakReward> streakRewards;
-}
-
-class StreakReward {
-  const StreakReward({
-    required this.disciplineXp,
-    required this.coins,
-  });
-
-  final int disciplineXp;
-  final int coins;
 }

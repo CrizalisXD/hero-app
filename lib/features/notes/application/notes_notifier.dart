@@ -31,8 +31,15 @@ class NotesNotifier extends _$NotesNotifier {
     final repo = ref.read(notesRepositoryProvider);
     final note = await repo.updateNote(noteId, input);
     final current = state.valueOrNull ?? const <Note>[];
+    // If the note isn't in the cached list (stale/filtered cache), prepend
+    // it — mapping over a list without the id would silently drop the edit.
+    final hasIt = current.any((n) => n.id == noteId);
     state = AsyncData(
-      current.map((n) => n.id == noteId ? note : n).toList(growable: false),
+      hasIt
+          ? current
+              .map((n) => n.id == noteId ? note : n)
+              .toList(growable: false)
+          : [note, ...current],
     );
     return note;
   }

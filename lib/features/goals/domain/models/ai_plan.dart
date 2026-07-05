@@ -30,7 +30,12 @@ class AiPlan {
       mainCategory: (j['main_category'] as String?) ?? 'mind',
       secondaryCategories: rawSecondaries,
       estimatedWeeks: (j['estimated_weeks'] as num?)?.toInt(),
-      steps: rawSteps.map(AiPlanStep.fromJson).toList(),
+      // The AI payload is untrusted — a malformed step without a title
+      // would otherwise become a blank task/habit the user can't use.
+      steps: rawSteps
+          .map(AiPlanStep.fromJson)
+          .where((s) => s.title.trim().isNotEmpty)
+          .toList(),
       warnings: rawWarnings,
     );
   }

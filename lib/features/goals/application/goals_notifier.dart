@@ -28,10 +28,14 @@ class GoalsNotifier extends AsyncNotifier<GoalsView> {
   GoalsRepository get _repo => ref.read(goalsRepositoryProvider);
 
   Future<GoalsView> _load() async {
-    final goalsFuture = _repo.fetchGoals();
-    final progressFuture = _repo.fetchProgress();
-    final goals = await goalsFuture;
-    final progressList = await progressFuture;
+    // Future.wait so a failure in one fetch can't leave the other as an
+    // orphaned future whose rejection becomes an unhandled async error.
+    final results = await Future.wait<Object>([
+      _repo.fetchGoals(),
+      _repo.fetchProgress(),
+    ]);
+    final goals = results[0] as List<Goal>;
+    final progressList = (results[1] as List).cast<GoalProgress>();
     final progressMap = {for (final p in progressList) p.goalId: p};
     return GoalsView(goals: goals, progress: progressMap);
   }

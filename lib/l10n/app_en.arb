@@ -903,6 +903,8 @@
   "@accountDeleteError": {},
   "accountDeleteCancelled": "Deletion cancelled. Welcome back.",
   "@accountDeleteCancelled": {},
+  "accountDeleteCancelFailed": "Couldn't cancel the account deletion — it is still scheduled. Check your connection and sign in again.",
+  "@accountDeleteCancelFailed": {},
 
   "aboutVersion": "Version {version}",
   "@aboutVersion": { "placeholders": { "version": { "type": "String" } } },

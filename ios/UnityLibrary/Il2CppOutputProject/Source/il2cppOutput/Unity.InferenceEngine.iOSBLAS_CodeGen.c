@@ -24,14 +24,13 @@ static Il2CppMethodPointer s_methodPointers[6] =
 };
 static const int32_t s_InvokerIndices[6] = 
 {
-	11506,
-	4833,
-	4966,
-	4602,
+	28998,
+	16597,
+	16921,
+	16156,
 	41,
-	4833,
+	16597,
 };
-extern const Il2CppDebuggerMetadataRegistration g_DebuggerMetadataRegistrationUnity_InferenceEngine_iOSBLAS;
 IL2CPP_EXTERN_C const Il2CppCodeGenModule g_Unity_InferenceEngine_iOSBLAS_CodeGenModule;
 const Il2CppCodeGenModule g_Unity_InferenceEngine_iOSBLAS_CodeGenModule = 
 {
@@ -47,7 +46,7 @@ const Il2CppCodeGenModule g_Unity_InferenceEngine_iOSBLAS_CodeGenModule =
 	NULL,
 	0,
 	NULL,
-	&g_DebuggerMetadataRegistrationUnity_InferenceEngine_iOSBLAS,
+	NULL,
 	NULL,
 	NULL,
 	NULL,

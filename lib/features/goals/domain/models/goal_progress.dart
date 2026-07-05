@@ -23,12 +23,15 @@ class GoalProgress {
         milestonesTotal: (j['milestones_total'] as num?)?.toInt() ?? 0,
       );
 
+  // Clamped: stale counters can briefly report done > total (e.g. a task
+  // re-categorised away after completion) — the bar must not overflow.
   double get taskPercent =>
-      tasksTotal == 0 ? 0 : tasksDone / tasksTotal;
+      tasksTotal == 0 ? 0 : (tasksDone / tasksTotal).clamp(0.0, 1.0);
 
   /// Alias for [taskPercent] — used by ActiveGoalPanel.
   double get taskProgress => taskPercent;
 
-  double get milestonePercent =>
-      milestonesTotal == 0 ? 0 : milestonesDone / milestonesTotal;
+  double get milestonePercent => milestonesTotal == 0
+      ? 0
+      : (milestonesDone / milestonesTotal).clamp(0.0, 1.0);
 }

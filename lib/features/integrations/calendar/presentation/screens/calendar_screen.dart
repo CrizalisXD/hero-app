@@ -50,10 +50,18 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
 
   Future<void> _connect() async {
     setState(() => _busy = true);
+    // Consent on file BEFORE the OS prompt (TZ §15)…
     await ref
         .read(userConsentsRepoProvider)
         .setConsent(ConsentKeys.integrationCalendarRead, true);
     final ok = await DeviceCalendarService.instance.requestPermissions();
+    if (!ok) {
+      // …but revoked when the user denies — otherwise the consent ledger
+      // over-reports scopes that were never actually granted.
+      await ref
+          .read(userConsentsRepoProvider)
+          .setConsent(ConsentKeys.integrationCalendarRead, false);
+    }
     if (!mounted) return;
     if (!ok) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -65,11 +73,11 @@ class _CalendarScreenState extends ConsumerState<CalendarScreen> {
   }
 
   Future<void> _toggleSync(bool v) async {
-    if (v) {
-      await ref
-          .read(userConsentsRepoProvider)
-          .setConsent(ConsentKeys.integrationCalendarWrite, true);
-    }
+    // Keep the consent ledger in step with the toggle — revoke on disable
+    // too, not just grant on enable.
+    await ref
+        .read(userConsentsRepoProvider)
+        .setConsent(ConsentKeys.integrationCalendarWrite, v);
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool(_kCalSyncTasksKey, v);
     if (mounted) setState(() => _syncTasks = v);

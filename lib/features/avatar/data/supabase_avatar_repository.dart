@@ -11,7 +11,19 @@ class SupabaseAvatarRepository implements AvatarRepository {
 
   @override
   Future<Avatar> getMine() async {
-    final row = await _client.from('avatars').select().single();
+    // maybeSingle: a not-yet-provisioned avatar row must not surface as a
+    // cryptic PostgrestException. Run the (idempotent) bootstrap once and
+    // retry before giving up.
+    var row = await _client.from('avatars').select().maybeSingle();
+    if (row == null) {
+      try {
+        await _client.rpc<dynamic>('ensure_user_bootstrap');
+      } catch (_) {}
+      row = await _client.from('avatars').select().maybeSingle();
+    }
+    if (row == null) {
+      throw StateError('avatar_not_provisioned');
+    }
     return Avatar.fromJson(row);
   }
 

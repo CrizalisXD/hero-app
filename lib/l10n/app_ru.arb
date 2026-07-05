@@ -513,6 +513,7 @@
   "@accountDeleteScheduled": { "placeholders": { "date": { "type": "String" } } },
   "accountDeleteError": "Не удалось запросить удаление. Попробуй ещё раз.",
   "accountDeleteCancelled": "Удаление отменено. С возвращением.",
+  "accountDeleteCancelFailed": "Не удалось отменить удаление аккаунта — оно всё ещё запланировано. Проверь соединение и войди ещё раз.",
 
   "aboutVersion": "Версия {version}",
   "@aboutVersion": { "placeholders": { "version": { "type": "String" } } },

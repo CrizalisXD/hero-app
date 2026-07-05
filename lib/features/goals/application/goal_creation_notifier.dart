@@ -140,10 +140,40 @@ class GoalCreationNotifier extends Notifier<GoalCreationState> {
 
   // ── Confirm (calls ai-goal-confirm) ──────────────────────────────
 
-  Future<void> confirm() async {
+  /// Review snapshot claimed by [beginConfirm] while the energy gate runs.
+  GoalCreationReview? _claimedReview;
+
+  /// Synchronously claims the Review → Confirming transition. Returns
+  /// false when we're not in review (already confirming / navigated
+  /// away) — the re-entrancy guard that stops a double-tap racing the
+  /// async energy gate from confirming (and charging) twice.
+  bool beginConfirm() {
     final s = state;
-    if (s is! GoalCreationReview) return;
+    if (s is! GoalCreationReview) return false;
+    _claimedReview = s;
     state = GoalCreationConfirming(plan: s.plan);
+    return true;
+  }
+
+  /// Rolls back a claimed confirm (e.g. the energy gate refused).
+  void cancelConfirm() {
+    final s = _claimedReview;
+    _claimedReview = null;
+    if (s != null && state is GoalCreationConfirming) {
+      state = s;
+    }
+  }
+
+  Future<void> confirm() async {
+    // Use the claimed snapshot if beginConfirm ran; otherwise claim now
+    // (keeps direct confirm() calls working).
+    var s = _claimedReview;
+    if (s == null) {
+      if (!beginConfirm()) return;
+      s = _claimedReview;
+    }
+    _claimedReview = null;
+    if (s == null) return;
     try {
       final result = await _repo.confirmPlan(
         plan: s.plan,

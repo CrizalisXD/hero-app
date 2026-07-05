@@ -175,17 +175,27 @@ class CalendarSyncAgent {
       }
 
       // ── 4. Delete tasks whose calendar event is gone ──────────────
-      for (final entry in linked.entries) {
-        if (!calendarEventsById.containsKey(entry.key)) {
-          try {
-            await _client.from('tasks').delete().eq(
-                  'id',
-                  entry.value['id'] as String,
-                );
-            deletedCount++;
-          } catch (e) {
-            debugPrint('[calendar-sync] delete err: $e');
-          }
+      // Absence from the -1d..+30d window is NOT proof of deletion — the
+      // event may simply have been rescheduled outside the range. Confirm
+      // by direct id lookup before destroying the Hero task.
+      final missingIds = [
+        for (final entry in linked.entries)
+          if (!calendarEventsById.containsKey(entry.key)) entry.key,
+      ];
+      final stillExisting = missingIds.isEmpty
+          ? const <String>{}
+          : await DeviceCalendarService.instance
+              .existingEventIds(calId, missingIds);
+      for (final id in missingIds) {
+        if (stillExisting.contains(id)) continue;
+        try {
+          await _client.from('tasks').delete().eq(
+                'id',
+                linked[id]!['id'] as String,
+              );
+          deletedCount++;
+        } catch (e) {
+          debugPrint('[calendar-sync] delete err: $e');
         }
       }
 

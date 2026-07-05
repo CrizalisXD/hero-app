@@ -10,8 +10,6 @@ struct EmbeddedAttribute_tA1999F07600214350453E5B01566D651097A2F89;
 struct RefSafetyRulesAttribute_t2561E7F8EB1293C1444542D5A533B24932AD7895;
 struct Void_t4861ACF8F4594C3437BB48B6E56783494B843915;
 
-IL2CPP_EXTERN_C const RuntimeMethod* EmbeddedAttribute__ctor_mB7CB7C52C930E48B8E02D3DD1B56B33DD237AD70_RuntimeMethod_var;
-IL2CPP_EXTERN_C const RuntimeMethod* RefSafetyRulesAttribute__ctor_m9995FDD7F67B5D671BBD100F259D1459DEB6BBA1_RuntimeMethod_var;
 
 
 IL2CPP_EXTERN_C_BEGIN
@@ -103,17 +101,9 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void Attribute__ctor_m79ED1BF1EE36D1E417BA89A
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 101933
+// Method Definition Index: 101266
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void EmbeddedAttribute__ctor_mB7CB7C52C930E48B8E02D3DD1B56B33DD237AD70 (EmbeddedAttribute_tA1999F07600214350453E5B01566D651097A2F89* __this, const RuntimeMethod* method) 
 {
-	static bool s_Il2CppMethodInitialized;
-	if (!s_Il2CppMethodInitialized)
-	{
-		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&EmbeddedAttribute__ctor_mB7CB7C52C930E48B8E02D3DD1B56B33DD237AD70_RuntimeMethod_var);
-		s_Il2CppMethodInitialized = true;
-	}
-	DECLARE_METHOD_EXEC_CTX(methodExecutionContext, EmbeddedAttribute__ctor_mB7CB7C52C930E48B8E02D3DD1B56B33DD237AD70_RuntimeMethod_var, NULL, NULL, NULL);
-	CHECK_PAUSE_POINT;
 	{
 		Attribute__ctor_m79ED1BF1EE36D1E417BA89A0D9F91F8AAD8D19E2(__this, NULL);
 		return;
@@ -127,17 +117,9 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void EmbeddedAttribute__ctor_mB7CB7C52C930E48
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 101934
+// Method Definition Index: 101267
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RefSafetyRulesAttribute__ctor_m9995FDD7F67B5D671BBD100F259D1459DEB6BBA1 (RefSafetyRulesAttribute_t2561E7F8EB1293C1444542D5A533B24932AD7895* __this, int32_t ___0_p, const RuntimeMethod* method) 
 {
-	static bool s_Il2CppMethodInitialized;
-	if (!s_Il2CppMethodInitialized)
-	{
-		il2cpp_codegen_initialize_runtime_metadata((uintptr_t*)&RefSafetyRulesAttribute__ctor_m9995FDD7F67B5D671BBD100F259D1459DEB6BBA1_RuntimeMethod_var);
-		s_Il2CppMethodInitialized = true;
-	}
-	DECLARE_METHOD_EXEC_CTX(methodExecutionContext, RefSafetyRulesAttribute__ctor_m9995FDD7F67B5D671BBD100F259D1459DEB6BBA1_RuntimeMethod_var, NULL, NULL, NULL);
-	CHECK_PAUSE_POINT;
 	{
 		Attribute__ctor_m79ED1BF1EE36D1E417BA89A0D9F91F8AAD8D19E2(__this, NULL);
 		int32_t L_0 = ___0_p;

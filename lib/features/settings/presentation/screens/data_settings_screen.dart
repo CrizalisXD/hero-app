@@ -11,6 +11,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/widgets/hero_button.dart';
 import '../../../auth/application/auth_notifier.dart';
+import '../../../auth/domain/models/auth_session.dart';
 import '../../data/account_lifecycle_repository.dart';
 
 class DataSettingsScreen extends ConsumerStatefulWidget {
@@ -85,10 +86,17 @@ class _DataSettingsScreenState extends ConsumerState<DataSettingsScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l.accountDeleteScheduled(dateStr))),
       );
-      // Sign out — even for guests, since user explicitly confirmed deletion.
-      await ref.read(authActionsProvider.notifier).signOut(
-            acknowledgeGuestDataLoss: true,
-          );
+      final session = ref.read(authSessionControllerProvider);
+      if (session is! GuestSession) {
+        // Email users sign out; signing in again within the grace window
+        // cancels the deletion (the confirm dialog promises exactly that).
+        await ref.read(authActionsProvider.notifier).signOut();
+      }
+      // Guests stay signed in: the anonymous session is the ONLY key to
+      // this account. Signing out would destroy the local guest identity
+      // and make the promised 30-day cancel window unreachable — a single
+      // confirmed tap would become irreversible. Re-opening the app
+      // cancels the deletion via the same sign-in rule.
     } catch (_) {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/services/supabase_service.dart';
 import '../../../../core/widgets/hero_button.dart';
 import '../../application/social_notifiers.dart';
 import '../../data/supabase_social_repository.dart';
@@ -21,6 +22,12 @@ class PublicProfileScreen extends ConsumerStatefulWidget {
 class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
   AsyncValue<PublicProfile> _profile = const AsyncLoading();
   bool _busy = false;
+
+  /// Viewing our own profile (deep link / feed self-entry): friend/block/
+  /// report affordances make no sense against yourself — hide them instead
+  /// of relying on the server's cannot_*_self errors.
+  bool get _isSelf =>
+      ref.read(supabaseClientProvider).auth.currentUser?.id == widget.userId;
 
   @override
   void initState() {
@@ -89,6 +96,9 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
       if (!mounted) return;
       ref.invalidate(friendsNotifierProvider);
       ref.invalidate(friendRequestsNotifierProvider);
+      // The feed too — otherwise the blocked user's already-loaded events
+      // stay visible for the rest of the session.
+      ref.invalidate(friendsFeedNotifierProvider);
       Navigator.of(context).pop();
     } on SocialFriendException catch (_) {
       if (!mounted) return;
@@ -110,19 +120,26 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
       appBar: AppBar(
         title: Text(l.publicProfileTitle),
         actions: [
-          _profile.maybeWhen(
-            data: (p) => PopupMenuButton<String>(
-              onSelected: (v) {
-                if (v == 'block') _block(p);
-                if (v == 'report') _report();
-              },
-              itemBuilder: (_) => [
-                PopupMenuItem(value: 'block', child: Text(l.friendActionBlock)),
-                PopupMenuItem(value: 'report', child: Text(l.friendActionReport)),
-              ],
+          if (!_isSelf)
+            _profile.maybeWhen(
+              data: (p) => PopupMenuButton<String>(
+                onSelected: (v) {
+                  if (v == 'block') _block(p);
+                  if (v == 'report') _report();
+                },
+                itemBuilder: (_) => [
+                  PopupMenuItem(
+                    value: 'block',
+                    child: Text(l.friendActionBlock),
+                  ),
+                  PopupMenuItem(
+                    value: 'report',
+                    child: Text(l.friendActionReport),
+                  ),
+                ],
+              ),
+              orElse: () => const SizedBox.shrink(),
             ),
-            orElse: () => const SizedBox.shrink(),
-          ),
         ],
       ),
       body: _profile.when(
@@ -191,13 +208,15 @@ class _PublicProfileScreenState extends ConsumerState<PublicProfileScreen> {
           Icons.emoji_events_outlined,
           l.publicProfileAchievementsCount(p.achievementsCount),
         ),
-        const SizedBox(height: 32),
-        HeroButton(
-          label: l.socialAddFriend,
-          icon: Icons.person_add_alt,
-          isLoading: _busy,
-          onPressed: _busy ? null : _sendRequest,
-        ),
+        if (!_isSelf) ...[
+          const SizedBox(height: 32),
+          HeroButton(
+            label: l.socialAddFriend,
+            icon: Icons.person_add_alt,
+            isLoading: _busy,
+            onPressed: _busy ? null : _sendRequest,
+          ),
+        ],
       ],
     );
   }

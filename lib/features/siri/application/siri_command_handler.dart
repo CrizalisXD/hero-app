@@ -6,6 +6,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../categories/application/category_classifier_service.dart';
 import '../../categories/application/xp_engine.dart';
 import '../../categories/data/categories_assets_repository.dart';
+import '../../categories/data/categories_db_repository.dart';
 import '../../categories/domain/models/category_id.dart';
 import '../../categories/domain/models/xp_inputs.dart';
 import '../../habits/application/habits_notifier.dart';
@@ -80,7 +81,10 @@ class SiriCommandHandler {
       final engine = XpEngine(bundle);
       final main =
           cls.isConfident ? cls.mainCategory : CategoryId.mind;
-      final baseXp = bundle.rulesFor(main)?.baseXp ?? bundle.defaultBaseXp;
+      // [D4] base_xp — из БД; серверный пересчёт всё равно главнее (D5).
+      final baseXpMap =
+          await _ref.read(categoryBaseXpProvider.future);
+      final baseXp = baseXpMap[main] ?? bundle.defaultBaseXp;
       final xp = engine.categoryXp(
         baseXp: baseXp,
         difficulty: TaskDifficulty.normal,
@@ -134,7 +138,10 @@ class SiriCommandHandler {
       final engine = XpEngine(bundle);
       final main =
           cls.isConfident ? cls.mainCategory : CategoryId.mind;
-      final baseXp = bundle.rulesFor(main)?.baseXp ?? bundle.defaultBaseXp;
+      // [D4] base_xp — из БД; серверный пересчёт всё равно главнее (D5).
+      final baseXpMap =
+          await _ref.read(categoryBaseXpProvider.future);
+      final baseXp = baseXpMap[main] ?? bundle.defaultBaseXp;
       final xp = engine.categoryXp(
         baseXp: baseXp,
         difficulty: TaskDifficulty.easy,
@@ -198,7 +205,25 @@ class SiriCommandHandler {
         );
         return;
       }
-      final target = matched.first;
+      // Completing a task awards XP/discipline with NO confirmation UI, so
+      // the voice payload must resolve to an unambiguous target. A short
+      // fragment ('a') substring-matching half the task list must not
+      // silently complete an arbitrary matched.first.
+      final exact = matched
+          .where((t) => t.title.toLowerCase().trim() == q)
+          .toList();
+      final target = exact.length == 1
+          ? exact.first
+          : (matched.length == 1 ? matched.first : null);
+      if (target == null) {
+        await logger.log(
+          intentName: 'complete_task',
+          transcript: query,
+          status: 'failed',
+          resultPayload: {'reason': 'ambiguous', 'matches': matched.length},
+        );
+        return;
+      }
       await _ref
           .read(tasksNotifierProvider.notifier)
           .completeTask(target.id);

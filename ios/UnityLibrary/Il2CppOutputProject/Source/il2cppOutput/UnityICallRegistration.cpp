@@ -502,10 +502,6 @@ void RegisterAllStrippedInternalCalls()
 		void Register_Unity_Profiling_ProfilerRecorder_GetValid_Injected();
 		Register_Unity_Profiling_ProfilerRecorder_GetValid_Injected();
 
-		//System.Int32 Unity.Profiling.ProfilerRecorder::CopyTo_Pointer_Injected(Unity.Profiling.ProfilerRecorder&,Unity.Profiling.ProfilerRecorderSample*,System.Int32,System.Boolean)
-		void Register_Unity_Profiling_ProfilerRecorder_CopyTo_Pointer_Injected();
-		Register_Unity_Profiling_ProfilerRecorder_CopyTo_Pointer_Injected();
-
 		//System.Int32 Unity.Profiling.ProfilerRecorder::GetCount_Injected(Unity.Profiling.ProfilerRecorder&,Unity.Profiling.ProfilerRecorder/CountOptions)
 		void Register_Unity_Profiling_ProfilerRecorder_GetCount_Injected();
 		Register_Unity_Profiling_ProfilerRecorder_GetCount_Injected();
@@ -1310,10 +1306,6 @@ void RegisterAllStrippedInternalCalls()
 		void Register_UnityEngine_ComputeShader_HasKernel_Injected();
 		Register_UnityEngine_ComputeShader_HasKernel_Injected();
 
-		//System.Boolean UnityEngine.ComputeShader::IsSupported_Injected(System.IntPtr,System.Int32)
-		void Register_UnityEngine_ComputeShader_IsSupported_Injected();
-		Register_UnityEngine_ComputeShader_IsSupported_Injected();
-
 		//System.Int32 UnityEngine.ComputeShader::FindKernel_Injected(System.IntPtr,UnityEngine.Bindings.ManagedSpanWrapper&)
 		void Register_UnityEngine_ComputeShader_FindKernel_Injected();
 		Register_UnityEngine_ComputeShader_FindKernel_Injected();
@@ -1812,18 +1804,6 @@ void RegisterAllStrippedInternalCalls()
 
 	//End Registrations for type : UnityEngine.Font
 
-	//Start Registrations for type : UnityEngine.FrameDebugger
-
-		//System.Boolean UnityEngine.FrameDebugger::IsLocalEnabled()
-		void Register_UnityEngine_FrameDebugger_IsLocalEnabled();
-		Register_UnityEngine_FrameDebugger_IsLocalEnabled();
-
-		//System.Boolean UnityEngine.FrameDebugger::IsRemoteEnabled()
-		void Register_UnityEngine_FrameDebugger_IsRemoteEnabled();
-		Register_UnityEngine_FrameDebugger_IsRemoteEnabled();
-
-	//End Registrations for type : UnityEngine.FrameDebugger
-
 	//Start Registrations for type : UnityEngine.FrameTimingManager
 
 		//System.UInt32 UnityEngine.FrameTimingManager::GetLatestTimings_Injected(System.UInt32,UnityEngine.Bindings.ManagedSpanWrapper&)
@@ -2169,10 +2149,6 @@ void RegisterAllStrippedInternalCalls()
 		//System.Void* UnityEngine.GraphicsBuffer::BeginBufferWrite_Injected(System.IntPtr,System.Int32,System.Int32)
 		void Register_UnityEngine_GraphicsBuffer_BeginBufferWrite_Injected();
 		Register_UnityEngine_GraphicsBuffer_BeginBufferWrite_Injected();
-
-		//UnityEngine.GraphicsBuffer/Target UnityEngine.GraphicsBuffer::get_target_Injected(System.IntPtr)
-		void Register_UnityEngine_GraphicsBuffer_get_target_Injected();
-		Register_UnityEngine_GraphicsBuffer_get_target_Injected();
 
 		//UnityEngine.GraphicsBuffer/UsageFlags UnityEngine.GraphicsBuffer::GetUsageFlags_Injected(System.IntPtr)
 		void Register_UnityEngine_GraphicsBuffer_GetUsageFlags_Injected();
@@ -4102,14 +4078,6 @@ void RegisterAllStrippedInternalCalls()
 
 	//Start Registrations for type : UnityEngine.Renderer
 
-		//System.Boolean UnityEngine.Renderer::get_enabled_Injected(System.IntPtr)
-		void Register_UnityEngine_Renderer_get_enabled_Injected();
-		Register_UnityEngine_Renderer_get_enabled_Injected();
-
-		//System.Boolean UnityEngine.Renderer::get_isPartOfStaticBatch_Injected(System.IntPtr)
-		void Register_UnityEngine_Renderer_get_isPartOfStaticBatch_Injected();
-		Register_UnityEngine_Renderer_get_isPartOfStaticBatch_Injected();
-
 		//System.Int32 UnityEngine.Renderer::get_sortingGroupID_Injected(System.IntPtr)
 		void Register_UnityEngine_Renderer_get_sortingGroupID_Injected();
 		Register_UnityEngine_Renderer_get_sortingGroupID_Injected();
@@ -4274,10 +4242,6 @@ void RegisterAllStrippedInternalCalls()
 		void Register_UnityEngine_Rendering_CommandBuffer_BeginSample_Injected();
 		Register_UnityEngine_Rendering_CommandBuffer_BeginSample_Injected();
 
-		//System.Void UnityEngine.Rendering.CommandBuffer::BeginSample_ProfilerMarker_Injected(System.IntPtr,System.IntPtr)
-		void Register_UnityEngine_Rendering_CommandBuffer_BeginSample_ProfilerMarker_Injected();
-		Register_UnityEngine_Rendering_CommandBuffer_BeginSample_ProfilerMarker_Injected();
-
 		//System.Void UnityEngine.Rendering.CommandBuffer::Blit_Texture_Injected(System.IntPtr,System.IntPtr,UnityEngine.Rendering.RenderTargetIdentifier&,System.IntPtr,System.Int32,UnityEngine.Vector2&,UnityEngine.Vector2&,System.Int32,System.Int32)
 		void Register_UnityEngine_Rendering_CommandBuffer_Blit_Texture_Injected();
 		Register_UnityEngine_Rendering_CommandBuffer_Blit_Texture_Injected();
@@ -4373,10 +4337,6 @@ void RegisterAllStrippedInternalCalls()
 		//System.Void UnityEngine.Rendering.CommandBuffer::EndSample_Injected(System.IntPtr,UnityEngine.Bindings.ManagedSpanWrapper&)
 		void Register_UnityEngine_Rendering_CommandBuffer_EndSample_Injected();
 		Register_UnityEngine_Rendering_CommandBuffer_EndSample_Injected();
-
-		//System.Void UnityEngine.Rendering.CommandBuffer::EndSample_ProfilerMarker_Injected(System.IntPtr,System.IntPtr)
-		void Register_UnityEngine_Rendering_CommandBuffer_EndSample_ProfilerMarker_Injected();
-		Register_UnityEngine_Rendering_CommandBuffer_EndSample_ProfilerMarker_Injected();
 
 		//System.Void UnityEngine.Rendering.CommandBuffer::IncrementUpdateCount_Injected(System.IntPtr,UnityEngine.Rendering.RenderTargetIdentifier&)
 		void Register_UnityEngine_Rendering_CommandBuffer_IncrementUpdateCount_Injected();

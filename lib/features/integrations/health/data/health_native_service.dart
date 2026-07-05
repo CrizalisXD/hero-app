@@ -144,6 +144,30 @@ class HealthNativeService {
       }
     }
 
+    // STEPS: raw samples overlap across sources (iPhone + Watch + apps),
+    // so the summation above double-counts. getTotalStepsInInterval lets
+    // the platform apply its own source dedup/priority — overwrite the
+    // summed value with the authoritative total per day (keeping the raw
+    // sum only as a fallback when the totals API fails).
+    for (var i = 0; i < days; i++) {
+      final dayStart = DateTime(now.year, now.month, now.day - (days - 1) + i);
+      final dayEnd = i == days - 1
+          ? endOfToday
+          : DateTime(dayStart.year, dayStart.month, dayStart.day, 23, 59, 59);
+      final key = dayStart.toIso8601String().split('T').first;
+      try {
+        final total = await Health().getTotalStepsInInterval(dayStart, dayEnd);
+        if (total != null && (total > 0 || byDate.containsKey(key))) {
+          byDate.putIfAbsent(
+            key,
+            () => {'steps': 0, 'distance': 0, 'workouts': 0},
+          )['steps'] = total;
+        }
+      } catch (e) {
+        debugPrint('getTotalStepsInInterval($key) failed: $e');
+      }
+    }
+
     return byDate.entries.map((e) {
       final d = DateTime.parse(e.key);
       return HealthDailyData(

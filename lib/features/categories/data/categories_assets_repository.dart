@@ -29,7 +29,6 @@ class CategoriesAssetsRepository {
         id: CategoryId.fromWire(m['id'] as String)!,
         color: m['color'] as String,
         icon: m['icon'] as String,
-        baseXp: (m['base_xp'] as num).toInt(),
         keywordsRu: _mapStringInt(keywords['ru']),
         keywordsEn: _mapStringInt(keywords['en']),
         excludeRu: _listString(excludes['ru']),
@@ -60,7 +59,6 @@ class CategoriesAssetsRepository {
       ),
       metaStats: MetaStatsRules(
         disciplineXp: _mapStringInt(meta['discipline_xp']),
-        streakRewards: _parseStreaks(meta['streak_rewards']),
       ),
     );
   }
@@ -88,21 +86,6 @@ class CategoriesAssetsRepository {
     return v.map((e) => e.toString()).toList();
   }
 
-  Map<String, StreakReward> _parseStreaks(dynamic v) {
-    if (v is! Map) return const <String, StreakReward>{};
-    return Map<String, StreakReward>.fromEntries(
-      v.entries.map((e) {
-        final m = e.value as Map<dynamic, dynamic>;
-        return MapEntry(
-          e.key.toString(),
-          StreakReward(
-            disciplineXp: (m['discipline_xp'] as num?)?.toInt() ?? 0,
-            coins: (m['coins'] as num?)?.toInt() ?? 0,
-          ),
-        );
-      }),
-    );
-  }
 }
 
 final categoriesAssetsRepositoryProvider =

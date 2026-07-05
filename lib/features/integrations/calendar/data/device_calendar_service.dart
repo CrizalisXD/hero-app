@@ -173,6 +173,33 @@ class DeviceCalendarService {
         .toList(growable: false);
   }
 
+  /// Returns the subset of [eventIds] that still exist in the calendar,
+  /// searched over a wide window (±years) — so an event merely rescheduled
+  /// outside the sync range doesn't read as deleted. On lookup failure we
+  /// err on the side of "still exists": never delete on doubt.
+  Future<Set<String>> existingEventIds(
+    String calendarId,
+    List<String> eventIds,
+  ) async {
+    if (eventIds.isEmpty) return const {};
+    try {
+      final now = DateTime.now();
+      final res = await _plugin.retrieveEvents(
+        calendarId,
+        RetrieveEventsParams(
+          eventIds: eventIds,
+          startDate: now.subtract(const Duration(days: 366)),
+          endDate: now.add(const Duration(days: 366 * 5)),
+        ),
+      );
+      final events = res.data ?? <Event>[];
+      return events.map((e) => e.eventId).whereType<String>().toSet();
+    } catch (e) {
+      debugPrint('existingEventIds err: $e');
+      return eventIds.toSet();
+    }
+  }
+
   /// Hard-delete an event by id. Returns true on success.
   Future<bool> deleteEvent(String calendarId, String eventId) async {
     try {

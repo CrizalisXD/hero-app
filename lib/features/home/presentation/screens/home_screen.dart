@@ -366,12 +366,13 @@ class _HeroLayer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Scale up anchored to the top edge so the hero grows downward (grounded
-    // near the floor) instead of bleeding up over the HUD.
-    return Transform.translate(
-      offset: const Offset(0, 24),
+    // Референс-композиция: герой меньше и в левой трети экрана, колесо
+    // действий свободно дышит справа. Сдвиг — в долях размера сцены
+    // (FractionalTranslation), чтобы держался на любых диагоналях.
+    return FractionalTranslation(
+      translation: const Offset(-0.15, 0.03),
       child: Transform.scale(
-        scale: 1.2,
+        scale: 0.9,
         alignment: Alignment.topCenter,
         child: HeroAvatarStage(avatar: avatar, level: level),
       ),

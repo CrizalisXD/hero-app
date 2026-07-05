@@ -35,7 +35,7 @@ class HabitsNotifier extends AsyncNotifier<HabitsView> {
     state = await AsyncValue.guard(_load);
   }
 
-  /// Optimistic insert: prepends the new habit to the list.
+  /// Inserts the created habit at the top of the list.
   Future<Habit?> createHabit(CreateHabitInput input) async {
     try {
       final created = await _repo.create(input);
@@ -44,8 +44,10 @@ class HabitsNotifier extends AsyncNotifier<HabitsView> {
         current.copyWith(habits: [created, ...current.habits]),
       );
       return created;
-    } catch (e, st) {
-      state = AsyncError(e, st);
+    } catch (_) {
+      // Keep the loaded list intact — one failed insert must not flip the
+      // whole screen into the error state. Callers surface a snackbar off
+      // the null return.
       return null;
     }
   }

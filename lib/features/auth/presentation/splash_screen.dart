@@ -51,6 +51,8 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     );
 
     String next;
+    var deletionCancelled = false;
+    var deletionCancelFailed = false;
     try {
       debugPrint('[splash] calling ensureBootstrap…');
       await Future.any([
@@ -59,20 +61,35 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       ]);
       debugPrint('[splash] ensureBootstrap done');
 
-      debugPrint('[splash] calling routeAfterAuth…');
-      next = await Future.any([
-        ref.read(authRouteServiceProvider).routeAfterAuth(),
-        watchdog,
+      debugPrint('[splash] calling decideAfterAuth…');
+      final decision = await Future.any([
+        ref.read(authRouteServiceProvider).decideAfterAuth(),
+        watchdog.then((path) => RoutingDecision(path: path)),
       ]);
-      debugPrint('[splash] routeAfterAuth returned: $next');
+      next = decision.path;
+      deletionCancelled = decision.deletionWasCancelled;
+      deletionCancelFailed = decision.deletionCancelFailed;
+      debugPrint('[splash] decideAfterAuth returned: $next');
     } catch (e, st) {
       debugPrint('[splash] error: $e\n$st');
       next = '/welcome';
     }
 
     if (!mounted) return;
+    // Capture before navigating away — the splash Scaffold unmounts.
+    final messenger = ScaffoldMessenger.of(context);
+    final l = context.l10n;
     debugPrint('[splash] context.go($next)');
     context.go(next);
+    if (deletionCancelled) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l.accountDeleteCancelled)),
+      );
+    } else if (deletionCancelFailed) {
+      messenger.showSnackBar(
+        SnackBar(content: Text(l.accountDeleteCancelFailed)),
+      );
+    }
   }
 
   @override

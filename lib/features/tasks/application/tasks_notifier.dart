@@ -162,21 +162,18 @@ class TodayTasksNotifier extends AsyncNotifier<List<Task>> {
     state = AsyncData(current.where((t) => t.id != taskId).toList());
   }
 
-  /// Undo for Today tab. Server reversal is delegated to
-  /// [TasksNotifier.uncompleteTask] via the screen.
-  Future<void> uncompleteTask(String taskId) async {
-    final previous = state.valueOrNull ?? const <Task>[];
-    final updated = previous.map((t) {
-      if (t.id != taskId) return t;
-      return t.copyWith(isDone: false, completedAt: null);
-    }).toList();
-    state = AsyncData(updated);
-    try {
-      await _repo.uncompleteTask(taskId);
-    } catch (_) {
-      state = AsyncData(previous);
-      rethrow;
-    }
+  /// Undo for Today tab — LOCAL state flip only. The server reversal is
+  /// delegated to [TasksNotifier.uncompleteTask] via the screen: calling
+  /// the uncomplete RPC from both notifiers would reverse the completion
+  /// (and its XP) twice.
+  void uncompleteTaskLocal(String taskId) {
+    final current = state.valueOrNull ?? const <Task>[];
+    state = AsyncData(
+      current.map((t) {
+        if (t.id != taskId) return t;
+        return t.copyWith(isDone: false, completedAt: null);
+      }).toList(),
+    );
   }
 }
 

@@ -20,6 +20,13 @@ class HealthScreen extends ConsumerWidget {
         .setConsent(ConsentKeys.integrationHealthRead, true);
 
     final ok = await ref.read(healthConnectionProvider.notifier).connect();
+    if (!ok) {
+      // Permission denied — revoke the pre-recorded consent so the ledger
+      // doesn't claim access that was never actually granted.
+      await ref
+          .read(userConsentsRepoProvider)
+          .setConsent(ConsentKeys.integrationHealthRead, false);
+    }
     if (!context.mounted) return;
     final l = context.l10n;
     ScaffoldMessenger.of(context).showSnackBar(

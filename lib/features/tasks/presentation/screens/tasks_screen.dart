@@ -105,15 +105,15 @@ class _TodayTab extends ConsumerWidget {
                 tasks: tasks,
                 onComplete: (id) => _handleComplete(context, ref, id),
                 onUncomplete: (id) async {
-                  // Tap or slide-action "Undo" — reverse the completion
-                  // both locally (in both notifiers) and on the server.
+                  // Tap or slide-action "Undo" — one server reversal (via
+                  // TasksNotifier), local flips in both notifiers.
                   try {
                     await ref
                         .read(tasksNotifierProvider.notifier)
                         .uncompleteTask(id);
-                    await ref
+                    ref
                         .read(todayTasksNotifierProvider.notifier)
-                        .uncompleteTask(id);
+                        .uncompleteTaskLocal(id);
                     ref.invalidate(homeNotifierProvider);
                   } catch (_) {}
                 },
@@ -211,11 +211,21 @@ class _AllTab extends ConsumerWidget {
                     await ref
                         .read(tasksNotifierProvider.notifier)
                         .uncompleteTask(id);
+                    // Keep the Today tab's cached copy in sync — otherwise
+                    // it still shows the task as done after this undo.
+                    ref
+                        .read(todayTasksNotifierProvider.notifier)
+                        .uncompleteTaskLocal(id);
                     ref.invalidate(homeNotifierProvider);
                   } catch (_) {}
                 },
-                onDelete: (id) =>
-                    ref.read(tasksNotifierProvider.notifier).deleteTask(id),
+                onDelete: (id) {
+                  // Mirror into both notifiers so Today and All stay in sync.
+                  ref
+                      .read(todayTasksNotifierProvider.notifier)
+                      .deleteTask(id);
+                  ref.read(tasksNotifierProvider.notifier).deleteTask(id);
+                },
               ),
             ),
     );
@@ -267,9 +277,9 @@ class _AllTab extends ConsumerWidget {
                   await ref
                       .read(tasksNotifierProvider.notifier)
                       .uncompleteTask(taskId);
-                  await ref
+                  ref
                       .read(todayTasksNotifierProvider.notifier)
-                      .uncompleteTask(taskId);
+                      .uncompleteTaskLocal(taskId);
                   ref.invalidate(homeNotifierProvider);
                 } catch (_) {}
               },

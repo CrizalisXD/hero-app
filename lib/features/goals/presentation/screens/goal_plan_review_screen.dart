@@ -201,6 +201,12 @@ class GoalPlanReviewScreen extends ConsumerWidget {
                 onPressed: (isConfirming || enabledStepCount == 0)
                     ? null
                     : () async {
+                        final notifier =
+                            ref.read(goalCreationProvider.notifier);
+                        // Claim the confirm transition BEFORE the async
+                        // energy gate — a double-tap must not run two
+                        // confirms (double goal + double energy charge).
+                        if (!notifier.beginConfirm()) return;
                         // Energy gate before we materialise the plan
                         // server-side. Cost is fixed at the goal tier;
                         // the AI-generated sub-tasks and habits don't
@@ -210,8 +216,12 @@ class GoalPlanReviewScreen extends ConsumerWidget {
                           ref,
                           EnergyCosts.goal,
                         );
-                        if (!paid || !context.mounted) return;
-                        await ref.read(goalCreationProvider.notifier).confirm();
+                        if (!paid) {
+                          notifier.cancelConfirm();
+                          return;
+                        }
+                        if (!context.mounted) return;
+                        await notifier.confirm();
                       },
               ),
               if (canRegenerate) ...[

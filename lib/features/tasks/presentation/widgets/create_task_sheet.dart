@@ -11,6 +11,7 @@ import '../../../../core/widgets/hero_button.dart';
 import '../../../categories/application/category_classifier_service.dart';
 import '../../../categories/application/xp_engine.dart';
 import '../../../categories/data/categories_assets_repository.dart';
+import '../../../categories/data/categories_db_repository.dart';
 import '../../../categories/domain/models/category_id.dart';
 import '../../../categories/domain/models/xp_inputs.dart';
 import '../../../energy/data/energy_service.dart';
@@ -155,10 +156,13 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
     final importance = cls?.suggestedImportance ?? TaskImportance.normal;
     final disciplineXp = cls?.suggestedDisciplineXp ?? 0;
 
+    // [D4] base_xp — из БД; [D5] xpReward здесь — только превью,
+    // сервер в complete_task пересчитает и перезапишет.
     final rulesBundle = ref.read(categoryRulesProvider).valueOrNull;
-    final int baseXp = rulesBundle?.rulesFor(mainCategory)?.baseXp ??
-        rulesBundle?.defaultBaseXp ??
-        20;
+    final int baseXp =
+        ref.read(categoryBaseXpProvider).valueOrNull?[mainCategory] ??
+            rulesBundle?.defaultBaseXp ??
+            20;
 
     final int xpReward = engine?.categoryXp(
           baseXp: baseXp,
@@ -168,14 +172,18 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
         ) ??
         baseXp;
 
-    // Energy gate — spend BEFORE we set _submitting=true so the user
-    // can keep editing if they don't have enough.
+    // Re-entrancy guard BEFORE the async energy gate — otherwise a rapid
+    // double-tap passes the `_submitting` check twice and spends energy
+    // twice. Reset on refusal so the user can keep editing.
+    setState(() => _submitting = true);
+
     final cost = EnergyCosts.forTaskDifficulty(difficulty.wire);
     final paid = await EnergyGuard.spendOrBlock(context, ref, cost);
-    if (!paid) return;
     if (!mounted) return;
-
-    setState(() => _submitting = true);
+    if (!paid) {
+      setState(() => _submitting = false);
+      return;
+    }
 
     final input = CreateTaskInput(
       title: title,

@@ -45,7 +45,12 @@ class AuthActions extends _$AuthActions {
     state = const AsyncLoading();
     try {
       final s = await _repo.signInWithEmail(email: email, password: password);
-      await _repo.ensureBootstrap();
+      // A bootstrap hiccup must not read as "sign-in failed" — the session
+      // is already established (the router will move the user on), and the
+      // splash screen re-runs ensureBootstrap anyway.
+      try {
+        await _repo.ensureBootstrap();
+      } catch (_) {}
       state = const AsyncData(null);
       return s;
     } catch (e, st) {
@@ -77,7 +82,12 @@ class AuthActions extends _$AuthActions {
     state = const AsyncLoading();
     try {
       final s = await _repo.signInAsGuest();
-      await _repo.ensureBootstrap();
+      // Same as signInWithEmail: the guest session already exists, splash
+      // retries ensureBootstrap — don't present a bootstrap hiccup as a
+      // failed sign-in.
+      try {
+        await _repo.ensureBootstrap();
+      } catch (_) {}
       state = const AsyncData(null);
       return s;
     } catch (e, st) {
@@ -88,7 +98,11 @@ class AuthActions extends _$AuthActions {
 
   /// Upgrades the current anonymous guest user to an email/password account.
   /// CRITICAL: keeps the same auth.users.id — all game data stays attached.
-  Future<EmailSession> upgradeGuestToEmail({
+  ///
+  /// Returns [SignUpResult.needsEmailConfirmation] when the email change is
+  /// pending a confirmation link — the UI must route to the email-confirm
+  /// screen, NOT report success.
+  Future<SignUpResult> upgradeGuestToEmail({
     required String email,
     required String password,
   }) async {

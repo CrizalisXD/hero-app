@@ -8,6 +8,7 @@ import '../../../../../core/l10n/l10n.dart';
 import '../../../categories/application/category_classifier_service.dart';
 import '../../../categories/application/xp_engine.dart';
 import '../../../categories/data/categories_assets_repository.dart';
+import '../../../categories/data/categories_db_repository.dart';
 import '../../../categories/domain/models/category_id.dart';
 import '../../../categories/domain/models/category_rules.dart';
 import '../../../categories/domain/models/xp_inputs.dart';
@@ -110,15 +111,19 @@ class _CreateHabitSheetState extends ConsumerState<CreateHabitSheet> {
     final title = _titleCtrl.text.trim();
     if (title.isEmpty || _submitting) return;
 
-    // Energy gate. Good habits cost more (longer commitment), bad
-    // habits a bit less.
+    // Re-entrancy guard BEFORE the async energy gate — otherwise a rapid
+    // double-tap passes the `_submitting` check twice and spends energy
+    // twice. Good habits cost more (longer commitment), bad a bit less.
+    setState(() => _submitting = true);
+
     final cost =
         _type == HabitType.bad ? EnergyCosts.habitBad : EnergyCosts.habitGood;
     final paid = await EnergyGuard.spendOrBlock(context, ref, cost);
-    if (!paid) return;
     if (!mounted) return;
-
-    setState(() => _submitting = true);
+    if (!paid) {
+      setState(() => _submitting = false);
+      return;
+    }
 
     final XpEngine? engine = ref.read(xpEngineProvider).valueOrNull;
     final CategoryRulesBundle? rulesBundle =
@@ -134,7 +139,9 @@ class _CreateHabitSheetState extends ConsumerState<CreateHabitSheet> {
     final duration = cls?.suggestedDuration ?? TaskDuration.short;
     final importance = cls?.suggestedImportance ?? TaskImportance.normal;
 
-    final int baseXp = rulesBundle?.rulesFor(main)?.baseXp ??
+    // [D4] base_xp — из БД; [D5] xpReward — только превью, сервер
+    // в complete_habit_checkin пересчитает и перезапишет.
+    final int baseXp = ref.read(categoryBaseXpProvider).valueOrNull?[main] ??
         rulesBundle?.defaultBaseXp ??
         20;
 

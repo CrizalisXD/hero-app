@@ -7,6 +7,7 @@ import '../../../core/widgets/hero_button.dart';
 import '../application/auth_error_l10n.dart';
 import '../application/auth_notifier.dart';
 import '../application/failure_mappers.dart';
+import '../domain/models/sign_up_result.dart';
 import 'widgets/auth_text_field.dart';
 
 /// Lets a guest (anonymous user) attach an email + password to keep
@@ -40,17 +41,28 @@ class _GuestUpgradeScreenState extends ConsumerState<GuestUpgradeScreen> {
       _error = null;
     });
     try {
-      await ref.read(authActionsProvider.notifier).upgradeGuestToEmail(
-            email: _email.text,
-            password: _pass.text,
-          );
+      final res =
+          await ref.read(authActionsProvider.notifier).upgradeGuestToEmail(
+                email: _email.text,
+                password: _pass.text,
+              );
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(context.l10n.guestUpgradeSuccess)),
-      );
-      // After upgrade, route back through splash so AuthRouteService
-      // re-evaluates onboarding_done with the (now email) session.
-      context.go('/splash');
+      switch (res) {
+        case SignUpConfirmed():
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(context.l10n.guestUpgradeSuccess)),
+          );
+          // After upgrade, route back through splash so AuthRouteService
+          // re-evaluates onboarding_done with the (now email) session.
+          context.go('/splash');
+        case SignUpNeedsEmailConfirmation(:final email):
+          // Email change is pending the confirmation link — the account
+          // stays a guest until it's clicked. Route to the confirm screen
+          // instead of falsely reporting success.
+          context.go(
+            '/auth/email-confirm?email=${Uri.encodeQueryComponent(email)}',
+          );
+      }
     } on AuthFailureException catch (e) {
       if (!mounted) return;
       setState(() => _error = e.kind.localized(context));

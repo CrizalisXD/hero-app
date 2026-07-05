@@ -161,8 +161,11 @@ class _GoalHeaderCard extends StatelessWidget {
     final tasksTotal = progress?.tasksTotal ?? 0;
     final msDone = progress?.milestonesDone ?? 0;
     final msTotal = progress?.milestonesTotal ?? 0;
-    final taskPct = tasksTotal == 0 ? 0.0 : tasksDone / tasksTotal;
-    final msPct = msTotal == 0 ? 0.0 : msDone / msTotal;
+    // Clamped: stale counters can briefly report done > total — the bar
+    // (and the % label) must not overflow past 100%.
+    final taskPct =
+        tasksTotal == 0 ? 0.0 : (tasksDone / tasksTotal).clamp(0.0, 1.0);
+    final msPct = msTotal == 0 ? 0.0 : (msDone / msTotal).clamp(0.0, 1.0);
 
     return HeroCard.hero(
       gradient: LinearGradient(

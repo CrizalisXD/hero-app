@@ -171,20 +171,33 @@ serve(async (req) => {
   if (message.length < 1) return bad('empty_message')
   const locale = payload.locale === 'en' ? 'en' : 'ru'
 
-  // 1) Daily limit check
+  // 1) Daily limit check — explicitly scoped to the caller. Never rely on
+  //    RLS alone for the counting query: with a permissive policy the cap
+  //    would silently become global across all users.
   const today = new Date().toISOString().slice(0, 10)
   const { count: requestsToday } = await client
     .from('ai_request_logs')
     .select('*', { count: 'exact', head: true })
+    .eq('user_id', uid)
     .eq('feature', 'chat')
     .eq('request_date', today)
   if ((requestsToday ?? 0) >= DAILY_LIMIT) {
     return bad('daily_limit_reached', 429)
   }
 
-  // 2) Ensure conversation
+  // 2) Ensure conversation. A client-supplied conversation_id must belong
+  //    to the caller — otherwise messages could be appended into / read
+  //    from another user's conversation wherever RLS is not airtight.
   let conversationId = payload.conversation_id
-  if (!conversationId) {
+  if (conversationId) {
+    const { data: conv } = await client
+      .from('ai_conversations')
+      .select('id')
+      .eq('id', conversationId)
+      .eq('user_id', uid)
+      .maybeSingle()
+    if (!conv) return bad('conversation_not_found', 404)
+  } else {
     const { data: conv, error: convErr } = await client
       .from('ai_conversations')
       .insert({ user_id: uid, context_type: 'general' })
@@ -218,7 +231,7 @@ serve(async (req) => {
     await Promise.all([
       client.from('users').select(
         'current_energy_level, current_time_commitment_minutes, current_main_obstacle, current_failure_reasons, current_support_style, current_life_change_areas',
-      ).single(),
+      ).eq('id', uid).single(),
       client.from('goals').select('id, title, main_category, target_date').eq('status', 'active').limit(3),
       client.from('tasks').select('id, title, main_category, is_done').eq('is_done', false).limit(5),
       client.from('habits').select('id, title, main_category, current_streak').eq('is_archived', false).limit(5),

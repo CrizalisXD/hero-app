@@ -108,15 +108,23 @@ class EnergyService {
     }
   }
 
-  /// Atomic spend. Throws PostgrestException on infra failures; returns
-  /// EnergySpendResult.ok=false when the user simply doesn't have
-  /// enough. The caller decides how to surface that to the UI.
+  /// Atomic spend. Throws PostgrestException on server errors (including
+  /// an unexpected payload shape); returns EnergySpendResult.ok=false when
+  /// the user simply doesn't have enough. The caller decides how to
+  /// surface that to the UI.
   Future<EnergySpendResult> spend(int amount) async {
     final raw = await _client.rpc<dynamic>(
       'spend_energy',
       params: {'p_amount': amount},
-    ) as Map<String, dynamic>;
-    return EnergySpendResult.fromJson(raw);
+    );
+    if (raw is! Map) {
+      // A malformed payload must NOT escape as a CastError — EnergyGuard
+      // fails open on unknown errors, which would make creates free.
+      throw PostgrestException(
+        message: 'spend_energy returned unexpected payload: $raw',
+      );
+    }
+    return EnergySpendResult.fromJson(Map<String, dynamic>.from(raw));
   }
 }
 

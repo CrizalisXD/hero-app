@@ -49,13 +49,15 @@ void main() {
       );
 
       // CRITICAL invariant: user_id MUST NOT have changed.
+      expect(after, isA<SignUpConfirmed>());
+      final confirmed = after as SignUpConfirmed;
       expect(
-        after.userId,
+        confirmed.userId,
         equals(guestId),
         reason: 'upgradeGuestToEmail must preserve user_id — '
             'all game data is keyed on auth.users.id',
       );
-      expect(after.email, equals('real-user@example.com'));
+      expect(confirmed.email, equals('real-user@example.com'));
 
       // And currentSession should now reflect EmailSession with same id.
       final post = repo.currentSession;
@@ -96,7 +98,7 @@ class _ContractAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<EmailSession> upgradeGuestToEmail({
+  Future<SignUpResult> upgradeGuestToEmail({
     required String email,
     required String password,
   }) async {
@@ -108,12 +110,12 @@ class _ContractAuthRepository implements AuthRepository {
     // The whole point: capture id BEFORE doing anything else.
     final id = s.userId;
 
-    // (simulated updateUser — no-op in this contract test)
+    // (simulated updateUser — no-op in this contract test; the email is
+    // treated as immediately confirmed)
     // (simulated profiles UPDATE — no-op)
 
-    final upgraded = EmailSession(userId: id, email: email);
-    _session = upgraded;
-    return upgraded;
+    _session = EmailSession(userId: id, email: email);
+    return SignUpResult.confirmed(userId: id, email: email);
   }
 
   // ── Unused in this test, but required by the interface. ──

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -6,8 +7,10 @@ import '../../goals/data/supabase_goals_repository.dart';
 import '../../goals/domain/models/goal.dart';
 import '../../goals/domain/models/goal_progress.dart';
 import '../../habits/data/supabase_habits_repository.dart';
+import '../../habits/domain/models/habit.dart';
 import '../../energy/data/energy_service.dart';
 import '../../tasks/data/supabase_tasks_repository.dart';
+import '../../tasks/domain/models/task.dart';
 import '../data/avatar_repository.dart';
 import '../data/character_stats_repository.dart';
 import '../domain/home_data.dart';
@@ -45,15 +48,18 @@ class HomeNotifier extends AsyncNotifier<HomeData> {
     // Idempotent within the hour; safe to call on every Home load.
     await ref.read(energyServiceProvider).regen();
 
-    // Parallel fetch of independent data sources
+    // Parallel fetch of independent data sources. Only character_stats is
+    // critical (Home can't render without level/XP); every secondary source
+    // gets a fallback so a single failing endpoint doesn't take down the
+    // whole dashboard. avatarRepo.getMy() has its own internal fallback.
     final results = await Future.wait<dynamic>([
-      _fetchUserRow(client),       // 0: display_name
-      charRepo.getMy(),            // 1: character_stats
+      _orElse(_fetchUserRow(client), const <String, dynamic>{}), // 0
+      charRepo.getMy(),            // 1: character_stats (critical)
       avatarRepo.getMy(),          // 2: avatar
-      tasksRepo.getTodayTasks(),   // 3: today pending tasks
-      habitsRepo.listActive(),     // 4: active habits
-      habitsRepo.habitIdsCheckedToday(), // 5: checked today
-      goalsRepo.fetchGoals(),      // 6: all goals
+      _orElse(tasksRepo.getTodayTasks(), const <Task>[]),  // 3
+      _orElse(habitsRepo.listActive(), const <Habit>[]),   // 4
+      _orElse(habitsRepo.habitIdsCheckedToday(), const <String>{}), // 5
+      _orElse(goalsRepo.fetchGoals(), const <Goal>[]),     // 6
     ]);
 
     final displayName =
@@ -61,11 +67,13 @@ class HomeNotifier extends AsyncNotifier<HomeData> {
             ?? 'Hero';
     final character = results[1] as CharacterStats;
     final avatar = results[2] as AvatarConfig;
+    // Filter completed BEFORE truncating — three already-done rows at the
+    // head of the list must not blank the Focus card while pending tasks
+    // exist further down.
     final todayTasks = (results[3] as List<dynamic>)
-        .cast<dynamic>()
+        .where((t) => (t as dynamic).isDone != true)
         .take(3)
-        .toList()
-        .cast<dynamic>();
+        .toList();
     final habits = (results[4] as List<dynamic>);
     final checkedToday = results[5] as Set<String>;
     final goals = (results[6] as List<dynamic>);
@@ -88,14 +96,21 @@ class HomeNotifier extends AsyncNotifier<HomeData> {
       displayName: displayName,
       character: character,
       avatar: avatar,
-      todayTasks: todayTasks.whereType<dynamic>()
-          .toList()
-          .cast(),
+      todayTasks: todayTasks.cast(),
       activeHabits: habits.cast(),
       habitsCheckedToday: checkedToday,
       activeGoal: activeGoal,
       activeGoalProgress: activeGoalProgress,
     );
+  }
+
+  /// Wraps a non-critical fetch with a fallback so one failing secondary
+  /// source degrades gracefully instead of erroring the whole Home load.
+  Future<T> _orElse<T>(Future<T> future, T fallback) {
+    return future.catchError((Object e) {
+      debugPrint('[home] secondary fetch failed: $e');
+      return fallback;
+    });
   }
 
   Future<Map<String, dynamic>> _fetchUserRow(SupabaseClient client) async {

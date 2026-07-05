@@ -25,6 +25,33 @@ class SupabaseSocialRepository {
   SupabaseSocialRepository(this._client);
   final SupabaseClient _client;
 
+  /// Stable codes the social RPCs raise with (the code IS the message).
+  static const _knownCodes = {
+    'rate_limited',
+    'already_pending',
+    'already_friends',
+    'blocked',
+    'not_found',
+    'cannot_friend_self',
+    'cannot_block_self',
+    'cannot_report_self',
+    'invalid_request',
+    'not_authenticated',
+  };
+
+  /// Extracts a stable error code from a Postgres exception so callers can
+  /// switch on it. Anything unrecognised maps to 'unknown' — raw
+  /// provider-specific text must never become the API surface (callers
+  /// matching on codes like 'blocked' would silently never match).
+  String _stableCode(PostgrestException e) {
+    final m = e.message.trim();
+    if (_knownCodes.contains(m)) return m;
+    for (final c in _knownCodes) {
+      if (m.contains(c)) return c;
+    }
+    return 'unknown';
+  }
+
   // ── Search & profile ──────────────────────────────────────────
   Future<List<PublicProfile>> search(String query) async {
     final rows = await _client
@@ -48,7 +75,7 @@ class SupabaseSocialRepository {
       }
       return PublicProfile.fromJson(res.cast<String, dynamic>());
     } on PostgrestException catch (e) {
-      throw SocialFriendException(e.message);
+      throw SocialFriendException(_stableCode(e));
     }
   }
 
@@ -77,7 +104,7 @@ class SupabaseSocialRepository {
         params: {'p_receiver_id': receiverId},
       );
     } on PostgrestException catch (e) {
-      throw SocialFriendException(e.message);
+      throw SocialFriendException(_stableCode(e));
     }
   }
 
@@ -92,7 +119,7 @@ class SupabaseSocialRepository {
       final m = res is Map ? res.cast<String, dynamic>() : const <String, dynamic>{};
       return UnlockedAchievement.listFromJson(m['unlocked_achievements']);
     } on PostgrestException catch (e) {
-      throw SocialFriendException(e.message);
+      throw SocialFriendException(_stableCode(e));
     }
   }
 
@@ -103,7 +130,7 @@ class SupabaseSocialRepository {
         params: {'p_request_id': requestId},
       );
     } on PostgrestException catch (e) {
-      throw SocialFriendException(e.message);
+      throw SocialFriendException(_stableCode(e));
     }
   }
 
@@ -114,7 +141,7 @@ class SupabaseSocialRepository {
         params: {'p_request_id': requestId},
       );
     } on PostgrestException catch (e) {
-      throw SocialFriendException(e.message);
+      throw SocialFriendException(_stableCode(e));
     }
   }
 
@@ -125,7 +152,7 @@ class SupabaseSocialRepository {
         params: {'p_friend_id': friendId},
       );
     } on PostgrestException catch (e) {
-      throw SocialFriendException(e.message);
+      throw SocialFriendException(_stableCode(e));
     }
   }
 
@@ -136,7 +163,7 @@ class SupabaseSocialRepository {
         params: {'p_user_id': userId},
       );
     } on PostgrestException catch (e) {
-      throw SocialFriendException(e.message);
+      throw SocialFriendException(_stableCode(e));
     }
   }
 
@@ -155,7 +182,7 @@ class SupabaseSocialRepository {
         },
       );
     } on PostgrestException catch (e) {
-      throw SocialFriendException(e.message);
+      throw SocialFriendException(_stableCode(e));
     }
   }
 

@@ -50,7 +50,6 @@ void main() {
   group('RU mind', () {
     test('читать книгу', () => expectMain('Прочитать 10 страниц книги', CategoryId.mind));
     test('учить английский', () => expectMain('Учить английские слова', CategoryId.mind));
-    test('медитация', () => expectMain('Медитация 10 минут', CategoryId.mind));
     test('программирование', () => expectMain('Решить задачу по программированию', CategoryId.mind));
     test('подкаст', () => expectMain('Послушать подкаст про науку', CategoryId.mind));
   });
@@ -66,6 +65,8 @@ void main() {
     test('пить воду', () => expectMain('Пить воду утром', CategoryId.health));
     test('поспать 8 часов', () => expectMain('Поспать 8 часов', CategoryId.health));
     test('к стоматологу', () => expectMain('Сходить к стоматологу', CategoryId.health));
+    // [D7] медитация — восстановление психики, не когнитивный вход.
+    test('медитация', () => expectMain('Медитация 10 минут', CategoryId.health));
   });
 
   group('RU social', () {
@@ -82,7 +83,8 @@ void main() {
 
   group('RU creativity', () {
     test('нарисовать скетч', () => expectMain('Нарисовать скетч', CategoryId.creativity));
-    test('написать главу книги → mind', () => expectMain('Написать главу книги', CategoryId.mind));
+    // [D7] создать текст — творческий выход, не обучение.
+    test('написать главу книги', () => expectMain('Написать главу книги', CategoryId.creativity));
     test('снять видео YouTube', () => expectMain('Снять видео на YouTube', CategoryId.creativity));
   });
 

@@ -127,7 +127,7 @@ class SupabaseAuthRepository implements AuthRepository {
   ///    is_guest = false, auth_provider = 'email', email = ...
   /// 4. user_id НЕ меняется — все habits/tasks/goals/XP остаются.
   @override
-  Future<EmailSession> upgradeGuestToEmail({
+  Future<SignUpResult> upgradeGuestToEmail({
     required String email,
     required String password,
   }) async {
@@ -145,9 +145,21 @@ class SupabaseAuthRepository implements AuthRepository {
 
     try {
       // (1) Bind email + password to the anonymous user — same user_id.
-      await _client.auth.updateUser(
+      final res = await _client.auth.updateUser(
         UserAttributes(email: trimmedEmail, password: password),
       );
+
+      // With "Confirm email" enabled (the Supabase default) the change is
+      // only PENDING at this point — a confirmation link was sent. Flipping
+      // the profile flags / clearing the local guest marker now would
+      // strand the account if the user signed out before confirming: the
+      // email can't sign in yet and the guest key would be gone. So we
+      // stop here; AuthRouteService._reconcileCompletedUpgrade finishes
+      // the flag flip on the first splash after the email is confirmed.
+      final confirmed = res.user?.emailConfirmedAt != null;
+      if (!confirmed) {
+        return SignUpResult.needsEmailConfirmation(email: trimmedEmail);
+      }
 
       // (2) Make sure bootstrap rows exist (idempotent — was guest before).
       await ensureBootstrap();
@@ -168,7 +180,7 @@ class SupabaseAuthRepository implements AuthRepository {
       // (5) No longer a guest — clear local guest flags.
       await guestStore.clearGuest();
 
-      return EmailSession(userId: userId, email: trimmedEmail);
+      return SignUpResult.confirmed(userId: userId, email: trimmedEmail);
     } on AuthException catch (e) {
       throw mapSupabaseAuthException(e);
     } on PostgrestException catch (e) {

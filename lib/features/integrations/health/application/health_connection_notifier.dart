@@ -45,6 +45,10 @@ class HealthConnection extends _$HealthConnection {
     return HealthConnectionState(connected: connected, today: today);
   }
 
+  /// Requests HealthKit / Health Connect access and runs a first sync.
+  /// Returns whether permission was GRANTED — "connected" tracks the
+  /// grant, not the first sync result: an empty or transiently failing
+  /// first sync must not present as "not connected" and re-prompt.
   Future<bool> connect() async {
     final current = state.value ?? HealthConnectionState.empty;
     state = AsyncData(current.copyWith(busy: true));
@@ -56,14 +60,13 @@ class HealthConnection extends _$HealthConnection {
       return false;
     }
 
-    final synced =
-        await ref.read(healthSyncServiceProvider).syncRecent(days: 7);
+    await ref.read(healthSyncServiceProvider).syncRecent(days: 7);
     final today =
         await ref.read(supabaseHealthRepositoryProvider).getToday();
     state = AsyncData(
-      HealthConnectionState(connected: synced, today: today),
+      HealthConnectionState(connected: true, today: today),
     );
-    return synced;
+    return true;
   }
 
   Future<void> syncNow() async {

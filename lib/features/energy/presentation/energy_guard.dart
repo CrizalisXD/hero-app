@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../core/l10n/l10n.dart';
@@ -26,10 +27,16 @@ class EnergyGuard {
       if (!context.mounted) return false;
       await _showNotEnoughDialog(context, res.energy, res.needed ?? amount);
       return false;
+    } on PostgrestException catch (e) {
+      // The server answered and errored/refused — fail CLOSED. Failing
+      // open here would hand out unlimited free creates for as long as
+      // the spend_energy RPC is broken (bad migration, RLS change, …),
+      // and energy is NOT re-checked server-side.
+      debugPrint('energy spend rejected: ${e.message}');
+      return false;
     } catch (e) {
-      // Infra failure — let the action through rather than blocking the
-      // user behind a server hiccup. The server-side check_and_unlock
-      // pipeline will still enforce no XP for ghosted creates.
+      // Transport-level failure (offline, timeout) — let the action
+      // through rather than blocking the user behind a network hiccup.
       debugPrint('energy spend infra err: $e');
       return true;
     }

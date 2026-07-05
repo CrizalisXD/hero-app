@@ -491,11 +491,9 @@ packages:
   flutter_unity_widget:
     dependency: "direct main"
     description:
-      path: "."
-      ref: "experimental/unity_6000"
-      resolved-ref: "83ba040aa69dc65afbdd7f39d35485310a65a9d6"
-      url: "https://github.com/juicycleff/flutter-unity-view-widget.git"
-    source: git
+      path: "third_party/flutter_unity_widget"
+      relative: true
+    source: path
     version: "6000.1.0"
   flutter_web_plugins:
     dependency: transitive

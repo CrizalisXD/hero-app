@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "default_base_xp": 20,
   "categories": [
     {
@@ -10,7 +10,6 @@
       "description_en": "Physical strength and muscle development.",
       "color": "#E54B4B",
       "icon": "dumbbell",
-      "base_xp": 20,
       "keywords": {
         "ru": {
           "штанг": 10,
@@ -102,7 +101,6 @@
       "description_en": "Reading, learning, mental development, meditation.",
       "color": "#5B6CFF",
       "icon": "brain",
-      "base_xp": 20,
       "keywords": {
         "ru": {
           "прочита": 10,
@@ -120,10 +118,6 @@
           "выучи": 9,
           "повтор": 5,
           "запомн": 6,
-          "медитац": 10,
-          "медитир": 10,
-          "осознанн": 7,
-          "практик": 5,
           "язык": 7,
           "англ": 7,
           "слов": 5,
@@ -133,11 +127,9 @@
           "програм": 9,
           "код": 7,
           "алгоритм": 8,
-          "задач": 4,
           "интеллект": 8,
           "мозг": 6,
           "размышл": 6,
-          "анализ": 6,
           "конспект": 8,
           "статья": 6,
           "подкаст": 7,
@@ -165,9 +157,6 @@
           "tutorial": 7,
           "exam": 7,
           "revise": 7,
-          "meditation": 10,
-          "meditate": 10,
-          "mindful": 8,
           "practice": 4,
           "language": 7,
           "english": 6,
@@ -190,7 +179,16 @@
           "notes": 5
         }
       },
-      "exclude_keywords": {}
+      "exclude_keywords": {
+        "ru": [
+          "медитац",
+          "нарисова",
+          "написа"
+        ],
+        "en": [
+          "meditat"
+        ]
+      }
     },
     {
       "id": "endurance",
@@ -200,7 +198,6 @@
       "description_en": "Cardio, running, swimming, cycling — long sustained efforts.",
       "color": "#23B07A",
       "icon": "activity",
-      "base_xp": 20,
       "keywords": {
         "ru": {
           "бег": 10,
@@ -302,7 +299,6 @@
       "description_en": "Sleep, nutrition, water, doctors, recovery.",
       "color": "#3DC9C2",
       "icon": "heart-pulse",
-      "base_xp": 20,
       "keywords": {
         "ru": {
           "сон": 10,
@@ -354,7 +350,11 @@
           "растяжк": 6,
           "йог": 7,
           "осанк": 7,
-          "дыхательн": 7
+          "дыхательн": 7,
+          "медитац": 10,
+          "медитир": 10,
+          "осознанн": 7,
+          "майндфулнес": 9
         },
         "en": {
           "sleep": 10,
@@ -401,7 +401,11 @@
           "yoga": 8,
           "posture": 7,
           "breathing": 7,
-          "mobility": 7
+          "mobility": 7,
+          "meditation": 10,
+          "meditate": 10,
+          "mindful": 8,
+          "mindfulness": 9
         }
       },
       "exclude_keywords": {}
@@ -414,7 +418,6 @@
       "description_en": "Relationships, communication, family, friends, networking.",
       "color": "#FFB547",
       "icon": "users",
-      "base_xp": 20,
       "keywords": {
         "ru": {
           "позвон": 10,
@@ -516,7 +519,6 @@
       "description_en": "Money, budget, savings, investments, payments.",
       "color": "#F2C94C",
       "icon": "wallet",
-      "base_xp": 20,
       "keywords": {
         "ru": {
           "деньг": 9,
@@ -622,7 +624,6 @@
       "description_en": "Creative practice: music, drawing, writing, design.",
       "color": "#BF7CFF",
       "icon": "palette",
-      "base_xp": 20,
       "keywords": {
         "ru": {
           "рисова": 10,
@@ -752,24 +753,6 @@
       "complete_all_daily_tasks": 10,
       "complete_habit": 4,
       "complete_before_deadline": 5
-    },
-    "streak_rewards": {
-      "7": {
-        "discipline_xp": 25,
-        "coins": 50
-      },
-      "14": {
-        "discipline_xp": 60,
-        "coins": 120
-      },
-      "30": {
-        "discipline_xp": 100,
-        "coins": 250
-      },
-      "100": {
-        "discipline_xp": 500,
-        "coins": 1500
-      }
     }
   },
   "xp_multipliers": {
