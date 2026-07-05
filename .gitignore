@@ -80,3 +80,13 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Unity project caches — регенерируются редактором, в git им не место
+unity/hero_unity/Library/
+unity/hero_unity/Temp/
+unity/hero_unity/Logs/
+unity/hero_unity/obj/
+unity/hero_unity/UserSettings/
+# Пребилт-рантайм Unity (221+ MB, > лимита GitHub) — воссоздаётся экспортом
+# из unity/hero_unity (Flutter → Export IOS, или batch-режимом Unity)
+ios/UnityLibrary/Frameworks/UnityRuntime.framework/
