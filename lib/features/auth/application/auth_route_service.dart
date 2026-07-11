@@ -64,7 +64,7 @@ class AuthRouteService {
     final profile =
         await _ref.read(profilesRepositoryProvider).getMyProfile();
     return RoutingDecision(
-      path: profile.onboardingDone ? '/home' : '/onboarding/life-change',
+      path: profile.onboardingDone ? '/home' : '/onboarding/name',
       deletionWasCancelled: deletionCancelled,
       deletionCancelFailed: deletionCancelFailed,
     );

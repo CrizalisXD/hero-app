@@ -4,9 +4,10 @@ import 'package:go_router/go_router.dart';
 
 import '../../../core/l10n/l10n.dart';
 import '../application/onboarding_controller.dart';
-import 'widgets/choice_chip_grid.dart';
 import 'widgets/onboarding_shell.dart';
+import 'widgets/selectable_card_grid.dart';
 
+/// Шаг 7: время в день.
 class TimeCommitmentScreen extends ConsumerStatefulWidget {
   const TimeCommitmentScreen({super.key});
 
@@ -16,41 +17,64 @@ class TimeCommitmentScreen extends ConsumerStatefulWidget {
 }
 
 class _TimeCommitmentScreenState extends ConsumerState<TimeCommitmentScreen> {
-  int _minutes = 0;
+  late String _selected;
 
   @override
   void initState() {
     super.initState();
-    _minutes = ref.read(onboardingControllerProvider).timeCommitmentMinutes;
+    _selected = ref
+        .read(onboardingControllerProvider)
+        .timeCommitmentMinutes
+        .toString();
   }
 
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
     final options = [
-      (key: '5', label: l.onboardingTime5min),
-      (key: '15', label: l.onboardingTime15min),
-      (key: '30', label: l.onboardingTime30min),
-      (key: '60', label: l.onboardingTime60min),
+      CardGridOption(
+        key: '5',
+        label: l.onboardingTime5min,
+        icon: Icons.bolt,
+        description: l.onboardingTime5Desc,
+      ),
+      CardGridOption(
+        key: '15',
+        label: l.onboardingTime15min,
+        icon: Icons.timer_outlined,
+        description: l.onboardingTime15Desc,
+      ),
+      CardGridOption(
+        key: '30',
+        label: l.onboardingTime30min,
+        icon: Icons.hourglass_bottom,
+        description: l.onboardingTime30Desc,
+      ),
+      CardGridOption(
+        key: '60',
+        label: l.onboardingTime60min,
+        icon: Icons.rocket_launch,
+        description: l.onboardingTime60Desc,
+      ),
     ];
 
     return OnboardingShell(
-      step: 4,
-      totalSteps: 9,
+      step: 7,
+      totalSteps: 12,
       title: l.onboardingTimeTitle,
       subtitle: l.onboardingTimeSubtitle,
-      continueEnabled: _minutes > 0,
       onBack: () => context.go('/onboarding/energy-level'),
       onContinue: () {
         ref
             .read(onboardingControllerProvider.notifier)
-            .setTimeCommitment(_minutes);
-        context.go('/onboarding/failure-reason');
+            .setTimeCommitment(int.parse(_selected));
+        context.go('/onboarding/preferred-time');
       },
-      content: ChoiceChipGrid(
+      content: SelectableCardGrid(
         options: options,
-        selected: _minutes > 0 ? {'$_minutes'} : {},
-        onToggle: (key) => setState(() => _minutes = int.parse(key)),
+        selected: {_selected},
+        aspectRatio: 1.05,
+        onToggle: (key) => setState(() => _selected = key),
       ),
     );
   }

@@ -9,6 +9,7 @@ import '../../categories/data/categories_assets_repository.dart';
 import '../../categories/data/categories_db_repository.dart';
 import '../../categories/domain/models/category_id.dart';
 import '../../categories/domain/models/xp_inputs.dart';
+import '../../energy/data/energy_service.dart';
 import '../../habits/application/habits_notifier.dart';
 import '../../habits/domain/models/create_habit_input.dart';
 import '../../tasks/application/tasks_notifier.dart';
@@ -62,6 +63,23 @@ class SiriCommandHandler {
     }
   }
 
+  /// Mirrors EnergyGuard.spendOrBlock for the headless voice path:
+  /// fail closed when the server refuses or errors, fail open only on
+  /// transport failures (offline/timeout). No dialog — callers log
+  /// `not_enough_energy` to voice_command_logs instead.
+  Future<bool> _spendEnergy(int amount) async {
+    try {
+      final res = await _ref.read(energyServiceProvider).spend(amount);
+      return res.ok;
+    } on PostgrestException catch (e) {
+      debugPrint('siri energy spend rejected: ${e.message}');
+      return false;
+    } catch (e) {
+      debugPrint('siri energy spend infra err: $e');
+      return true;
+    }
+  }
+
   Future<void> _createTask(String title) async {
     final logger = _ref.read(voiceCommandLogsRepositoryProvider);
     if (title.trim().length < 2) {
@@ -99,6 +117,15 @@ class SiriCommandHandler {
         importance: TaskImportance.normal,
         xpReward: xp,
       );
+      if (!await _spendEnergy(EnergyCosts.taskNormal)) {
+        await logger.log(
+          intentName: 'create_task',
+          transcript: title,
+          status: 'failed',
+          resultPayload: const {'reason': 'not_enough_energy'},
+        );
+        return;
+      }
       final task =
           await _ref.read(tasksNotifierProvider.notifier).createTask(input);
       await logger.log(
@@ -157,6 +184,15 @@ class SiriCommandHandler {
         xpReward: xp,
         disciplineXpReward: engine.disciplineXpForHabit(),
       );
+      if (!await _spendEnergy(EnergyCosts.habitGood)) {
+        await logger.log(
+          intentName: 'create_habit',
+          transcript: title,
+          status: 'failed',
+          resultPayload: const {'reason': 'not_enough_energy'},
+        );
+        return;
+      }
       final habit = await _ref
           .read(habitsNotifierProvider.notifier)
           .createHabit(input);
@@ -191,8 +227,10 @@ class SiriCommandHandler {
       return;
     }
     try {
-      final tasks =
-          _ref.read(tasksNotifierProvider).value ?? const [];
+      // Await the load rather than reading .value: on a Siri cold start
+      // the notifier hasn't fetched yet and .value would be an empty
+      // list → every voice completion logs 'no_match'.
+      final tasks = await _ref.read(tasksNotifierProvider.future);
       final matched = tasks
           .where((t) => !t.isDone && t.title.toLowerCase().contains(q))
           .toList();

@@ -1,14 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/feature_flags/feature_flag_keys.dart';
+import '../../../../core/feature_flags/feature_flag_providers.dart';
 import '../../../../core/l10n/l10n.dart';
 
-class SettingsScreen extends StatelessWidget {
+class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
+    // Gate feature rows at the source: a disabled feature must not be pushed,
+    // because the router redirect would bounce it back to '/home' — and with
+    // '/home' already at the base of the stack that collides page keys
+    // (Navigator "duplicate GlobalKey"). Hiding the row is the clean fix; the
+    // redirect stays as defense-in-depth for cold deep links.
+    final flags = ref.watch(featureFlagResolverOrFallbackProvider);
     return Scaffold(
       appBar: AppBar(title: Text(l.settingsTitle)),
       body: ListView(
@@ -37,30 +46,34 @@ class SettingsScreen extends StatelessWidget {
             label: l.settingsSectionPrivacy,
             to: '/settings/privacy',
           ),
-          _row(
-            context,
-            icon: Icons.favorite_outline,
-            label: l.healthScreenTitle,
-            to: '/settings/integrations/health',
-          ),
-          _row(
-            context,
-            icon: Icons.event_outlined,
-            label: l.calendarScreenTitle,
-            to: '/settings/integrations/calendar',
-          ),
-          _row(
-            context,
-            icon: Icons.mic_none_outlined,
-            label: l.siriScreenTitle,
-            to: '/settings/voice',
-          ),
-          _row(
-            context,
-            icon: Icons.sticky_note_2_outlined,
-            label: l.settingsNotesRow,
-            to: '/notes',
-          ),
+          if (flags.isEnabled(FeatureFlagKey.healthIntegrationEnabled))
+            _row(
+              context,
+              icon: Icons.favorite_outline,
+              label: l.healthScreenTitle,
+              to: '/settings/integrations/health',
+            ),
+          if (flags.isEnabled(FeatureFlagKey.calendarIntegrationEnabled))
+            _row(
+              context,
+              icon: Icons.event_outlined,
+              label: l.calendarScreenTitle,
+              to: '/settings/integrations/calendar',
+            ),
+          if (flags.isEnabled(FeatureFlagKey.siriShortcutsEnabled))
+            _row(
+              context,
+              icon: Icons.mic_none_outlined,
+              label: l.siriScreenTitle,
+              to: '/settings/voice',
+            ),
+          if (flags.isEnabled(FeatureFlagKey.notesEnabled))
+            _row(
+              context,
+              icon: Icons.sticky_note_2_outlined,
+              label: l.settingsNotesRow,
+              to: '/notes',
+            ),
           _row(
             context,
             icon: Icons.psychology_outlined,
@@ -73,12 +86,13 @@ class SettingsScreen extends StatelessWidget {
             label: l.settingsSectionDataExport,
             to: '/settings/data',
           ),
-          _row(
-            context,
-            icon: Icons.emoji_events_outlined,
-            label: l.rewardsTitle,
-            to: '/rewards',
-          ),
+          if (flags.isEnabled(FeatureFlagKey.rewardsEnabled))
+            _row(
+              context,
+              icon: Icons.emoji_events_outlined,
+              label: l.rewardsTitle,
+              to: '/rewards',
+            ),
           _row(
             context,
             icon: Icons.info_outline,

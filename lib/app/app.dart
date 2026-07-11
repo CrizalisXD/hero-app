@@ -87,8 +87,22 @@ class _HeroAppState extends ConsumerState<HeroApp>
       };
 
   Future<void> _maybeHandleSiri() async {
+    if (rootNavigatorKey.currentContext == null || !mounted) return;
+    // On a Siri-triggered cold start this fires on the very first frame,
+    // while SplashScreen is still deciding where to route. Handling now
+    // would consume the one-shot payload and then get stomped by the
+    // splash's own context.go(). Wait out the splash (its watchdog caps
+    // it at 30s) before consuming.
+    final router = ref.read(routerProvider);
+    var waitedMs = 0;
+    while (mounted &&
+        waitedMs < 35000 &&
+        router.routerDelegate.currentConfiguration.uri.path == '/splash') {
+      await Future<void>.delayed(const Duration(milliseconds: 250));
+      waitedMs += 250;
+    }
     final context = rootNavigatorKey.currentContext;
-    if (context == null || !mounted) return;
+    if (context == null || !context.mounted || !mounted) return;
     await ref.read(siriCommandHandlerProvider).handlePendingIfAny(context);
   }
 

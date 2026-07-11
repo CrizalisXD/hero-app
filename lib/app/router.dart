@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../core/feature_flags/feature_flag_keys.dart';
+import '../core/feature_flags/feature_flag_providers.dart';
 import '../features/ai_chat/presentation/screens/ai_chat_screen.dart';
 import '../features/auth/application/auth_notifier.dart';
 import '../features/auth/domain/models/auth_session.dart';
@@ -21,7 +23,7 @@ import '../features/habits/presentation/screens/habits_screen.dart'
     as habits_feature;
 import '../features/home/presentation/screens/home_screen.dart';
 import '../features/home/presentation/screens/home_shell.dart';
-import '../features/onboarding/presentation/avatar_intro_screen.dart';
+import '../features/onboarding/presentation/insight_screen.dart';
 import '../features/challenges/presentation/screens/challenge_detail_screen.dart';
 import '../features/challenges/presentation/screens/challenges_list_screen.dart';
 import '../features/challenges/presentation/screens/create_challenge_screen.dart';
@@ -49,9 +51,13 @@ import '../features/onboarding/presentation/habits_screen.dart'
     as onboarding_habits;
 import '../features/onboarding/presentation/life_change_screen.dart';
 import '../features/onboarding/presentation/main_obstacle_screen.dart';
+import '../features/onboarding/presentation/name_screen.dart';
+import '../features/onboarding/presentation/notifications_screen.dart';
+import '../features/onboarding/presentation/preferred_time_screen.dart';
 import '../features/onboarding/presentation/support_style_screen.dart';
 import '../features/onboarding/presentation/time_commitment_screen.dart';
 import '../features/tasks/presentation/screens/tasks_screen.dart';
+import '../features/wishlist/presentation/screens/wishlist_screen.dart';
 
 const _publicRoutes = <String>{
   '/splash',
@@ -59,6 +65,19 @@ const _publicRoutes = <String>{
   '/auth/sign-in',
   '/auth/sign-up',
   '/auth/email-confirm',
+};
+
+/// Роуты, закрытые фича-флагами. UI прячет входы, но deep link или
+/// ручная навигация обязаны упираться сюда же — гейт в redirect.
+/// Ключ — префикс локации, значение — флаг из public.feature_flags.
+const _gatedRoutePrefixes = <String, String>{
+  '/social': FeatureFlagKey.socialEnabled,
+  '/challenges': FeatureFlagKey.challengesEnabled,
+  '/rewards': FeatureFlagKey.rewardsEnabled,
+  '/notes': FeatureFlagKey.notesEnabled,
+  '/settings/integrations/health': FeatureFlagKey.healthIntegrationEnabled,
+  '/settings/integrations/calendar': FeatureFlagKey.calendarIntegrationEnabled,
+  '/settings/voice': FeatureFlagKey.siriShortcutsEnabled,
 };
 
 final _shellNavigatorKey = GlobalKey<NavigatorState>();
@@ -90,6 +109,14 @@ final routerProvider = Provider<GoRouter>((ref) {
           isPublic &&
           loc != '/auth/email-confirm') {
         return '/splash';
+      }
+
+      for (final gated in _gatedRoutePrefixes.entries) {
+        if (loc == gated.key || loc.startsWith('${gated.key}/')) {
+          final flags = ref.read(featureFlagResolverOrFallbackProvider);
+          if (!flags.isEnabled(gated.value)) return '/home';
+          break;
+        }
       }
 
       return null;
@@ -209,6 +236,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, __) => const RewardsScreen(),
       ),
 
+      // ── Wishlist «Хочу попробовать» ──
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/wishlist',
+        builder: (_, __) => const WishlistScreen(),
+      ),
+
       // ── Social modals (Phase 13) ──
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
@@ -240,14 +274,26 @@ final routerProvider = Provider<GoRouter>((ref) {
             ChallengeDetailScreen(challengeId: s.pathParameters['id']!),
       ),
 
-      // ── Onboarding (outside shell — no bottom nav) ──
+      // ── Onboarding v2 (outside shell — no bottom nav) ──
+      GoRoute(
+        path: '/onboarding/name',
+        builder: (_, __) => const NameScreen(),
+      ),
       GoRoute(
         path: '/onboarding/life-change',
         builder: (_, __) => const LifeChangeScreen(),
       ),
       GoRoute(
+        path: '/onboarding/insight',
+        builder: (_, __) => const InsightScreen(),
+      ),
+      GoRoute(
         path: '/onboarding/main-obstacle',
         builder: (_, __) => const MainObstacleScreen(),
+      ),
+      GoRoute(
+        path: '/onboarding/failure-reason',
+        builder: (_, __) => const FailureReasonScreen(),
       ),
       GoRoute(
         path: '/onboarding/energy-level',
@@ -258,8 +304,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, __) => const TimeCommitmentScreen(),
       ),
       GoRoute(
-        path: '/onboarding/failure-reason',
-        builder: (_, __) => const FailureReasonScreen(),
+        path: '/onboarding/preferred-time',
+        builder: (_, __) => const PreferredTimeScreen(),
       ),
       GoRoute(
         path: '/onboarding/support-style',
@@ -270,8 +316,8 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, __) => const onboarding_habits.HabitsScreen(),
       ),
       GoRoute(
-        path: '/onboarding/avatar-intro',
-        builder: (_, __) => const AvatarIntroScreen(),
+        path: '/onboarding/notifications',
+        builder: (_, __) => const NotificationsScreen(),
       ),
       GoRoute(
         path: '/onboarding/first-mission',

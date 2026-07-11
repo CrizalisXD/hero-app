@@ -42,6 +42,43 @@ const STARTER_HABITS: Record<string, {
     xp_reward: 15,
     discipline_xp_reward: 4,
   },
+  // Онбординг v2: динамический каталог по выбранным направлениям.
+  morning_stretch: {
+    title: 'Разминка 5 минут',
+    main_category: 'strength',
+    difficulty: 'easy',
+    duration: 'short',
+    importance: 'normal',
+    xp_reward: 15,
+    discipline_xp_reward: 4,
+  },
+  track_expenses: {
+    title: 'Записать расходы',
+    main_category: 'finance',
+    difficulty: 'easy',
+    duration: 'short',
+    importance: 'normal',
+    xp_reward: 15,
+    discipline_xp_reward: 4,
+  },
+  call_close_person: {
+    title: 'Позвонить близкому',
+    main_category: 'social',
+    difficulty: 'easy',
+    duration: 'short',
+    importance: 'normal',
+    xp_reward: 15,
+    discipline_xp_reward: 4,
+  },
+  sketch_10_min: {
+    title: 'Скетч 10 минут',
+    main_category: 'creativity',
+    difficulty: 'easy',
+    duration: 'short',
+    importance: 'normal',
+    xp_reward: 15,
+    discipline_xp_reward: 4,
+  },
 };
 
 serve(async (req: Request) => {
@@ -92,7 +129,11 @@ serve(async (req: Request) => {
       const n = typeof v === 'number' ? Math.round(v) : NaN;
       return Number.isFinite(n) ? Math.min(max, Math.max(min, n)) : dflt;
     };
-    const ALLOWED_SUPPORT_STYLES = ['direct', 'gentle', 'strict', 'analytical'];
+    // Полный набор, который умеет слать клиент (экран стиля коучинга) +
+    // legacy-значения из ai-chat.
+    const ALLOWED_SUPPORT_STYLES = [
+      'direct', 'gentle', 'humorous', 'neutral', 'strict', 'analytical',
+    ];
 
     const life_change_areas = asStringArray(body.life_change_areas);
     const main_obstacle =
@@ -113,6 +154,17 @@ serve(async (req: Request) => {
         ? body.support_style
         : '';
     const starter_habits = asStringArray(body.starter_habits, 10);
+    // Онбординг v2: имя героя и предпочитаемое время (дефолт напоминаний).
+    const display_name =
+      typeof body.display_name === 'string'
+        ? body.display_name.trim().slice(0, 30)
+        : '';
+    const ALLOWED_TIMES = ['morning', 'afternoon', 'evening'];
+    const preferred_time =
+      typeof body.preferred_time === 'string' &&
+      ALLOWED_TIMES.includes(body.preferred_time)
+        ? body.preferred_time
+        : null;
 
     // 1. Update current_* columns on public.users (not profiles)
     const { error: usersErr } = await supabase
@@ -134,6 +186,24 @@ serve(async (req: Request) => {
         JSON.stringify({ ok: false, error: 'Failed to update user' }),
         { status: 500, headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' } },
       );
+    }
+
+    // 1b. Онбординг v2 — best-effort, отдельными апдейтами: имя пишется
+    // всегда (колонка есть), preferred_focus_time может отсутствовать до
+    // применения миграции 20260705000001 — это не должно валить онбординг.
+    if (display_name) {
+      const { error: nameErr } = await supabase
+        .from('users')
+        .update({ display_name })
+        .eq('id', user.id);
+      if (nameErr) console.error('display_name update error:', nameErr);
+    }
+    if (preferred_time) {
+      const { error: timeErr } = await supabase
+        .from('users')
+        .update({ preferred_focus_time: preferred_time })
+        .eq('id', user.id);
+      if (timeErr) console.error('preferred_focus_time update error:', timeErr);
     }
 
     // 2. Create profile snapshot

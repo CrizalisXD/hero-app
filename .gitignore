@@ -90,3 +90,6 @@ unity/hero_unity/UserSettings/
 # Пребилт-рантайм Unity (221+ MB, > лимита GitHub) — воссоздаётся экспортом
 # из unity/hero_unity (Flutter → Export IOS, или batch-режимом Unity)
 ios/UnityLibrary/Frameworks/UnityRuntime.framework/
+# Burst debug-символы — Unity помечает как «DoNotShip», регенерируются
+# экспортом, только раздувают историю.
+ios/UnityLibrary/*BurstDebugInformation_DoNotShip/

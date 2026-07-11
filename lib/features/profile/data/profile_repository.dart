@@ -15,25 +15,61 @@ class ProfileRepository {
   }
 
   /// Pulls everything the profile screen needs in one parallel batch.
+  ///
+  /// Only character_stats is critical — without level/XP there is nothing
+  /// to render. If it is missing (fresh/just-switched session that beat
+  /// ensure_user_bootstrap), the idempotent bootstrap RPC runs once and the
+  /// batch refetches. Every other source degrades to defaults so a single
+  /// missing row can't take down the whole screen.
   Future<ProfileOverview> loadOverview() async {
+    try {
+      final overview = await _fetchOverview();
+      if (overview != null) return overview;
+    } catch (_) {/* fall through to the bootstrap retry */}
+    try {
+      await _client.rpc<dynamic>('ensure_user_bootstrap');
+    } catch (_) {/* let the refetch below surface the real error */}
+    final overview = await _fetchOverview();
+    if (overview == null) {
+      throw StateError('character_stats missing after bootstrap');
+    }
+    return overview;
+  }
+
+  Future<ProfileOverview?> _fetchOverview() async {
     final results = await Future.wait<dynamic>([
-      _client.from('users').select('display_name, email').single(),
+      _orElse<Map<String, dynamic>?>(
+        _client.from('users').select('display_name, email').maybeSingle(),
+        null,
+      ),
       _client
           .from('character_stats')
           .select('level, xp_current, xp_to_next, xp_total, energy, energy_max')
-          .single(),
-      _client.from('avatars').select('primary_color').single(),
-      _client.from('category_progress').select('category, xp_total, level'),
-      _client.from('meta_stats').select().single(),
+          .maybeSingle(),
+      _orElse<Map<String, dynamic>?>(
+        _client.from('avatars').select('primary_color').maybeSingle(),
+        null,
+      ),
+      _orElse<List<dynamic>>(
+        _client.from('category_progress').select('category, xp_total, level'),
+        const <dynamic>[],
+      ),
+      _orElse<Map<String, dynamic>?>(
+        _client.from('meta_stats').select().maybeSingle(),
+        null,
+      ),
     ]);
 
-    final userRow = results[0] as Map<String, dynamic>;
-    final stats = results[1] as Map<String, dynamic>;
-    final avatar = results[2] as Map<String, dynamic>;
+    final stats = results[1] as Map<String, dynamic>?;
+    if (stats == null) return null;
+
+    final userRow = results[0] as Map<String, dynamic>? ?? const {};
+    final avatar = results[2] as Map<String, dynamic>? ?? const {};
     final cats = (results[3] as List)
         .map((e) => CategoryProgress.fromJson(e as Map<String, dynamic>))
         .toList();
-    final meta = MetaStats.fromJson(results[4] as Map<String, dynamic>);
+    final meta =
+        MetaStats.fromJson(results[4] as Map<String, dynamic>? ?? const {});
 
     return ProfileOverview(
       displayName: userRow['display_name'] as String? ?? 'Hero',
@@ -48,6 +84,14 @@ class ProfileRepository {
       categories: cats,
       metaStats: meta,
     );
+  }
+
+  static Future<T> _orElse<T>(Future<T> future, T fallback) async {
+    try {
+      return await future;
+    } catch (_) {
+      return fallback;
+    }
   }
 
   Future<void> updateDisplayName(String name) async {

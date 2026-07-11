@@ -1236,14 +1236,6 @@ void RegisterAllStrippedInternalCalls()
 
 	//End Registrations for type : UnityEngine.ColorGamutUtility
 
-	//Start Registrations for type : UnityEngine.ColorUtility
-
-		//System.Boolean UnityEngine.ColorUtility::DoTryParseHtmlColor_Injected(UnityEngine.Bindings.ManagedSpanWrapper&,UnityEngine.Color32&)
-		void Register_UnityEngine_ColorUtility_DoTryParseHtmlColor_Injected();
-		Register_UnityEngine_ColorUtility_DoTryParseHtmlColor_Injected();
-
-	//End Registrations for type : UnityEngine.ColorUtility
-
 	//Start Registrations for type : UnityEngine.Component
 
 		//System.IntPtr UnityEngine.Component::get_gameObject_Injected(System.IntPtr)
@@ -4093,10 +4085,6 @@ void RegisterAllStrippedInternalCalls()
 		//System.Int32 UnityEngine.Renderer::get_sortingOrder_Injected(System.IntPtr)
 		void Register_UnityEngine_Renderer_get_sortingOrder_Injected();
 		Register_UnityEngine_Renderer_get_sortingOrder_Injected();
-
-		//System.IntPtr UnityEngine.Renderer::GetMaterial_Injected(System.IntPtr)
-		void Register_UnityEngine_Renderer_GetMaterial_Injected();
-		Register_UnityEngine_Renderer_GetMaterial_Injected();
 
 		//System.Void UnityEngine.Renderer::get_bounds_Injected(System.IntPtr,UnityEngine.Bounds&)
 		void Register_UnityEngine_Renderer_get_bounds_Injected();

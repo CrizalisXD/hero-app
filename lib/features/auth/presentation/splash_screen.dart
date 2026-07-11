@@ -41,12 +41,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     }
 
     // 30s watchdog — if ensureBootstrap / routeAfterAuth never returns,
-    // we'd otherwise be stuck on the splash forever.
+    // we'd otherwise be stuck on the splash forever. The session here is
+    // authenticated (unauthenticated returned above), so degrade to /home —
+    // /welcome would just get bounced back to /splash by the router's
+    // auth redirect, looping the hang. Home retries bootstrap itself.
     final watchdog = Future<String>.delayed(
       const Duration(seconds: 30),
       () {
-        debugPrint('[splash] watchdog fired — forcing /welcome');
-        return '/welcome';
+        debugPrint('[splash] watchdog fired — forcing /home');
+        return '/home';
       },
     );
 
@@ -72,7 +75,9 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       debugPrint('[splash] decideAfterAuth returned: $next');
     } catch (e, st) {
       debugPrint('[splash] error: $e\n$st');
-      next = '/welcome';
+      // Same reasoning as the watchdog: the session is authenticated, so
+      // land on Home (which retries bootstrap) instead of /welcome.
+      next = '/home';
     }
 
     if (!mounted) return;

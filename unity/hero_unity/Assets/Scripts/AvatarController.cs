@@ -146,12 +146,13 @@ public class AvatarController : MonoBehaviour
 
     private void ApplyTint(string hex)
     {
-        if (tintTarget == null || string.IsNullOrEmpty(hex)) return;
-        if (ColorUtility.TryParseHtmlString(hex, out var color))
-        {
-            // Instance the material so we don't edit the shared asset.
-            tintTarget.material.color = color;
-        }
+        // primaryColor is a UI ACCENT (profile ring, aura, HUD) — NOT a skin
+        // tint. Writing it into the body material's albedo painted the whole
+        // avatar green/purple. The imported model already ships natural
+        // materials (suit, skin), so we must leave them untouched. Kept as a
+        // no-op hook: if a dedicated accent renderer (aura/platform/rim) is
+        // wired up later, tint THAT here — never the body mesh.
+        return;
     }
 
     private void Send(string message)

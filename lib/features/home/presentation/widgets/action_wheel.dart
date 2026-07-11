@@ -34,9 +34,26 @@ class WheelItem {
 /// it carries momentum, snaps to a detent, and rubber-bands at the ends.
 /// Orbs away from the active zone peek (fade + scale down).
 class ActionWheel extends StatefulWidget {
-  const ActionWheel({super.key, required this.items});
+  const ActionWheel({super.key, required this.items, this.centerIndexAtStart});
 
   final List<WheelItem> items;
+
+  /// Which item index (fractional allowed) sits at the active zone (angle 0)
+  /// when the wheel first builds. Null keeps the list middle centred.
+  final double? centerIndexAtStart;
+
+  // Geometry. Matched to the Home reference image: the circle centre sits to
+  // the LEFT (behind the hero) and the visible arc bows out to the RIGHT, so
+  // the middle orbs bulge toward the right edge and the ends pull back left.
+  // (The TZ §4.1 "centre on the right" wording produces the mirror curve, so
+  // we follow the image.) Active zone is angle 0 — the rightmost point.
+  //
+  // Public: _OrbitBackArc on Home continues the same circle behind the hero,
+  // so both must share one geometry.
+  static const cxFactor = 0.0; // centre X at the left screen edge
+  static const cyFactor = 0.5;
+  static const rFactor = 0.85;
+  static const detent = 24 * math.pi / 180; // step between orbs
 
   @override
   State<ActionWheel> createState() => _ActionWheelState();
@@ -44,15 +61,10 @@ class ActionWheel extends StatefulWidget {
 
 class _ActionWheelState extends State<ActionWheel>
     with SingleTickerProviderStateMixin {
-  // Geometry. Matched to the Home reference image: the circle centre sits to
-  // the LEFT (behind the hero) and the visible arc bows out to the RIGHT, so
-  // the middle orbs bulge toward the right edge and the ends pull back left.
-  // (The TZ §4.1 "centre on the right" wording produces the mirror curve, so
-  // we follow the image.) Active zone is angle 0 — the rightmost point.
-  static const _cxFactor = 0.0; // centre X at the left screen edge
-  static const _cyFactor = 0.5;
-  static const _rFactor = 0.85;
-  static const _detent = 24 * math.pi / 180; // step between orbs
+  static const _cxFactor = ActionWheel.cxFactor;
+  static const _cyFactor = ActionWheel.cyFactor;
+  static const _rFactor = ActionWheel.rFactor;
+  static const _detent = ActionWheel.detent;
 
   late final AnimationController _ctrl;
   Animation<double>? _anim;
@@ -68,6 +80,11 @@ class _ActionWheelState extends State<ActionWheel>
   void initState() {
     super.initState();
     _ctrl = AnimationController(vsync: this);
+    final ci = widget.centerIndexAtStart;
+    if (ci != null) {
+      _rotation = (((widget.items.length - 1) / 2 - ci) * _detent)
+          .clamp(_minRotation, _maxRotation);
+    }
   }
 
   @override

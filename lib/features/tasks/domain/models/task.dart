@@ -106,6 +106,7 @@ class Task {
     Object? dueDate = _sentinel,
     Object? dueAt = _sentinel,
     Object? completedAt = _sentinel,
+    Object? externalCalendarEventId = _sentinel,
     DateTime? createdAt,
   }) {
     return Task(
@@ -131,6 +132,9 @@ class Task {
       completedAt: completedAt == _sentinel
           ? this.completedAt
           : completedAt as DateTime?,
+      externalCalendarEventId: externalCalendarEventId == _sentinel
+          ? this.externalCalendarEventId
+          : externalCalendarEventId as String?,
       createdAt: createdAt ?? this.createdAt,
     );
   }

@@ -20,7 +20,9 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   try {
-    await SupabaseService.init();
+    // Timeout: Supabase.initialize can hang on a bad network — without a
+    // cap the user stares at the native launch screen (white) forever.
+    await SupabaseService.init().timeout(const Duration(seconds: 12));
   } catch (e) {
     // Misconfigured env / failed init — show an explanation instead of
     // dying before the first frame with a blank screen.

@@ -1,26 +1,21 @@
 {
   "@@locale": "en",
   "appName": "Hero",
-  "@appName": { "description": "App name in stores and splash" },
-
+  "@appName": {
+    "description": "App name in stores and splash"
+  },
   "splashTagline": "Your life is the RPG",
   "@splashTagline": {},
-
   "splashLoading": "Loading…",
   "@splashLoading": {},
-
   "loadingGeneric": "Loading…",
   "@loadingGeneric": {},
-
   "errorGeneric": "Something went wrong. Try again.",
   "@errorGeneric": {},
-
   "errorNoInternet": "No connection. Check your internet.",
   "@errorNoInternet": {},
-
   "errorServerUnavailable": "Server is unavailable. Try later.",
   "@errorServerUnavailable": {},
-
   "welcomeTitle": "Your life. Your hero.",
   "@welcomeTitle": {},
   "welcomeSubtitle": "Real actions. Real progress. Real you.",
@@ -33,7 +28,6 @@
   "@welcomeSignUp": {},
   "welcomeGuestNote": "You can convert to an account later.",
   "@welcomeGuestNote": {},
-
   "signInTitle": "Welcome back",
   "@signInTitle": {},
   "signInEmailLabel": "Email",
@@ -48,7 +42,6 @@
   "@signInGoToSignUp": {},
   "signInForgotPassword": "Forgot password?",
   "@signInForgotPassword": {},
-
   "signUpTitle": "Create your account",
   "@signUpTitle": {},
   "signUpEmailLabel": "Email",
@@ -67,9 +60,12 @@
   "@signUpEmailConfirmTitle": {},
   "signUpEmailConfirmBody": "We sent a confirmation link to {email}. Open it to finish sign-up.",
   "@signUpEmailConfirmBody": {
-    "placeholders": { "email": { "type": "String" } }
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
   },
-
   "authErrorInvalidCredentials": "Wrong email or password.",
   "@authErrorInvalidCredentials": {},
   "authErrorEmailNotConfirmed": "Confirm your email — check your inbox.",
@@ -84,7 +80,6 @@
   "@authErrorGuestDisabled": {},
   "authErrorGeneric": "Couldn't sign in. Try again.",
   "@authErrorGeneric": {},
-
   "guestUpgradeTitle": "Save your progress",
   "@guestUpgradeTitle": {},
   "guestUpgradeSubtitle": "Add an email and password — your hero, habits, and XP all stay.",
@@ -105,7 +100,6 @@
   "@guestUpgradeSignOutWarningCancel": {},
   "guestUpgradeSignOutWarningConfirm": "Sign out anyway",
   "@guestUpgradeSignOutWarningConfirm": {},
-
   "onboardingContinue": "Continue",
   "@onboardingContinue": {},
   "onboardingBack": "Back",
@@ -114,7 +108,6 @@
   "@onboardingSkip": {},
   "onboardingSaveError": "Couldn't save profile. Try again.",
   "@onboardingSaveError": {},
-
   "onboardingLifeChangeTitle": "What do you want to change?",
   "@onboardingLifeChangeTitle": {},
   "onboardingLifeChangeSubtitle": "Pick one or more areas",
@@ -131,10 +124,9 @@
   "@onboardingAreaSocial": {},
   "onboardingAreaCreativity": "Creativity",
   "@onboardingAreaCreativity": {},
-
   "onboardingObstacleTitle": "What holds you back?",
   "@onboardingObstacleTitle": {},
-  "onboardingObstacleSubtitle": "Pick the biggest one",
+  "onboardingObstacleSubtitle": "Mark everything in the way — pick several",
   "@onboardingObstacleSubtitle": {},
   "onboardingObstacleNoDisc": "No discipline",
   "@onboardingObstacleNoDisc": {},
@@ -148,7 +140,6 @@
   "@onboardingObstacleNoPlan": {},
   "onboardingObstacleFear": "Fear of failure",
   "@onboardingObstacleFear": {},
-
   "onboardingEnergyTitle": "How's your energy?",
   "@onboardingEnergyTitle": {},
   "onboardingEnergySubtitle": "Rate your typical daily level",
@@ -163,7 +154,6 @@
   "@onboardingEnergyEnergized": {},
   "onboardingEnergyCharged": "Fully charged",
   "@onboardingEnergyCharged": {},
-
   "onboardingTimeTitle": "How much time per day?",
   "@onboardingTimeTitle": {},
   "onboardingTimeSubtitle": "How much you can commit to Hero",
@@ -176,7 +166,6 @@
   "@onboardingTime30min": {},
   "onboardingTime60min": "1 hour",
   "@onboardingTime60min": {},
-
   "onboardingFailureTitle": "Why do you usually quit?",
   "@onboardingFailureTitle": {},
   "onboardingFailureSubtitle": "Pick all that apply",
@@ -193,7 +182,6 @@
   "@onboardingFailureNoSupport": {},
   "onboardingFailureOther": "Something else",
   "@onboardingFailureOther": {},
-
   "onboardingSupportTitle": "How should Hero support you?",
   "@onboardingSupportTitle": {},
   "onboardingSupportSubtitle": "Choose your coaching style",
@@ -214,7 +202,6 @@
   "@onboardingSupportNeutral": {},
   "onboardingSupportNeutralDesc": "Facts only, no fluff",
   "@onboardingSupportNeutralDesc": {},
-
   "onboardingHabitsTitle": "Pick your starter habits",
   "@onboardingHabitsTitle": {},
   "onboardingHabitsSubtitle": "These will be your first quests",
@@ -225,21 +212,18 @@
   "@onboardingHabitRead10": {},
   "onboardingHabitWalk10": "Walk 10 minutes",
   "@onboardingHabitWalk10": {},
-
   "onboardingAvatarIntroTitle": "Your Hero is waiting",
   "@onboardingAvatarIntroTitle": {},
   "onboardingAvatarIntroBody": "Every great journey starts with a single step. You've told Hero what matters — now it's time to begin.",
   "@onboardingAvatarIntroBody": {},
   "onboardingAvatarIntroNext": "I'm ready",
   "@onboardingAvatarIntroNext": {},
-
   "onboardingFirstMissionTitle": "First mission",
   "@onboardingFirstMissionTitle": {},
   "onboardingFirstMissionBody": "Your profile is set. Your habits are chosen. One tap and your Hero comes to life.",
   "@onboardingFirstMissionBody": {},
   "onboardingFirstMissionCta": "Enter Hero",
   "@onboardingFirstMissionCta": {},
-
   "tasksTitle": "Tasks",
   "@tasksTitle": {},
   "tasksTabToday": "Today",
@@ -270,14 +254,12 @@
   "@createTaskDueDateLabel": {},
   "createTaskDueDateClear": "Clear",
   "@createTaskDueDateClear": {},
-
   "taskEditTitle": "Edit task",
   "@taskEditTitle": {},
   "taskEditSave": "Save",
   "@taskEditSave": {},
   "taskEditError": "Couldn't save changes. Try again.",
   "@taskEditError": {},
-
   "categoryStrength": "Strength",
   "@categoryStrength": {},
   "categoryMind": "Mind",
@@ -292,7 +274,6 @@
   "@categoryFinance": {},
   "categoryCreativity": "Creativity",
   "@categoryCreativity": {},
-
   "difficultyEasy": "Easy",
   "@difficultyEasy": {},
   "difficultyNormal": "Normal",
@@ -301,28 +282,24 @@
   "@difficultyHard": {},
   "difficultyEpic": "Epic",
   "@difficultyEpic": {},
-
   "durationShort": "Short",
   "@durationShort": {},
   "durationMedium": "Medium",
   "@durationMedium": {},
   "durationLong": "Long",
   "@durationLong": {},
-
   "importanceLow": "Low",
   "@importanceLow": {},
   "importanceNormal": "Normal",
   "@importanceNormal": {},
   "importanceHigh": "High",
   "@importanceHigh": {},
-
   "habitsTitle": "Habits",
   "@habitsTitle": {},
   "habitsEmpty": "No habits yet. Add a small one.",
   "@habitsEmpty": {},
   "habitsLoadError": "Couldn't load habits. Try again.",
   "@habitsLoadError": {},
-
   "habitsFabCreate": "Add",
   "@habitsFabCreate": {},
   "createHabitSheetTitle": "New habit",
@@ -337,25 +314,31 @@
   "@createHabitSubmit": {},
   "createHabitCreateError": "Couldn't save. Try again.",
   "@createHabitCreateError": {},
-
   "habitCheckinAction": "Check in",
   "@habitCheckinAction": {},
   "habitCheckedToday": "Done today",
   "@habitCheckedToday": {},
   "habitStreakDays": "{count, plural, =0{no streak} =1{1 day} other{{count} days}}",
   "@habitStreakDays": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "habitCheckinSuccessSnack": "+{xp} XP · {streak}",
   "@habitCheckinSuccessSnack": {
     "placeholders": {
-      "xp":     { "type": "int" },
-      "streak": { "type": "String" }
+      "xp": {
+        "type": "int"
+      },
+      "streak": {
+        "type": "String"
+      }
     }
   },
   "habitCheckinErrorSnack": "Couldn't check in. Try again.",
   "@habitCheckinErrorSnack": {},
-
   "habitDeleteAction": "Delete",
   "@habitDeleteAction": {},
   "habitDeleteConfirmTitle": "Delete habit?",
@@ -364,7 +347,6 @@
   "@habitDeleteConfirmBody": {},
   "habitDeleteCancel": "Cancel",
   "@habitDeleteCancel": {},
-
   "goalsTitle": "Goals",
   "@goalsTitle": {},
   "goalsEmpty": "No goals yet. Start a quest.",
@@ -373,7 +355,6 @@
   "@goalsLoadError": {},
   "goalsFabCreate": "New goal",
   "@goalsFabCreate": {},
-
   "goalCreateTitle": "New goal",
   "@goalCreateTitle": {},
   "goalCreateTitleLabel": "What's the goal?",
@@ -396,7 +377,11 @@
   "@goalCreateTimePerDayLabel": {},
   "goalCreateTimePerDay": "{min} min",
   "@goalCreateTimePerDay": {
-    "placeholders": { "min": { "type": "int" } }
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
   },
   "goalCreateCurrentLevelLabel": "Where are you now",
   "@goalCreateCurrentLevelLabel": {},
@@ -416,7 +401,6 @@
   "@goalCreateContinue": {},
   "goalCreateMakePlan": "Make plan",
   "@goalCreateMakePlan": {},
-
   "goalArchetypeScreenTitle": "Set up your goal",
   "@goalArchetypeScreenTitle": {},
   "goalArchetypePrompt": "What kind of goal is this?",
@@ -439,7 +423,6 @@
   "@goalArchetypeLifeChange": {},
   "goalArchetypeCustom": "Custom",
   "@goalArchetypeCustom": {},
-
   "goalPeriodLabel": "Plan period",
   "@goalPeriodLabel": {},
   "goalPeriod1Week": "1 week",
@@ -450,7 +433,6 @@
   "@goalPeriod3Months": {},
   "goalPeriodCustom": "Custom date",
   "@goalPeriodCustom": {},
-
   "goalPlanModeLabel": "How to build the plan",
   "@goalPlanModeLabel": {},
   "goalPlanModeAi": "AI Plan",
@@ -459,7 +441,6 @@
   "@goalPlanModeOwn": {},
   "goalPlanModeMixed": "Mixed",
   "@goalPlanModeMixed": {},
-
   "goalMoneyTargetAmountLabel": "Target amount",
   "@goalMoneyTargetAmountLabel": {},
   "goalMoneyCurrencyLabel": "Currency",
@@ -468,7 +449,6 @@
   "@goalEventDateLabel": {},
   "goalEventDatePick": "Pick date",
   "@goalEventDatePick": {},
-
   "goalPlanAddStep": "Add step",
   "@goalPlanAddStep": {},
   "goalPlanStepTitleLabel": "Title",
@@ -479,7 +459,6 @@
   "@goalPlanFrequencyLabel": {},
   "goalPlanEmptyOwn": "No steps yet. Add your first one.",
   "@goalPlanEmptyOwn": {},
-
   "goalPlanReviewTitle": "Your plan",
   "@goalPlanReviewTitle": {},
   "goalPlanReviewSummary": "Summary",
@@ -488,7 +467,11 @@
   "@goalPlanReviewSteps": {},
   "goalPlanReviewEstimated": "Estimated: {weeks} weeks",
   "@goalPlanReviewEstimated": {
-    "placeholders": { "weeks": { "type": "int" } }
+    "placeholders": {
+      "weeks": {
+        "type": "int"
+      }
+    }
   },
   "goalPlanStepTask": "Task",
   "@goalPlanStepTask": {},
@@ -502,7 +485,6 @@
   "@goalPlanReviewRegenerate": {},
   "goalPlanReviewBack": "Edit answers",
   "@goalPlanReviewBack": {},
-
   "goalAnalyzing": "Analyzing goal…",
   "@goalAnalyzing": {},
   "goalAnalyzeError": "Couldn't build a plan. Try again.",
@@ -511,21 +493,28 @@
   "@goalConfirming": {},
   "goalConfirmError": "Couldn't save the plan. Try again.",
   "@goalConfirmError": {},
-
   "goalDetailTitle": "Goal",
   "@goalDetailTitle": {},
   "goalDetailProgressTasks": "Tasks: {done}/{total}",
   "@goalDetailProgressTasks": {
     "placeholders": {
-      "done":  { "type": "int" },
-      "total": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "goalDetailProgressMilestones": "Milestones: {done}/{total}",
   "@goalDetailProgressMilestones": {
     "placeholders": {
-      "done":  { "type": "int" },
-      "total": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "goalDetailRelatedTasks": "Tasks",
@@ -534,7 +523,6 @@
   "@goalDetailRelatedHabits": {},
   "goalDetailRelatedMilestones": "Milestones",
   "@goalDetailRelatedMilestones": {},
-
   "goalStatusActive": "Active",
   "@goalStatusActive": {},
   "goalStatusCompleted": "Done",
@@ -553,25 +541,57 @@
   "@goalActionPause": {},
   "goalActionResume": "Resume goal",
   "@goalActionResume": {},
-
   "homeTitle": "Home",
   "@homeTitle": {},
   "homeGreetingMorning": "Good morning, {name}",
-  "@homeGreetingMorning": { "placeholders": { "name": { "type": "String" } } },
+  "@homeGreetingMorning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "homeGreetingDay": "Hi {name}",
-  "@homeGreetingDay": { "placeholders": { "name": { "type": "String" } } },
+  "@homeGreetingDay": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "homeGreetingEvening": "Evening, {name}",
-  "@homeGreetingEvening": { "placeholders": { "name": { "type": "String" } } },
+  "@homeGreetingEvening": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "homeGreetingNight": "Late hours, {name}",
-  "@homeGreetingNight": { "placeholders": { "name": { "type": "String" } } },
-
+  "@homeGreetingNight": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "homeLevel": "Level {level}",
-  "@homeLevel": { "placeholders": { "level": { "type": "int" } } },
+  "@homeLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
   "homeXpProgress": "{current}/{toNext} XP",
   "@homeXpProgress": {
     "placeholders": {
-      "current": { "type": "int" },
-      "toNext":  { "type": "int" }
+      "current": {
+        "type": "int"
+      },
+      "toNext": {
+        "type": "int"
+      }
     }
   },
   "homeEnergy": "Energy",
@@ -579,18 +599,20 @@
   "homeEnergyValue": "{cur}/{max}",
   "@homeEnergyValue": {
     "placeholders": {
-      "cur": { "type": "int" },
-      "max": { "type": "int" }
+      "cur": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
     }
   },
-
   "homeFocusTitle": "Today's focus",
   "@homeFocusTitle": {},
   "homeFocusEmpty": "Nothing for today. Add a task or check in a habit.",
   "@homeFocusEmpty": {},
   "homeFocusAddTask": "Add task",
   "@homeFocusAddTask": {},
-
   "homeBubbleTasks": "Tasks",
   "@homeBubbleTasks": {},
   "homeBubbleHabits": "Habits",
@@ -599,7 +621,6 @@
   "@homeBubbleGoals": {},
   "homeBubbleCoach": "Coach",
   "@homeBubbleCoach": {},
-
   "homeActiveGoal": "Active goal",
   "@homeActiveGoal": {},
   "homeActiveGoalNone": "No active goals yet.",
@@ -609,26 +630,32 @@
   "homeActiveGoalProgress": "{done}/{total}",
   "@homeActiveGoalProgress": {
     "placeholders": {
-      "done":  { "type": "int" },
-      "total": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
-
   "homePreviewMore": "All →",
   "@homePreviewMore": {},
-
   "homeError": "Couldn't load your data. Check connection.",
   "@homeError": {},
   "homeRetry": "Retry",
   "@homeRetry": {},
-
   "levelUpTitle": "Level up!",
   "@levelUpTitle": {},
   "levelUpSubtitle": "Now level {level}",
-  "@levelUpSubtitle": { "placeholders": { "level": { "type": "int" } } },
+  "@levelUpSubtitle": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
   "levelUpClose": "Awesome",
   "@levelUpClose": {},
-
   "navHome": "Home",
   "@navHome": {},
   "navTasks": "Tasks",
@@ -649,7 +676,6 @@
   "@navReminders": {},
   "comingSoon": "Coming soon",
   "@comingSoon": {},
-
   "aiChatTitle": "Coach",
   "@aiChatTitle": {},
   "aiChatEmptyTitle": "Talk to your coach",
@@ -668,7 +694,6 @@
   "@aiChatSendError": {},
   "aiChatLimitReached": "Daily message limit reached. Come back tomorrow.",
   "@aiChatLimitReached": {},
-
   "aiSuggestionTaskBadge": "Suggested task",
   "@aiSuggestionTaskBadge": {},
   "aiSuggestionHabitBadge": "Suggested habit",
@@ -677,7 +702,6 @@
   "@aiSuggestionAdd": {},
   "aiSuggestionDismiss": "Skip",
   "@aiSuggestionDismiss": {},
-
   "avatarScreenTitle": "Your hero",
   "@avatarScreenTitle": {},
   "avatarColorPickerTitle": "Pick your color",
@@ -688,21 +712,16 @@
   "@avatarSaveError": {},
   "avatarSaveSuccess": "Updated.",
   "@avatarSaveSuccess": {},
-
   "featureLockedTitle": "Not available yet",
   "@featureLockedTitle": {},
   "featureLockedBody": "This feature is being prepared. We'll let you know.",
   "@featureLockedBody": {},
-
   "signOut": "Sign out",
   "@signOut": {},
-
   "onboardingStubTitle": "Onboarding",
   "@onboardingStubTitle": {},
-
   "onboardingStubBody": "Onboarding will live here.",
   "@onboardingStubBody": {},
-
   "settingsTitle": "Settings",
   "@settingsTitle": {},
   "settingsSectionAccount": "Account",
@@ -719,7 +738,6 @@
   "@settingsSectionDataExport": {},
   "settingsSectionAbout": "About",
   "@settingsSectionAbout": {},
-
   "accountEmail": "Email",
   "@accountEmail": {},
   "accountGuestNotice": "You're in guest mode — your progress is saved.",
@@ -734,7 +752,6 @@
   "@accountSignOutCancel": {},
   "accountSignOutAction": "Sign out",
   "@accountSignOutAction": {},
-
   "languagePickerTitle": "App language",
   "@languagePickerTitle": {},
   "languageRu": "Русский",
@@ -745,7 +762,6 @@
   "@languageSystem": {},
   "languageSaveError": "Couldn't change language. Try again.",
   "@languageSaveError": {},
-
   "notifTitle": "Notifications",
   "@notifTitle": {},
   "notifTasks": "Task reminders",
@@ -758,7 +774,6 @@
   "@notifRoutines": {},
   "notifCoach": "Coach messages",
   "@notifCoach": {},
-
   "reminderSheetTitle": "Reminder",
   "@reminderSheetTitle": {},
   "reminderModeOnce": "One-time",
@@ -819,7 +834,6 @@
   "@notifPermissionDenied": {},
   "notifPermissionEnable": "Open Settings",
   "@notifPermissionEnable": {},
-
   "consentsTitle": "Privacy",
   "@consentsTitle": {},
   "consentsSectionAi": "What AI may use",
@@ -856,7 +870,6 @@
   "@consentIntegrationHealthRead": {},
   "consentIntegrationTasksSync": "Sync with external task apps",
   "@consentIntegrationTasksSync": {},
-
   "aiMemoryTitle": "AI Coach memory",
   "@aiMemoryTitle": {},
   "aiMemoryEnabledLabel": "Let AI remember things",
@@ -873,7 +886,6 @@
   "@aiMemoryClearError": {},
   "aiMemoryClearSuccess": "Memory erased.",
   "@aiMemoryClearSuccess": {},
-
   "dataExportTitle": "Export & delete",
   "@dataExportTitle": {},
   "dataExportDownload": "Download my data",
@@ -881,10 +893,15 @@
   "dataExportPreparing": "Preparing your data…",
   "@dataExportPreparing": {},
   "dataExportSaved": "Saved to {path}",
-  "@dataExportSaved": { "placeholders": { "path": { "type": "String" } } },
+  "@dataExportSaved": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
   "dataExportError": "Couldn't export. Try again.",
   "@dataExportError": {},
-
   "accountDeleteSection": "Danger zone",
   "@accountDeleteSection": {},
   "accountDelete": "Delete account",
@@ -898,23 +915,33 @@
   "accountDeleteCancel": "Cancel",
   "@accountDeleteCancel": {},
   "accountDeleteScheduled": "Deletion scheduled for {date}.",
-  "@accountDeleteScheduled": { "placeholders": { "date": { "type": "String" } } },
+  "@accountDeleteScheduled": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "accountDeleteError": "Couldn't request deletion. Try again.",
   "@accountDeleteError": {},
   "accountDeleteCancelled": "Deletion cancelled. Welcome back.",
   "@accountDeleteCancelled": {},
   "accountDeleteCancelFailed": "Couldn't cancel the account deletion — it is still scheduled. Check your connection and sign in again.",
   "@accountDeleteCancelFailed": {},
-
   "aboutVersion": "Version {version}",
-  "@aboutVersion": { "placeholders": { "version": { "type": "String" } } },
+  "@aboutVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "aboutPrivacyPolicy": "Privacy policy",
   "@aboutPrivacyPolicy": {},
   "aboutTermsOfService": "Terms of service",
   "@aboutTermsOfService": {},
   "aboutOpenSourceLicenses": "Open source licenses",
   "@aboutOpenSourceLicenses": {},
-
   "rewardsTitle": "Rewards",
   "@rewardsTitle": {},
   "rewardsTabAll": "All",
@@ -925,7 +952,6 @@
   "@rewardsTabLocked": {},
   "rewardsEmpty": "Earn your first achievement by completing a task.",
   "@rewardsEmpty": {},
-
   "rarityCommon": "Common",
   "@rarityCommon": {},
   "rarityRare": "Rare",
@@ -934,14 +960,18 @@
   "@rarityEpic": {},
   "rarityLegendary": "Legendary",
   "@rarityLegendary": {},
-
   "achievementUnlockedTitle": "Achievement unlocked",
   "@achievementUnlockedTitle": {},
   "achievementRewardXp": "+{xp} XP",
-  "@achievementRewardXp": { "placeholders": { "xp": { "type": "int" } } },
+  "@achievementRewardXp": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
   "achievementClose": "Awesome",
   "@achievementClose": {},
-
   "achievementStreak3Title": "Path Spark",
   "@achievementStreak3Title": {},
   "achievementStreak3Body": "3 days in a row",
@@ -958,7 +988,6 @@
   "@achievementStreak21Title": {},
   "achievementStreak21Body": "21 days of consistency",
   "@achievementStreak21Body": {},
-
   "achievementLevel5Title": "Path Rookie",
   "@achievementLevel5Title": {},
   "achievementLevel5Body": "Reach level 5",
@@ -971,7 +1000,6 @@
   "@achievementLevel30Title": {},
   "achievementLevel30Body": "Reach level 30",
   "@achievementLevel30Body": {},
-
   "achievementFirstGoalTitle": "First Quest",
   "@achievementFirstGoalTitle": {},
   "achievementFirstGoalBody": "Create your first goal",
@@ -980,7 +1008,6 @@
   "@achievementFirstGoalDoneTitle": {},
   "achievementFirstGoalDoneBody": "Complete a goal",
   "@achievementFirstGoalDoneBody": {},
-
   "achievementHabit7Title": "Weekly Rhythm",
   "@achievementHabit7Title": {},
   "achievementHabit7Body": "Hold a habit 7 days",
@@ -989,17 +1016,14 @@
   "@achievementHabit21Title": {},
   "achievementHabit21Body": "Hold a habit 21 days",
   "@achievementHabit21Body": {},
-
   "achievementTask100Title": "One Hundred Steps",
   "@achievementTask100Title": {},
   "achievementTask100Body": "Complete 100 tasks",
   "@achievementTask100Body": {},
-
   "achievementSocialFirstFriendTitle": "Ally Found",
   "@achievementSocialFirstFriendTitle": {},
   "achievementSocialFirstFriendBody": "Add your first friend",
   "@achievementSocialFirstFriendBody": {},
-
   "achievementChallengeFirstTitle": "Challenge Accepted",
   "@achievementChallengeFirstTitle": {},
   "achievementChallengeFirstBody": "Join a challenge",
@@ -1008,7 +1032,6 @@
   "@achievementChallengeCompleteTitle": {},
   "achievementChallengeCompleteBody": "Complete a challenge",
   "@achievementChallengeCompleteBody": {},
-
   "socialTitle": "Social",
   "@socialTitle": {},
   "navSocial": "Social",
@@ -1033,7 +1056,6 @@
   "@socialSearchHint": {},
   "socialSearchEmpty": "No one found.",
   "@socialSearchEmpty": {},
-
   "friendActionSend": "Send",
   "@friendActionSend": {},
   "friendActionAccept": "Accept",
@@ -1058,25 +1080,54 @@
   "@friendRequestExists": {},
   "friendActionError": "Couldn't do that. Try again.",
   "@friendActionError": {},
-
   "publicProfileTitle": "Profile",
   "@publicProfileTitle": {},
   "publicProfileLevel": "Level {level}",
-  "@publicProfileLevel": { "placeholders": { "level": { "type": "int" } } },
+  "@publicProfileLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
   "publicProfileStreak": "{days} day streak",
-  "@publicProfileStreak": { "placeholders": { "days": { "type": "int" } } },
+  "@publicProfileStreak": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "publicProfileAchievementsCount": "{count} achievements",
-  "@publicProfileAchievementsCount": { "placeholders": { "count": { "type": "int" } } },
-
+  "@publicProfileAchievementsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "feedAchievementUnlocked": "{name} earned «{title}»",
   "@feedAchievementUnlocked": {
-    "placeholders": { "name": { "type": "String" }, "title": { "type": "String" } }
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
   },
   "feedLevelUp": "{name} reached level {level}",
   "@feedLevelUp": {
-    "placeholders": { "name": { "type": "String" }, "level": { "type": "int" } }
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "level": {
+        "type": "int"
+      }
+    }
   },
-
   "reportTitle": "Report user",
   "@reportTitle": {},
   "reportReason": "Reason",
@@ -1097,19 +1148,22 @@
   "@reportSent": {},
   "reportRateLimited": "Too many reports today.",
   "@reportRateLimited": {},
-
   "blockConfirmTitle": "Block {name}?",
-  "@blockConfirmTitle": { "placeholders": { "name": { "type": "String" } } },
+  "@blockConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "blockConfirmBody": "They won't see your profile and can't find you.",
   "@blockConfirmBody": {},
   "blockConfirm": "Block",
   "@blockConfirm": {},
   "blockCancel": "Cancel",
   "@blockCancel": {},
-
   "consentSocialShowStreak": "Show streak to friends",
   "@consentSocialShowStreak": {},
-
   "challengesTitle": "Challenges",
   "@challengesTitle": {},
   "challengesAllTab": "All",
@@ -1135,19 +1189,34 @@
   "challengesProgressLabel": "{cur}/{target}",
   "@challengesProgressLabel": {
     "placeholders": {
-      "cur": { "type": "String" },
-      "target": { "type": "String" }
+      "cur": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
     }
   },
   "challengesDaysLeft": "{days} days left",
-  "@challengesDaysLeft": { "placeholders": { "days": { "type": "int" } } },
+  "@challengesDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "challengesDaysEnded": "Ended",
   "@challengesDaysEnded": {},
   "challengesActionError": "Couldn't do that. Try again.",
   "@challengesActionError": {},
   "challengesRewardCompleted": "Reward: +{xp} XP",
-  "@challengesRewardCompleted": { "placeholders": { "xp": { "type": "int" } } },
-
+  "@challengesRewardCompleted": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
   "challengeSevenDaysActivityTitle": "Seven days of action",
   "@challengeSevenDaysActivityTitle": {},
   "challengeSevenDaysActivityBody": "Complete at least 1 task each day for 7 days in a row.",
@@ -1156,10 +1225,8 @@
   "@challengeMonthlyStepsTitle": {},
   "challengeMonthlyStepsBody": "Walk or run 30 km in one month.",
   "@challengeMonthlyStepsBody": {},
-
   "navChallenges": "Quests",
   "@navChallenges": {},
-
   "healthScreenTitle": "Health",
   "@healthScreenTitle": {},
   "healthConnectTitle": "Connect Apple Health / Health Connect",
@@ -1183,16 +1250,33 @@
   "healthStatusNotConnected": "Not connected",
   "@healthStatusNotConnected": {},
   "healthTodaySteps": "{steps} steps today",
-  "@healthTodaySteps": { "placeholders": { "steps": { "type": "int" } } },
+  "@healthTodaySteps": {
+    "placeholders": {
+      "steps": {
+        "type": "int"
+      }
+    }
+  },
   "healthTodayDistance": "{km} km today",
-  "@healthTodayDistance": { "placeholders": { "km": { "type": "String" } } },
+  "@healthTodayDistance": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
   "healthLastSync": "Last sync: {when}",
-  "@healthLastSync": { "placeholders": { "when": { "type": "String" } } },
+  "@healthLastSync": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
   "healthAndroidNeedsHealthConnect": "Health Connect app is required. Open Play Store?",
   "@healthAndroidNeedsHealthConnect": {},
   "healthOpenPlayStore": "Open",
   "@healthOpenPlayStore": {},
-
   "calendarScreenTitle": "Calendar",
   "@calendarScreenTitle": {},
   "calendarConnectButton": "Connect calendar",
@@ -1213,7 +1297,6 @@
   "@calendarStatusConnected": {},
   "calendarStatusNotConnected": "Not connected",
   "@calendarStatusNotConnected": {},
-
   "siriScreenTitle": "Voice commands",
   "@siriScreenTitle": {},
   "siriIosOnlyNotice": "Voice commands work through Siri on iOS.",
@@ -1230,7 +1313,6 @@
   "@siriExampleShowToday": {},
   "siriExampleCreateHabit": "«Hey Siri, create a habit in Hero — read 10 pages»",
   "@siriExampleCreateHabit": {},
-
   "siriSettingsHowTitle": "How to use",
   "@siriSettingsHowTitle": {},
   "siriSettingsHowBody": "Say «Hey Siri» followed by any of the phrases below. The first time you use a command, iOS may ask you to record a sample.",
@@ -1243,7 +1325,6 @@
   "@siriCommandError": {},
   "siriCommandAuthRequired": "Sign in to Hero first.",
   "@siriCommandAuthRequired": {},
-
   "siriIntentCreateTaskTitle": "Add a task",
   "@siriIntentCreateTaskTitle": {},
   "siriIntentCreateTaskDescription": "Adds a task to your Hero list.",
@@ -1266,7 +1347,6 @@
   "@siriIntentShowTodayTitle": {},
   "siriIntentShowTodayDescription": "Opens Hero showing today's tasks.",
   "@siriIntentShowTodayDescription": {},
-
   "commonCancel": "Cancel",
   "@commonCancel": {},
   "commonSave": "Save",
@@ -1289,7 +1369,6 @@
   "@createTaskRecurringWeekly": {},
   "createTaskRecurringHint": "When you tick this task done, a fresh copy will appear for the next day. No streak, just a reminder loop.",
   "@createTaskRecurringHint": {},
-
   "notesTitle": "Notes",
   "@notesTitle": {},
   "notesPrivateTab": "Private",
@@ -1328,14 +1407,12 @@
   "@noteVisibilityAiAllowed": {},
   "noteVisibilityAiAllowedHint": "Coach may reference this note when “AI can use notes” is on.",
   "@noteVisibilityAiAllowedHint": {},
-
   "settingsNotesRow": "Notes",
   "@settingsNotesRow": {},
   "privacyAiCanUseNotesTitle": "AI can use notes",
   "@privacyAiCanUseNotesTitle": {},
   "privacyAiCanUseNotesBody": "When on, Coach may reference notes you marked “Shared with AI”. Private notes are always hidden.",
   "@privacyAiCanUseNotesBody": {},
-
   "habitTypeGood": "Build",
   "@habitTypeGood": {},
   "habitTypeBad": "Quit",
@@ -1348,16 +1425,23 @@
   "@habitSlipAction": {},
   "habitDaysCleanLabel": "{count, plural, =0{Day zero} =1{1 day clean} other{{count} days clean}}",
   "@habitDaysCleanLabel": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "habitSlipSnack": "Recorded. Tomorrow you start over.",
   "@habitSlipSnack": {},
-
   "profileTitle": "Profile",
   "@profileTitle": {},
   "profileXpTotal": "{xp} XP total",
   "@profileXpTotal": {
-    "placeholders": { "xp": { "type": "int" } }
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
   },
   "profileStatsSectionTitle": "Stats",
   "@profileStatsSectionTitle": {},
@@ -1381,17 +1465,19 @@
   "@profileEditDisplayName": {},
   "profileDisplayNameLabel": "Name",
   "@profileDisplayNameLabel": {},
-
   "energyNotEnoughTitle": "Not enough energy",
   "@energyNotEnoughTitle": {},
   "energyNotEnoughBody": "You have {have}, this needs {needed}. Finish today's tasks, check in habits, or wait — energy refills hourly and a fresh bonus comes with each new day.",
   "@energyNotEnoughBody": {
     "placeholders": {
-      "have": { "type": "int" },
-      "needed": { "type": "int" }
+      "have": {
+        "type": "int"
+      },
+      "needed": {
+        "type": "int"
+      }
     }
   },
-
   "challengesFilterAll": "All",
   "@challengesFilterAll": {},
   "challengesFilterWeekly": "Weekly",
@@ -1414,7 +1500,6 @@
   "@challengeSummer2026Title": {},
   "challengeSummer2026Body": "Complete 100 tasks before September.",
   "@challengeSummer2026Body": {},
-
   "challengeCreateTitle": "New challenge",
   "@challengeCreateTitle": {},
   "challengeCreateTitleLabel": "Title",
@@ -1443,7 +1528,86 @@
   "@challengeCreateInvalid": {},
   "challengeCreateError": "Couldn't create the challenge",
   "@challengeCreateError": {},
-
   "goalDetailNoSteps": "No steps yet. Try regenerating the AI plan.",
-  "@goalDetailNoSteps": {}
+  "@goalDetailNoSteps": {},
+  "onboardingStepLabel": "Step {step}",
+  "@onboardingStepLabel": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingNameTitle": "What should we call you?",
+  "onboardingNameSubtitle": "Your AI coach will address you by this name",
+  "onboardingNameHint": "Your name",
+  "onboardingNameNote": "You can change this anytime in your profile.",
+  "onboardingAreaStrength": "Strength",
+  "onboardingLifeChangeSubtitleV2": "Pick up to 3 areas — Hero will tailor your first quests to them",
+  "onboardingInsightTitle": "Hero got it",
+  "onboardingInsightTitleNamed": "{name}, Hero got it",
+  "@onboardingInsightTitleNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingInsightSubtitle": "Here's what we'll build from your answers",
+  "onboardingInsightPromise1": "A personal plan of small steps — no overload",
+  "onboardingInsightPromise2": "Quests and habits in your chosen areas",
+  "onboardingInsightPromise3": "Your hero grows with you — level by level",
+  "onboardingObstacleNoStart": "Don't know where to start",
+  "onboardingTime5Desc": "Warm-up",
+  "onboardingTime15Desc": "Steady pace",
+  "onboardingTime30Desc": "Serious mode",
+  "onboardingTime60Desc": "Full immersion",
+  "onboardingPreferredTitle": "When do you prefer to work on yourself?",
+  "onboardingPreferredSubtitle": "We'll tune reminders to your rhythm",
+  "onboardingPreferredMorning": "Morning",
+  "onboardingPreferredMorningDesc": "Before the day takes over",
+  "onboardingPreferredAfternoon": "Afternoon",
+  "onboardingPreferredAfternoonDesc": "At peak activity",
+  "onboardingPreferredEvening": "Evening",
+  "onboardingPreferredEveningDesc": "When things quiet down",
+  "onboardingHabitsSubtitleV2": "Picked for your areas. Choose 1–3 — your first quests",
+  "onboardingHabitStretch": "5-minute stretch",
+  "onboardingHabitExpenses": "Log expenses",
+  "onboardingHabitCall": "Call someone close",
+  "onboardingHabitSketch": "10-minute sketch",
+  "onboardingNotifTitle": "Don't let habits fade",
+  "onboardingNotifSubtitle": "Hero will nudge you at the right moment — gently and on time",
+  "onboardingNotifEnable": "Enable reminders",
+  "onboardingNotifLater": "Later",
+  "onboardingNotifBenefit1": "Habit reminders at your preferred time",
+  "onboardingNotifBenefit2": "Never lose a streak to a forgotten check-in",
+  "onboardingNotifBenefit3": "No spam — only your quests",
+  "onboardingFirstMissionTitleNamed": "{name}, your Hero is ready",
+  "@onboardingFirstMissionTitleNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "wishlistTitle": "Want to try",
+  "wishlistCaptureHint": "What do you want to try?",
+  "wishlistAddError": "Couldn't save. Try again.",
+  "wishlistLoadError": "Couldn't load the list.",
+  "wishlistTriedSection": "TRIED",
+  "wishlistActionToTask": "To task",
+  "wishlistActionTried": "Done",
+  "wishlistActionUntried": "Undo",
+  "wishlistInTasks": "→ already in tasks",
+  "wishlistConverted": "“{title}” is now a task",
+  "@wishlistConverted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "wishlistConvertError": "Couldn't create the task.",
+  "wishlistEmptyTitle": "Catch ideas on the fly",
+  "wishlistEmptyBody": "Pottery, climbing, a new language — drop everything you'd like to try someday. No strings attached."
 }

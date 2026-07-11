@@ -1,3 +1,4 @@
+import 'dart:math' as math;
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
@@ -6,6 +7,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/l10n/l10n.dart';
 import '../../../../../app/theme/app_colors.dart';
+import '../../../../../core/feature_flags/feature_flag_keys.dart';
+import '../../../../../core/feature_flags/feature_flag_providers.dart';
 import '../../../../../core/widgets/animated_fill_bar.dart';
 import '../../application/home_notifier.dart';
 import '../../data/avatar_repository.dart';
@@ -15,6 +18,7 @@ import '../widgets/action_wheel.dart';
 import '../widgets/hero_avatar_stage.dart';
 import '../widgets/home_error_state.dart';
 import '../widgets/home_skeleton.dart';
+import '../widgets/quest_arc_painter.dart';
 
 /// Immersive RPG home (Quest Map): a cinematic full-screen backdrop, a compact
 /// HUD with the hero avatar at the top, four quest-map nodes connected by a
@@ -65,59 +69,52 @@ class _ImmersiveHome extends StatefulWidget {
 }
 
 class _ImmersiveHomeState extends State<_ImmersiveHome> {
-  bool _visible = false;
-
-  @override
-  void initState() {
-    super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) setState(() => _visible = true);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.expand,
       children: [
         const Positioned.fill(child: _CinematicBackground()),
+        // ВАЖНО: НЕ оборачивать это поддерево в Opacity/AnimatedOpacity —
+        // внутри platform view (Unity), и opacity-группа заставляет движок
+        // компоновать регион в оверлей с непрозрачным чёрным фоном
+        // (это и был «чёрный квадрат» за аватаром).
         Positioned.fill(
-          child: AnimatedOpacity(
-            opacity: _visible ? 1.0 : 0.0,
-            duration: const Duration(milliseconds: 450),
-            curve: Curves.easeOut,
-            child: Stack(
-              children: [
-                SafeArea(
-                  bottom: false,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      _CompactHud(
-                        displayName: widget.data.displayName,
-                        character: widget.data.character,
-                        avatar: widget.data.avatar,
+          child: Stack(
+            children: [
+              SafeArea(
+                bottom: false,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _CompactHud(
+                      displayName: widget.data.displayName,
+                      character: widget.data.character,
+                      avatar: widget.data.avatar,
+                    ),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: Stack(
+                        fit: StackFit.expand,
+                        children: [
+                          // Dim continuation of the wheel's circle drawn UNDER
+                          // the hero — the orbit reads as a ring that passes
+                          // behind the character (reference composition).
+                          const _OrbitBackArc(),
+                          // 3D Unity hero (or placeholder) behind the nodes.
+                          _HeroLayer(
+                            avatar: widget.data.avatar,
+                            level: widget.data.character.level,
+                          ),
+                          _QuestMap(data: widget.data),
+                        ],
                       ),
-                      const SizedBox(height: 8),
-                      Expanded(
-                        child: Stack(
-                          fit: StackFit.expand,
-                          children: [
-                            // 3D Unity hero (or placeholder) behind the nodes.
-                            _HeroLayer(
-                              avatar: widget.data.avatar,
-                              level: widget.data.character.level,
-                            ),
-                            _QuestMap(data: widget.data),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                _FocusCard(data: widget.data),
-              ],
-            ),
+              ),
+              _FocusCard(data: widget.data),
+            ],
           ),
         ),
       ],
@@ -188,7 +185,7 @@ class _CinematicBackground extends StatelessWidget {
 
 // ── Compact HUD ──────────────────────────────────────────────────────────
 
-class _CompactHud extends StatelessWidget {
+class _CompactHud extends ConsumerWidget {
   const _CompactHud({
     required this.displayName,
     required this.character,
@@ -200,8 +197,11 @@ class _CompactHud extends StatelessWidget {
   final AvatarConfig avatar;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
+    final socialOn = ref
+        .watch(featureFlagResolverOrFallbackProvider)
+        .isEnabled(FeatureFlagKey.socialEnabled);
     final lowEnergy = character.energyProgress < 0.25;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 12, 0),
@@ -254,11 +254,15 @@ class _CompactHud extends StatelessWidget {
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(
-                icon: const Icon(Icons.mail_outline, color: Colors.white),
-                tooltip: l.navSocial,
-                onPressed: () => context.push('/social'),
-              ),
+              if (socialOn)
+                IconButton(
+                  icon: const Icon(
+                    Icons.people_alt_outlined,
+                    color: Colors.white,
+                  ),
+                  tooltip: l.navSocial,
+                  onPressed: () => context.push('/social'),
+                ),
               IconButton(
                 icon: const Icon(Icons.settings_outlined, color: Colors.white),
                 tooltip: l.settingsTitle,
@@ -382,18 +386,23 @@ class _HeroLayer extends StatelessWidget {
 
 // ── Action wheel ───────────────────────────────────────────────────────────
 
-class _QuestMap extends StatelessWidget {
+class _QuestMap extends ConsumerWidget {
   const _QuestMap({required this.data});
   final HomeData data;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l = context.l10n;
+    final flags = ref.watch(featureFlagResolverOrFallbackProvider);
     final habitsPending = data.activeHabits
         .where((h) => !data.habitsCheckedToday.contains(h.id))
         .length;
+    final tasksPending = data.todayTasks.where((t) => !t.isDone).length;
     final active = _activeNodeId(data);
 
+    // Core loop first (visible at start), long-tail modules further along
+    // the wheel. Flag-gated modules drop out entirely when disabled — the
+    // router redirect enforces the same rule for deep links.
     final items = <WheelItem>[
       WheelItem(
         icon: Icons.flag_rounded,
@@ -407,6 +416,7 @@ class _QuestMap extends StatelessWidget {
         label: l.navTasks,
         color: AppColors.accent,
         isActive: active == 'tasks',
+        badge: tasksPending > 0 ? '$tasksPending' : null,
         onTap: () => context.go('/tasks'),
       ),
       WheelItem(
@@ -423,42 +433,93 @@ class _QuestMap extends StatelessWidget {
         color: AppColors.creativity,
         onTap: () => context.go('/coach'),
       ),
-      // Placeholders — screens land in a later phase (TZ §5 tail).
-      WheelItem(
-        icon: Icons.repeat_rounded,
-        label: l.navRoutines,
-        color: AppColors.health,
-        onTap: () => _comingSoon(context),
-      ),
-      WheelItem(
-        icon: Icons.sticky_note_2_rounded,
-        label: l.navNotes,
-        color: AppColors.info,
-        onTap: () => _comingSoon(context),
-      ),
+      if (flags.isEnabled(FeatureFlagKey.challengesEnabled))
+        WheelItem(
+          icon: Icons.military_tech_rounded,
+          label: l.navChallenges,
+          color: AppColors.warning,
+          onTap: () => context.push('/challenges'),
+        ),
+      if (flags.isEnabled(FeatureFlagKey.rewardsEnabled))
+        WheelItem(
+          icon: Icons.emoji_events_rounded,
+          label: l.rewardsTitle,
+          color: const Color(0xFFF59E0B),
+          onTap: () => context.push('/rewards'),
+        ),
+      if (flags.isEnabled(FeatureFlagKey.notesEnabled))
+        WheelItem(
+          icon: Icons.sticky_note_2_rounded,
+          label: l.navNotes,
+          color: AppColors.info,
+          onTap: () => context.push('/notes'),
+        ),
       WheelItem(
         icon: Icons.lightbulb_outline_rounded,
         label: l.navWishlist,
         color: const Color(0xFFFF6FB5),
-        onTap: () => _comingSoon(context),
-      ),
-      WheelItem(
-        icon: Icons.notifications_rounded,
-        label: l.navReminders,
-        color: AppColors.warning,
-        onTap: () => _comingSoon(context),
+        onTap: () => context.push('/wishlist'),
       ),
     ];
 
-    return ActionWheel(items: items);
+    // Start with the core loop (Goals…Coach) in the window: the active zone
+    // sits between Tasks and Habits.
+    return ActionWheel(items: items, centerIndexAtStart: 1.5);
   }
+}
 
-  void _comingSoon(BuildContext context) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(context.l10n.comingSoon),
-        duration: const Duration(seconds: 2),
-      ),
+// ── Back half of the orbit ring (drawn behind the hero) ────────────────────
+
+class _OrbitBackArc extends StatelessWidget {
+  const _OrbitBackArc();
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final size = Size(constraints.maxWidth, constraints.maxHeight);
+        final c = Offset(
+          size.width * ActionWheel.cxFactor,
+          size.height * ActionWheel.cyFactor,
+        );
+        final r = size.width * ActionWheel.rFactor;
+
+        // The wheel's bright track spans ±(2.9·detent) around angle 0; the
+        // dim ring continues past it up over the hero's head and down behind
+        // the focus card, so the orbit visually wraps the character.
+        const trackHalf = ActionWheel.detent * 2.9;
+        const gap = ActionWheel.detent * 0.4;
+        const endOverhang = 0.12;
+        const topStart = -math.pi / 2 - endOverhang;
+        const bottomEnd = math.pi / 2 + endOverhang;
+        final dim = const Color(0xFFD4AF37).withValues(alpha: 0.35);
+
+        return IgnorePointer(
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              CustomPaint(
+                painter: QuestArcPainter(
+                  center: c,
+                  radius: r,
+                  startAngle: topStart,
+                  sweepAngle: (-trackHalf - gap) - topStart,
+                  color: dim,
+                ),
+              ),
+              CustomPaint(
+                painter: QuestArcPainter(
+                  center: c,
+                  radius: r,
+                  startAngle: trackHalf + gap,
+                  sweepAngle: bottomEnd - (trackHalf + gap),
+                  color: dim,
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
   }
 }

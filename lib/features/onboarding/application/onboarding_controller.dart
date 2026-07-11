@@ -8,12 +8,20 @@ class OnboardingController extends Notifier<OnboardingDraft> {
   @override
   OnboardingDraft build() => const OnboardingDraft();
 
+  void setDisplayName(String name) {
+    state = state.copyWith(displayName: name.trim());
+  }
+
+  void setPreferredTime(String time) {
+    state = state.copyWith(preferredTime: time);
+  }
+
   void setLifeChangeAreas(List<String> areas) {
     state = state.copyWith(lifeChangeAreas: areas);
   }
 
-  void setMainObstacle(String obstacle) {
-    state = state.copyWith(mainObstacle: obstacle);
+  void setMainObstacles(List<String> obstacles) {
+    state = state.copyWith(mainObstacles: obstacles);
   }
 
   void setEnergyLevel(int level) {

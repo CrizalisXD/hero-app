@@ -509,7 +509,7 @@ GameObject:
   - component: {fileID: 1279595278}
   - component: {fileID: 1279595277}
   m_Layer: 0
-  m_Name: 'AvatarController '
+  m_Name: AvatarController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

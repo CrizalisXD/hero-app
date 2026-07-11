@@ -7,6 +7,8 @@ import '../../../core/l10n/l10n.dart';
 import '../application/onboarding_controller.dart';
 import 'widgets/onboarding_shell.dart';
 
+/// Шаг 6: уровень энергии — крупный неон-слайдер (референс «183 cm»):
+/// большое число в рамке с glow + слайдер 1–5 + живой дескриптор.
 class EnergyLevelScreen extends ConsumerStatefulWidget {
   const EnergyLevelScreen({super.key});
 
@@ -15,98 +17,148 @@ class EnergyLevelScreen extends ConsumerStatefulWidget {
 }
 
 class _EnergyLevelScreenState extends ConsumerState<EnergyLevelScreen> {
-  int _level = 3;
+  late double _value;
 
   @override
   void initState() {
     super.initState();
-    _level = ref.read(onboardingControllerProvider).energyLevel;
+    _value =
+        ref.read(onboardingControllerProvider).energyLevel.toDouble();
+  }
+
+  String _descriptor(BuildContext context, int v) {
+    final l = context.l10n;
+    return switch (v) {
+      1 => l.onboardingEnergyExhausted,
+      2 => l.onboardingEnergyTired,
+      3 => l.onboardingEnergyNormal,
+      4 => l.onboardingEnergyEnergized,
+      _ => l.onboardingEnergyCharged,
+    };
   }
 
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
-    final labels = [
-      l.onboardingEnergyExhausted,
-      l.onboardingEnergyTired,
-      l.onboardingEnergyNormal,
-      l.onboardingEnergyEnergized,
-      l.onboardingEnergyCharged,
-    ];
+    final level = _value.round();
 
     return OnboardingShell(
-      step: 3,
-      totalSteps: 9,
+      step: 6,
+      totalSteps: 12,
       title: l.onboardingEnergyTitle,
       subtitle: l.onboardingEnergySubtitle,
-      onBack: () => context.go('/onboarding/main-obstacle'),
+      onBack: () => context.go('/onboarding/failure-reason'),
       onContinue: () {
         ref
             .read(onboardingControllerProvider.notifier)
-            .setEnergyLevel(_level);
+            .setEnergyLevel(level);
         context.go('/onboarding/time-commitment');
       },
+      scrollable: false,
       content: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 32),
-          Text(
-            labels[_level - 1],
-            style: const TextStyle(
-              fontSize: 22,
-              fontWeight: FontWeight.bold,
-              color: AppColors.textPrimary,
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 28),
+            decoration: BoxDecoration(
+              color: AppColors.accent.withValues(alpha: 0.10),
+              borderRadius: BorderRadius.circular(24),
+              border: Border.all(
+                color: AppColors.accent.withValues(alpha: 0.55),
+                width: 1.5,
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: AppColors.accent.withValues(alpha: 0.25),
+                  blurRadius: 30,
+                  spreadRadius: -6,
+                ),
+              ],
             ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 32),
-          Row(
-            children: List.generate(5, (i) {
-              final n = i + 1;
-              final isActive = n <= _level;
-              return Expanded(
-                child: GestureDetector(
-                  onTap: () => setState(() => _level = n),
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 4),
-                    height: 56,
-                    decoration: BoxDecoration(
-                      color: isActive ? AppColors.accentDim : AppColors.bgCard,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(
-                        color: isActive ? AppColors.accent : AppColors.border,
-                        width: isActive ? 1.5 : 1,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.baseline,
+                  textBaseline: TextBaseline.alphabetic,
+                  children: [
+                    Text(
+                      '$level',
+                      style: const TextStyle(
+                        fontSize: 72,
+                        height: 1,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.accentBright,
                       ),
                     ),
-                    child: Center(
-                      child: Text(
-                        '$n',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: isActive
-                              ? AppColors.textPrimary
-                              : AppColors.textMuted,
-                        ),
+                    const SizedBox(width: 6),
+                    const Text(
+                      '/5',
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textMuted,
                       ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 180),
+                  child: Text(
+                    _descriptor(context, level),
+                    key: ValueKey(level),
+                    style: const TextStyle(
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.textPrimary,
                     ),
                   ),
                 ),
-              );
-            }),
+              ],
+            ),
           ),
-          const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                labels[0],
-                style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
-              ),
-              Text(
-                labels[4],
-                style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
-              ),
-            ],
+          const SizedBox(height: 28),
+          SliderTheme(
+            data: SliderTheme.of(context).copyWith(
+              trackHeight: 8,
+              activeTrackColor: AppColors.accent,
+              inactiveTrackColor: AppColors.bgElevated,
+              thumbColor: AppColors.accentBright,
+              overlayColor: AppColors.accent.withValues(alpha: 0.2),
+              thumbShape:
+                  const RoundSliderThumbShape(enabledThumbRadius: 14),
+            ),
+            child: Slider(
+              value: _value,
+              min: 1,
+              max: 5,
+              divisions: 4,
+              onChanged: (v) => setState(() => _value = v),
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  l.onboardingEnergyExhausted,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+                Text(
+                  l.onboardingEnergyCharged,
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textMuted,
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

@@ -371,7 +371,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* String_Format_mA0534D6E2AE4D67A6BD8
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 100763
+// Method Definition Index: 100755
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void EmbeddedAttribute__ctor_m20ED66A3E4BEE3918E730334B661B56A5E6D03DF (EmbeddedAttribute_t8C638889E001A49C9349F809690AE6536104518D* __this, const RuntimeMethod* method) 
 {
 	{
@@ -387,7 +387,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void EmbeddedAttribute__ctor_m20ED66A3E4BEE39
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 100764
+// Method Definition Index: 100756
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RefSafetyRulesAttribute__ctor_m49A7DA06F9FE5D04F6097A507EF4DF1E009BBD29 (RefSafetyRulesAttribute_t55FB54C4F81E93146B60904BF4F55D17D5B70263* __this, int32_t ___0_p, const RuntimeMethod* method) 
 {
 	{
@@ -421,7 +421,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void RefSafetyRulesAttribute__ctor_m49A7DA06F
 #pragma clang diagnostic ignored "-Winvalid-offsetof"
 #pragma clang diagnostic ignored "-Wunused-variable"
 #endif
-// Method Definition Index: 100765
+// Method Definition Index: 100757
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* AndroidLocale_get_country_m4CF55D4A3CFD71553C727DB60A539CBD1D732456 (AndroidLocale_tD3DD517AF81D48109C281C82B6ABEBB2A91E5075* __this, const RuntimeMethod* method) 
 {
 	{
@@ -429,7 +429,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* AndroidLocale_get_country_m4CF55D4A
 		return L_0;
 	}
 }
-// Method Definition Index: 100766
+// Method Definition Index: 100758
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* AndroidLocale_get_language_m78BC34CC08937A1B4B6B70518179902C0824AA73 (AndroidLocale_tD3DD517AF81D48109C281C82B6ABEBB2A91E5075* __this, const RuntimeMethod* method) 
 {
 	{
@@ -437,7 +437,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* AndroidLocale_get_language_m78BC34C
 		return L_0;
 	}
 }
-// Method Definition Index: 100767
+// Method Definition Index: 100759
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR void AndroidLocale__ctor_m9E07C7046CD091CDB042C5D34B156C71DCAB38B2 (AndroidLocale_tD3DD517AF81D48109C281C82B6ABEBB2A91E5075* __this, String_t* ___0__country, String_t* ___1__language, const RuntimeMethod* method) 
 {
 	{
@@ -641,7 +641,7 @@ IL2CPP_EXTERN_C void AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2
 	il2cpp_codegen_marshal_free_bstring(marshaled.___U3CprimaryLocaleLanguageU3Ek__BackingField);
 	marshaled.___U3CprimaryLocaleLanguageU3Ek__BackingField = NULL;
 }
-// Method Definition Index: 100768
+// Method Definition Index: 100760
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_colorMode_m700935DC2CE77048A2A0C85C3A8110C7447BCFDA (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -649,7 +649,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_colorMode_m7
 		return L_0;
 	}
 }
-// Method Definition Index: 100769
+// Method Definition Index: 100761
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_densityDpi_m6DCB1B6665634092B927CB51572C6C906B70A8C9 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -657,7 +657,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_densityDpi_m
 		return L_0;
 	}
 }
-// Method Definition Index: 100770
+// Method Definition Index: 100762
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR float AndroidConfiguration_get_fontScale_m22CED04AD4608BB978F7332836F19FE43095484B (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -665,7 +665,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR float AndroidConfiguration_get_fontScale_m22C
 		return L_0;
 	}
 }
-// Method Definition Index: 100771
+// Method Definition Index: 100763
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_fontWeightAdjustment_mE46C6D355401711B3048E9FE63003D6BD7083B04 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -673,7 +673,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_fontWeightAd
 		return L_0;
 	}
 }
-// Method Definition Index: 100772
+// Method Definition Index: 100764
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_keyboard_mE9C11E5BB3F8EC3599A296CD137A09F998C1052C (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -681,7 +681,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_keyboard_mE9
 		return L_0;
 	}
 }
-// Method Definition Index: 100773
+// Method Definition Index: 100765
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_hardKeyboardHidden_mE3102E5F9769936ACB6151FF777F4EF372EB8A34 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -689,7 +689,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_hardKeyboard
 		return L_0;
 	}
 }
-// Method Definition Index: 100774
+// Method Definition Index: 100766
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_keyboardHidden_m0BAEC76E37F070768AF06E39BEB9B2F654D89007 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -697,7 +697,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_keyboardHidd
 		return L_0;
 	}
 }
-// Method Definition Index: 100775
+// Method Definition Index: 100767
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_mobileCountryCode_m9CA2BB13341BBDC11E5B650CF1B85B6D40303728 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -705,7 +705,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_mobileCountr
 		return L_0;
 	}
 }
-// Method Definition Index: 100776
+// Method Definition Index: 100768
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_mobileNetworkCode_mC013A6F34F638F8F401A239441D1DB8C5918EF63 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -713,7 +713,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_mobileNetwor
 		return L_0;
 	}
 }
-// Method Definition Index: 100777
+// Method Definition Index: 100769
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_navigation_m60398238358F9FB7E2859FC0E906FB2E10316431 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -721,7 +721,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_navigation_m
 		return L_0;
 	}
 }
-// Method Definition Index: 100778
+// Method Definition Index: 100770
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_navigationHidden_m6FDF5368AF77535033F4039A0D31A304A87D9F5E (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -729,7 +729,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_navigationHi
 		return L_0;
 	}
 }
-// Method Definition Index: 100779
+// Method Definition Index: 100771
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_orientation_mB50EB15E1DCAD234EC7921E8F41F8AF5678F7207 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -737,7 +737,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_orientation_
 		return L_0;
 	}
 }
-// Method Definition Index: 100780
+// Method Definition Index: 100772
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenHeightDp_m50773C7C10A7C117D47C651570138D4322D07FD1 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -745,7 +745,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenHeight
 		return L_0;
 	}
 }
-// Method Definition Index: 100781
+// Method Definition Index: 100773
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenWidthDp_m20B096B98845195E74BEB7CBCC80B2FD7A164AD9 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -753,7 +753,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenWidthD
 		return L_0;
 	}
 }
-// Method Definition Index: 100782
+// Method Definition Index: 100774
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_smallestScreenWidthDp_mDA11BF662C316CA2DAD21D113C22AEFD5CF75645 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -761,7 +761,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_smallestScre
 		return L_0;
 	}
 }
-// Method Definition Index: 100783
+// Method Definition Index: 100775
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenLayout_m11128E91C2918F74228B7A75CD553CBDD0DEE4C0 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -769,7 +769,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenLayout
 		return L_0;
 	}
 }
-// Method Definition Index: 100784
+// Method Definition Index: 100776
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_touchScreen_m88019DA5E4BF5F1425386D3A537615EAA777F583 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -777,7 +777,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_touchScreen_
 		return L_0;
 	}
 }
-// Method Definition Index: 100785
+// Method Definition Index: 100777
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_uiMode_mE108E6B5938F07F4A2EBC69EE162A6574B731339 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -785,7 +785,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_uiMode_mE108
 		return L_0;
 	}
 }
-// Method Definition Index: 100786
+// Method Definition Index: 100778
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* AndroidConfiguration_get_primaryLocaleCountry_m3BF98232E5121A9957EE0771B2FE96D59A07FED9 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -793,7 +793,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* AndroidConfiguration_get_primaryLoc
 		return L_0;
 	}
 }
-// Method Definition Index: 100787
+// Method Definition Index: 100779
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* AndroidConfiguration_get_primaryLocaleLanguage_m6036D7716067E3C52579AEF10AB67FA5E2AF034F (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -801,7 +801,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* AndroidConfiguration_get_primaryLoc
 		return L_0;
 	}
 }
-// Method Definition Index: 100788
+// Method Definition Index: 100780
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR AndroidLocaleU5BU5D_t0E48A0AED90A441E8095AB2C52153ED85AD634C1* AndroidConfiguration_get_locales_m553A090728CB5588C2C3446B9049EFC48829992E (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -848,7 +848,7 @@ IL_0017:
 		return L_4;
 	}
 }
-// Method Definition Index: 100789
+// Method Definition Index: 100781
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_colorModeHdr_mDA12A1054FBF6C71ED9FF1884E4E86FAA485714E (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -857,7 +857,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_colorModeHdr
 		return (int32_t)(((int32_t)(L_0&((int32_t)12))));
 	}
 }
-// Method Definition Index: 100790
+// Method Definition Index: 100782
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_colorModeWideColorGamut_m7062BAD7638613D42A5265ADF40EA2F05C7FF630 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -866,7 +866,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_colorModeWid
 		return (int32_t)(((int32_t)(L_0&3)));
 	}
 }
-// Method Definition Index: 100791
+// Method Definition Index: 100783
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenLayoutDirection_mF0650B4F3641A6167FF33D7EA519C4EB7B7990BA (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -875,7 +875,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenLayout
 		return (int32_t)(((int32_t)(L_0&((int32_t)192))));
 	}
 }
-// Method Definition Index: 100792
+// Method Definition Index: 100784
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenLayoutLong_m4BF5DEC402CC76D24A77B2AE05FB80A6FEB49E2E (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -884,7 +884,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenLayout
 		return (int32_t)(((int32_t)(L_0&((int32_t)48))));
 	}
 }
-// Method Definition Index: 100793
+// Method Definition Index: 100785
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenLayoutRound_m98C9A129BAE1454BB9BD605D84217A06B09BC008 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -893,7 +893,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenLayout
 		return (int32_t)(((int32_t)(L_0&((int32_t)768))));
 	}
 }
-// Method Definition Index: 100794
+// Method Definition Index: 100786
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenLayoutSize_mA18253406CBD702D355073E0FA1A182AA428BA71 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -902,7 +902,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenLayout
 		return (int32_t)(((int32_t)(L_0&((int32_t)15))));
 	}
 }
-// Method Definition Index: 100795
+// Method Definition Index: 100787
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_uiModeNight_m3561F470AF4D4BC9AFC6583DE93F861CF8FFEFEC (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -911,7 +911,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_uiModeNight_
 		return (int32_t)(((int32_t)(L_0&((int32_t)48))));
 	}
 }
-// Method Definition Index: 100796
+// Method Definition Index: 100788
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_uiModeType_mCC57F1E35C09495E9A3FD7CBD57778131E4A4D8E (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -920,7 +920,7 @@ IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_uiModeType_m
 		return (int32_t)(((int32_t)(L_0&((int32_t)15))));
 	}
 }
-// Method Definition Index: 100797
+// Method Definition Index: 100789
 IL2CPP_EXTERN_C IL2CPP_METHOD_ATTR String_t* AndroidConfiguration_ToString_mFCA4EDDA524358A9BD9D83833DD2A0124DEADB45 (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	static bool s_Il2CppMethodInitialized;
@@ -1377,7 +1377,7 @@ IL_02dc:
 #ifdef __clang__
 #pragma clang diagnostic pop
 #endif
-// Method Definition Index: 100786
+// Method Definition Index: 100778
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR String_t* AndroidConfiguration_get_primaryLocaleCountry_m3BF98232E5121A9957EE0771B2FE96D59A07FED9_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1385,7 +1385,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR String_t* AndroidConfiguration_ge
 		return L_0;
 	}
 }
-// Method Definition Index: 100787
+// Method Definition Index: 100779
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR String_t* AndroidConfiguration_get_primaryLocaleLanguage_m6036D7716067E3C52579AEF10AB67FA5E2AF034F_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1393,7 +1393,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR String_t* AndroidConfiguration_ge
 		return L_0;
 	}
 }
-// Method Definition Index: 100768
+// Method Definition Index: 100760
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_colorMode_m700935DC2CE77048A2A0C85C3A8110C7447BCFDA_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1401,7 +1401,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100783
+// Method Definition Index: 100775
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenLayout_m11128E91C2918F74228B7A75CD553CBDD0DEE4C0_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1409,7 +1409,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100785
+// Method Definition Index: 100777
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_uiMode_mE108E6B5938F07F4A2EBC69EE162A6574B731339_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1417,7 +1417,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100769
+// Method Definition Index: 100761
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_densityDpi_m6DCB1B6665634092B927CB51572C6C906B70A8C9_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1425,7 +1425,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100770
+// Method Definition Index: 100762
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR float AndroidConfiguration_get_fontScale_m22CED04AD4608BB978F7332836F19FE43095484B_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1433,7 +1433,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR float AndroidConfiguration_get_fo
 		return L_0;
 	}
 }
-// Method Definition Index: 100771
+// Method Definition Index: 100763
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_fontWeightAdjustment_mE46C6D355401711B3048E9FE63003D6BD7083B04_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1441,7 +1441,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100772
+// Method Definition Index: 100764
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_keyboard_mE9C11E5BB3F8EC3599A296CD137A09F998C1052C_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1449,7 +1449,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100773
+// Method Definition Index: 100765
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_hardKeyboardHidden_mE3102E5F9769936ACB6151FF777F4EF372EB8A34_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1457,7 +1457,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100774
+// Method Definition Index: 100766
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_keyboardHidden_m0BAEC76E37F070768AF06E39BEB9B2F654D89007_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1465,7 +1465,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100775
+// Method Definition Index: 100767
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_mobileCountryCode_m9CA2BB13341BBDC11E5B650CF1B85B6D40303728_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1473,7 +1473,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100776
+// Method Definition Index: 100768
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_mobileNetworkCode_mC013A6F34F638F8F401A239441D1DB8C5918EF63_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1481,7 +1481,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100777
+// Method Definition Index: 100769
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_navigation_m60398238358F9FB7E2859FC0E906FB2E10316431_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1489,7 +1489,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100778
+// Method Definition Index: 100770
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_navigationHidden_m6FDF5368AF77535033F4039A0D31A304A87D9F5E_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1497,7 +1497,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100779
+// Method Definition Index: 100771
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_orientation_mB50EB15E1DCAD234EC7921E8F41F8AF5678F7207_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1505,7 +1505,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100780
+// Method Definition Index: 100772
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenHeightDp_m50773C7C10A7C117D47C651570138D4322D07FD1_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1513,7 +1513,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100781
+// Method Definition Index: 100773
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_screenWidthDp_m20B096B98845195E74BEB7CBCC80B2FD7A164AD9_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1521,7 +1521,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100782
+// Method Definition Index: 100774
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_smallestScreenWidthDp_mDA11BF662C316CA2DAD21D113C22AEFD5CF75645_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1529,7 +1529,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100784
+// Method Definition Index: 100776
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_touchScreen_m88019DA5E4BF5F1425386D3A537615EAA777F583_inline (AndroidConfiguration_t7D5E737292DAE79648D18ED1EC44801762FD2821* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1537,7 +1537,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR int32_t AndroidConfiguration_get_
 		return L_0;
 	}
 }
-// Method Definition Index: 100765
+// Method Definition Index: 100757
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR String_t* AndroidLocale_get_country_m4CF55D4A3CFD71553C727DB60A539CBD1D732456_inline (AndroidLocale_tD3DD517AF81D48109C281C82B6ABEBB2A91E5075* __this, const RuntimeMethod* method) 
 {
 	{
@@ -1545,7 +1545,7 @@ IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR String_t* AndroidLocale_get_count
 		return L_0;
 	}
 }
-// Method Definition Index: 100766
+// Method Definition Index: 100758
 IL2CPP_MANAGED_FORCE_INLINE IL2CPP_METHOD_ATTR String_t* AndroidLocale_get_language_m78BC34CC08937A1B4B6B70518179902C0824AA73_inline (AndroidLocale_tD3DD517AF81D48109C281C82B6ABEBB2A91E5075* __this, const RuntimeMethod* method) 
 {
 	{

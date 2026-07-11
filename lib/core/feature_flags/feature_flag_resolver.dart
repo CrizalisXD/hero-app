@@ -18,27 +18,27 @@ class FeatureFlagResolver {
   }
 
   /// Map клиентских флагов → Dart compile-time дефолты.
+  ///
+  /// Compile-time замок оставлен ТОЛЬКО там, где фича реально может быть не
+  /// собрана в билд (Unity-рендерер, фото-AI аватара). Social / Health /
+  /// Siri — обычные всегда-скомпилированные экраны, поэтому ими управляет
+  /// только серверный флаг (БД). Раньше они требовали ещё и dart-define
+  /// (HERO_SOCIAL_ENABLED и т.п.), который по умолчанию false — из-за этого
+  /// сборка без define'ов «теряла» разделы. Убрано.
   bool _dartDefault(String key) {
     switch (key) {
-      case FeatureFlagKey.socialEnabled:
-        return FeatureFlags.socialEnabled;
-      case FeatureFlagKey.healthIntegrationEnabled:
-        return FeatureFlags.healthEnabled;
-      case FeatureFlagKey.siriShortcutsEnabled:
-        return FeatureFlags.voiceEnabled;
       case FeatureFlagKey.unityAvatarEnabled:
         return FeatureFlags.unityAvatarEnabled;
       case FeatureFlagKey.photoAvatarGenerationEnabled:
         return FeatureFlags.avatarPhotoAiEnabled;
-      // фичи без Dart-флага: Dart default = true, решает только БД
+      // Всё остальное — runtime-контроль через БД (Dart default = true).
+      case FeatureFlagKey.socialEnabled:
+      case FeatureFlagKey.healthIntegrationEnabled:
+      case FeatureFlagKey.siriShortcutsEnabled:
       case FeatureFlagKey.challengesEnabled:
-        return true;
       case FeatureFlagKey.rewardsEnabled:
-        return true;
       case FeatureFlagKey.calendarIntegrationEnabled:
-        return true;
       case FeatureFlagKey.notesEnabled:
-        return true;
       case FeatureFlagKey.externalIntegrationsEnabled:
         return true;
       default:

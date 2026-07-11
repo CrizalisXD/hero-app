@@ -51,8 +51,7 @@ extern "C" void CreateSystemRenderingSurfaceMTL(UnityDisplaySurfaceMTL* surface)
     surface->swapchain.layer.presentsWithTransaction = NO;
     surface->swapchain.layer.drawsAsynchronously = YES;
 
-    // HERO PATCH: слой прозрачный безусловно (страховка).
-    if (true || UnityPreserveFramebufferAlpha())
+    if (UnityPreserveFramebufferAlpha())
     {
         const CGFloat components[] = {1.0f, 1.0f, 1.0f, 0.0f};
         CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();

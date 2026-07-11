@@ -67,7 +67,6 @@
 		5F5BA7A58276A2C459108A01 /* UndefinePlatforms.h in Headers */ = {isa = PBXBuildFile; fileRef = 9A6DD026291028B2A1ED4E66 /* UndefinePlatforms.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5F7F88DF4BFAD6727306ACA5 /* ActivityIndicator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2F4D1090A0C7074B4878ECB7 /* ActivityIndicator.mm */; };
 		63ACF7178776C648B96974EB /* baselib.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7CD8D832DF5E49F3229DE515 /* baselib.a */; };
-		63C342359189C03119F4F7AE /* Data in Resources */ = {isa = PBXBuildFile; fileRef = AA31BF961B55660D0013FB1B /* Data */; };
 		6412DCBAA9529A01D381C747 /* Filesystem.mm in Sources */ = {isa = PBXBuildFile; fileRef = F5B58EA838E650B8EF348294 /* Filesystem.mm */; };
 		67A617E5FFD67C6B9FBA0A15 /* MetalHelper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 49265D736859235BFB6D1FF6 /* MetalHelper.mm */; };
 		69ED3E404F037B21557B6831 /* VideoPlayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 18C5DFDBA7DBE2E98847911A /* VideoPlayer.h */; };
@@ -129,6 +128,7 @@
 		D20065EB0CEBC7320B036C0F /* UnityView+Keyboard.mm in Sources */ = {isa = PBXBuildFile; fileRef = 75257F0364FAA7366928C8D9 /* UnityView+Keyboard.mm */; };
 		D2587EF545D3BF7AA78B63A0 /* RegisterFeatures.h in Headers */ = {isa = PBXBuildFile; fileRef = BB36EE442773C18BA750DC92 /* RegisterFeatures.h */; };
 		D278DEC80B1DCB2D5A57519E /* CameraCapture.h in Headers */ = {isa = PBXBuildFile; fileRef = 388F104DCF476E1CC9A03DD9 /* CameraCapture.h */; };
+		D5D9475CBCBE7C23D54521A8 /* Data in Resources */ = {isa = PBXBuildFile; fileRef = AA31BF961B55660D0013FB1B /* Data */; };
 		D68A2D92E86446856C4F6FF9 /* InternalProfiler.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 0A4EDD36855D1DD5A2FF465B /* InternalProfiler.cpp */; };
 		D75945DA0A252832D1F079F7 /* UnityTrampolineCompatibility.h in Headers */ = {isa = PBXBuildFile; fileRef = 86FE9E686EDE3B8F5FFD6F86 /* UnityTrampolineCompatibility.h */; };
 		D7C2D97F0F5BA8BF5205A09C /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 830B5C100E5ED4C100C7819F /* UIKit.framework */; };
@@ -2174,7 +2174,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				91C1EB5F348833EAD02A7E9A /* PrivacyInfo.xcprivacy in Resources */,
-				63C342359189C03119F4F7AE /* Data in Resources */,
+				D5D9475CBCBE7C23D54521A8 /* Data in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -7,14 +7,12 @@
   "errorGeneric": "Что-то пошло не так. Попробуй ещё раз.",
   "errorNoInternet": "Нет связи. Проверь интернет.",
   "errorServerUnavailable": "Сервер недоступен. Попробуй позже.",
-
   "welcomeTitle": "Твоя жизнь. Твой герой.",
   "welcomeSubtitle": "Реальные действия. Реальный прогресс. Реальный ты.",
   "welcomeContinueGuest": "Продолжить как гость",
   "welcomeSignIn": "Войти",
   "welcomeSignUp": "Создать аккаунт",
   "welcomeGuestNote": "Позже можно превратить гостевой профиль в аккаунт.",
-
   "signInTitle": "С возвращением",
   "signInEmailLabel": "Email",
   "signInPasswordLabel": "Пароль",
@@ -22,7 +20,6 @@
   "signInNoAccount": "Ещё нет аккаунта?",
   "signInGoToSignUp": "Создать",
   "signInForgotPassword": "Забыл пароль?",
-
   "signUpTitle": "Создай свой аккаунт",
   "signUpEmailLabel": "Email",
   "signUpPasswordLabel": "Пароль",
@@ -32,7 +29,6 @@
   "signUpGoToSignIn": "Войти",
   "signUpEmailConfirmTitle": "Проверь почту",
   "signUpEmailConfirmBody": "Мы отправили письмо со ссылкой на {email}. Открой её, чтобы завершить регистрацию.",
-
   "authErrorInvalidCredentials": "Неверный email или пароль.",
   "authErrorEmailNotConfirmed": "Подтверди email — проверь почту.",
   "authErrorWeakPassword": "Пароль должен быть минимум 8 символов.",
@@ -40,7 +36,6 @@
   "authErrorRateLimited": "Слишком много попыток. Попробуй через минуту.",
   "authErrorGuestDisabled": "Гостевой режим временно недоступен. Войди по email.",
   "authErrorGeneric": "Не удалось войти. Попробуй ещё раз.",
-
   "guestUpgradeTitle": "Сохрани свой прогресс",
   "guestUpgradeSubtitle": "Добавь email и пароль — герой, привычки и XP останутся с тобой.",
   "guestUpgradeEmailLabel": "Email",
@@ -51,12 +46,10 @@
   "guestUpgradeSignOutWarningBody": "Гостевой аккаунт хранится только на этом устройстве. Без привязки email прогресс может быть потерян.",
   "guestUpgradeSignOutWarningCancel": "Остаться",
   "guestUpgradeSignOutWarningConfirm": "Всё равно выйти",
-
   "onboardingContinue": "Продолжить",
   "onboardingBack": "Назад",
   "onboardingSkip": "Пропустить",
   "onboardingSaveError": "Не удалось сохранить профиль. Попробуй ещё раз.",
-
   "onboardingLifeChangeTitle": "Что ты хочешь изменить?",
   "onboardingLifeChangeSubtitle": "Выбери одно или несколько направлений",
   "onboardingAreaHealth": "Здоровье",
@@ -65,16 +58,14 @@
   "onboardingAreaEndurance": "Выносливость",
   "onboardingAreaSocial": "Общение",
   "onboardingAreaCreativity": "Творчество",
-
   "onboardingObstacleTitle": "Что тебе мешает?",
-  "onboardingObstacleSubtitle": "Выбери главное препятствие",
+  "onboardingObstacleSubtitle": "Отметь всё, что мешает — можно несколько",
   "onboardingObstacleNoDisc": "Нет дисциплины",
   "onboardingObstacleNoTime": "Нет времени",
   "onboardingObstacleNoMotiv": "Нет мотивации",
   "onboardingObstacleNoEnergy": "Мало энергии",
   "onboardingObstacleNoPlan": "Нет плана",
   "onboardingObstacleFear": "Страх неудачи",
-
   "onboardingEnergyTitle": "Сколько у тебя энергии?",
   "onboardingEnergySubtitle": "Оцени свой обычный уровень в течение дня",
   "onboardingEnergyExhausted": "Опустошён",
@@ -82,14 +73,12 @@
   "onboardingEnergyNormal": "В норме",
   "onboardingEnergyEnergized": "Бодрый",
   "onboardingEnergyCharged": "Полон сил",
-
   "onboardingTimeTitle": "Сколько времени в день?",
   "onboardingTimeSubtitle": "Сколько времени готов уделять Hero",
   "onboardingTime5min": "5 мин",
   "onboardingTime15min": "15 мин",
   "onboardingTime30min": "30 мин",
   "onboardingTime60min": "1 час",
-
   "onboardingFailureTitle": "Почему ты обычно срываешься?",
   "onboardingFailureSubtitle": "Отметь всё, что подходит",
   "onboardingFailureLoseMotiv": "Быстро теряю мотивацию",
@@ -98,7 +87,6 @@
   "onboardingFailureTooHard": "Слишком сложно",
   "onboardingFailureNoSupport": "Нет поддержки",
   "onboardingFailureOther": "Что-то другое",
-
   "onboardingSupportTitle": "Как Hero должен тебя поддерживать?",
   "onboardingSupportSubtitle": "Выбери стиль коучинга",
   "onboardingSupportDirect": "Прямо",
@@ -109,21 +97,17 @@
   "onboardingSupportHumorousDesc": "Легко и с огоньком",
   "onboardingSupportNeutral": "Нейтрально",
   "onboardingSupportNeutralDesc": "Только факты, без лишнего",
-
   "onboardingHabitsTitle": "Выбери стартовые привычки",
   "onboardingHabitsSubtitle": "Это будут твои первые квесты",
   "onboardingHabitDrinkWater": "Пить воду утром",
   "onboardingHabitRead10": "Читать 10 страниц",
   "onboardingHabitWalk10": "Прогулка 10 минут",
-
   "onboardingAvatarIntroTitle": "Твой Герой ждёт тебя",
   "onboardingAvatarIntroBody": "Любое великое путешествие начинается с первого шага. Ты рассказал Hero всё важное — пора начинать.",
   "onboardingAvatarIntroNext": "Я готов",
-
   "onboardingFirstMissionTitle": "Первая миссия",
   "onboardingFirstMissionBody": "Твой профиль настроен. Привычки выбраны. Одно нажатие — и твой Герой оживёт.",
   "onboardingFirstMissionCta": "Войти в Hero",
-
   "tasksTitle": "Задачи",
   "tasksTabToday": "Сегодня",
   "tasksTabAll": "Все",
@@ -139,11 +123,9 @@
   "createTaskCategoryDetecting": "Определяю категорию…",
   "createTaskDueDateLabel": "Дата и время",
   "createTaskDueDateClear": "Сбросить",
-
   "taskEditTitle": "Редактировать задачу",
   "taskEditSave": "Сохранить",
   "taskEditError": "Не удалось сохранить изменения. Попробуй ещё раз.",
-
   "categoryStrength": "Сила",
   "categoryMind": "Разум",
   "categoryEndurance": "Выносливость",
@@ -151,24 +133,19 @@
   "categorySocial": "Социальное",
   "categoryFinance": "Финансы",
   "categoryCreativity": "Творчество",
-
   "difficultyEasy": "Легко",
   "difficultyNormal": "Обычно",
   "difficultyHard": "Сложно",
   "difficultyEpic": "Эпик",
-
   "durationShort": "Коротко",
   "durationMedium": "Средне",
   "durationLong": "Долго",
-
   "importanceLow": "Низкая",
   "importanceNormal": "Средняя",
   "importanceHigh": "Высокая",
-
   "habitsTitle": "Привычки",
   "habitsEmpty": "Привычек пока нет. Добавь маленькую.",
   "habitsLoadError": "Не удалось загрузить привычки. Попробуй ещё раз.",
-
   "habitsFabCreate": "Добавить",
   "createHabitSheetTitle": "Новая привычка",
   "createHabitTitleLabel": "Какая привычка?",
@@ -176,32 +153,36 @@
   "createHabitDescriptionLabel": "Заметка (опц.)",
   "createHabitSubmit": "Добавить",
   "createHabitCreateError": "Не удалось сохранить. Попробуй ещё раз.",
-
   "habitCheckinAction": "Отметить",
   "habitCheckedToday": "Сегодня сделано",
   "habitStreakDays": "{count, plural, =0{нет серии} =1{1 день} few{{count} дня} many{{count} дней} other{{count} дней}}",
   "@habitStreakDays": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "habitCheckinSuccessSnack": "+{xp} XP · {streak}",
   "@habitCheckinSuccessSnack": {
     "placeholders": {
-      "xp":     { "type": "int" },
-      "streak": { "type": "String" }
+      "xp": {
+        "type": "int"
+      },
+      "streak": {
+        "type": "String"
+      }
     }
   },
   "habitCheckinErrorSnack": "Не удалось отметить. Попробуй ещё раз.",
-
   "habitDeleteAction": "Удалить",
   "habitDeleteConfirmTitle": "Удалить привычку?",
   "habitDeleteConfirmBody": "Все отметки пропадут.",
   "habitDeleteCancel": "Отмена",
-
   "goalsTitle": "Цели",
   "goalsEmpty": "Целей ещё нет. Запусти квест.",
   "goalsLoadError": "Не удалось загрузить. Попробуй ещё раз.",
   "goalsFabCreate": "Новая цель",
-
   "goalCreateTitle": "Новая цель",
   "goalCreateTitleLabel": "Какая цель?",
   "goalCreateTitleHint": "Начать бегать / Выучить испанский / Накопить на отпуск",
@@ -214,7 +195,11 @@
   "goalCreateTimePerDayLabel": "Времени в день",
   "goalCreateTimePerDay": "{min} мин",
   "@goalCreateTimePerDay": {
-    "placeholders": { "min": { "type": "int" } }
+    "placeholders": {
+      "min": {
+        "type": "int"
+      }
+    }
   },
   "goalCreateCurrentLevelLabel": "С чего стартуешь",
   "goalCreateCurrentLevelBeginner": "С нуля",
@@ -225,7 +210,6 @@
   "goalCreateMaterialsNo": "Нет, разберусь",
   "goalCreateContinue": "Продолжить",
   "goalCreateMakePlan": "Сделать план",
-
   "goalArchetypeScreenTitle": "Настрой цель",
   "goalArchetypePrompt": "Какая это цель?",
   "goalArchetypeSkillLearning": "Навык",
@@ -237,35 +221,34 @@
   "goalArchetypeRelationshipGoal": "Отношения",
   "goalArchetypeLifeChange": "Изменение жизни",
   "goalArchetypeCustom": "Своя цель",
-
   "goalPeriodLabel": "Период плана",
   "goalPeriod1Week": "1 неделя",
   "goalPeriod1Month": "1 месяц",
   "goalPeriod3Months": "3 месяца",
   "goalPeriodCustom": "Своя дата",
-
   "goalPlanModeLabel": "Как составить план",
   "goalPlanModeAi": "AI план",
   "goalPlanModeOwn": "Свой план",
   "goalPlanModeMixed": "Смешанный",
-
   "goalMoneyTargetAmountLabel": "Целевая сумма",
   "goalMoneyCurrencyLabel": "Валюта",
   "goalEventDateLabel": "Дата события",
   "goalEventDatePick": "Выбрать дату",
-
   "goalPlanAddStep": "Добавить шаг",
   "goalPlanStepTitleLabel": "Название",
   "goalPlanStepTypeLabel": "Тип",
   "goalPlanFrequencyLabel": "Частота",
   "goalPlanEmptyOwn": "Пока нет шагов. Добавь первый.",
-
   "goalPlanReviewTitle": "Твой план",
   "goalPlanReviewSummary": "Кратко",
   "goalPlanReviewSteps": "Шаги",
   "goalPlanReviewEstimated": "Срок: {weeks} нед.",
   "@goalPlanReviewEstimated": {
-    "placeholders": { "weeks": { "type": "int" } }
+    "placeholders": {
+      "weeks": {
+        "type": "int"
+      }
+    }
   },
   "goalPlanStepTask": "Задача",
   "goalPlanStepHabit": "Привычка",
@@ -273,31 +256,36 @@
   "goalPlanReviewConfirm": "Поехали",
   "goalPlanReviewRegenerate": "Перегенерировать",
   "goalPlanReviewBack": "Поправить ответы",
-
   "goalAnalyzing": "Анализирую цель…",
   "goalAnalyzeError": "Не получилось построить план. Попробуй ещё раз.",
   "goalConfirming": "Создаю всё…",
   "goalConfirmError": "Не удалось сохранить план. Попробуй ещё раз.",
-
   "goalDetailTitle": "Цель",
   "goalDetailProgressTasks": "Задачи: {done}/{total}",
   "@goalDetailProgressTasks": {
     "placeholders": {
-      "done":  { "type": "int" },
-      "total": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "goalDetailProgressMilestones": "Этапы: {done}/{total}",
   "@goalDetailProgressMilestones": {
     "placeholders": {
-      "done":  { "type": "int" },
-      "total": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
   "goalDetailRelatedTasks": "Задачи",
   "goalDetailRelatedHabits": "Привычки",
   "goalDetailRelatedMilestones": "Этапы",
-
   "goalStatusActive": "Активная",
   "goalStatusCompleted": "Готово",
   "goalStatusPaused": "На паузе",
@@ -307,65 +295,104 @@
   "goalActionRebuild": "Пересобрать план",
   "goalActionPause": "Поставить на паузу",
   "goalActionResume": "Возобновить цель",
-
   "homeTitle": "Главная",
   "homeGreetingMorning": "Доброе утро, {name}",
-  "@homeGreetingMorning": { "placeholders": { "name": { "type": "String" } } },
+  "@homeGreetingMorning": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "homeGreetingDay": "Привет, {name}",
-  "@homeGreetingDay": { "placeholders": { "name": { "type": "String" } } },
+  "@homeGreetingDay": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "homeGreetingEvening": "Добрый вечер, {name}",
-  "@homeGreetingEvening": { "placeholders": { "name": { "type": "String" } } },
+  "@homeGreetingEvening": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "homeGreetingNight": "Поздний час, {name}",
-  "@homeGreetingNight": { "placeholders": { "name": { "type": "String" } } },
-
+  "@homeGreetingNight": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "homeLevel": "Уровень {level}",
-  "@homeLevel": { "placeholders": { "level": { "type": "int" } } },
+  "@homeLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
   "homeXpProgress": "{current}/{toNext} XP",
   "@homeXpProgress": {
     "placeholders": {
-      "current": { "type": "int" },
-      "toNext":  { "type": "int" }
+      "current": {
+        "type": "int"
+      },
+      "toNext": {
+        "type": "int"
+      }
     }
   },
   "homeEnergy": "Энергия",
   "homeEnergyValue": "{cur}/{max}",
   "@homeEnergyValue": {
     "placeholders": {
-      "cur": { "type": "int" },
-      "max": { "type": "int" }
+      "cur": {
+        "type": "int"
+      },
+      "max": {
+        "type": "int"
+      }
     }
   },
-
   "homeFocusTitle": "Фокус на сегодня",
   "homeFocusEmpty": "На сегодня пусто. Добавь задачу или отметь привычку.",
   "homeFocusAddTask": "Добавить",
-
   "homeBubbleTasks": "Задачи",
   "homeBubbleHabits": "Привычки",
   "homeBubbleGoals": "Цели",
   "homeBubbleCoach": "Тренер",
-
   "homeActiveGoal": "Главная цель",
   "homeActiveGoalNone": "Активных целей пока нет.",
   "homeActiveGoalStart": "Создать",
   "homeActiveGoalProgress": "{done}/{total}",
   "@homeActiveGoalProgress": {
     "placeholders": {
-      "done":  { "type": "int" },
-      "total": { "type": "int" }
+      "done": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
     }
   },
-
   "homePreviewMore": "Все →",
-
   "homeError": "Не удалось загрузить данные. Проверь связь.",
   "homeRetry": "Попробовать снова",
-
   "levelUpTitle": "Новый уровень!",
   "levelUpSubtitle": "Теперь уровень {level}",
-  "@levelUpSubtitle": { "placeholders": { "level": { "type": "int" } } },
+  "@levelUpSubtitle": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
   "levelUpClose": "Класс",
-
   "navHome": "Главная",
   "navTasks": "Задачи",
   "navHabits": "Привычки",
@@ -376,7 +403,6 @@
   "navWishlist": "Хочу попробовать",
   "navReminders": "Напоминания",
   "comingSoon": "Скоро",
-
   "aiChatTitle": "Тренер",
   "aiChatEmptyTitle": "Поговори с тренером",
   "aiChatEmptyBody": "Расскажи что трудно, что хочешь изменить или что мешает. Я помню всё.",
@@ -386,27 +412,20 @@
   "aiChatLoadError": "Не удалось загрузить чат. Попробуй ещё раз.",
   "aiChatSendError": "Не удалось отправить. Попробуй ещё раз.",
   "aiChatLimitReached": "Лимит сообщений на сегодня исчерпан. Возвращайся завтра.",
-
   "aiSuggestionTaskBadge": "Предлагаемая задача",
   "aiSuggestionHabitBadge": "Предлагаемая привычка",
   "aiSuggestionAdd": "Добавить",
   "aiSuggestionDismiss": "Пропустить",
-
   "avatarScreenTitle": "Твой герой",
   "avatarColorPickerTitle": "Выбери цвет",
   "avatarSave": "Сохранить",
   "avatarSaveError": "Не удалось сохранить. Попробуй ещё раз.",
   "avatarSaveSuccess": "Обновлено.",
-
   "featureLockedTitle": "Пока недоступно",
   "featureLockedBody": "Эта возможность готовится. Скоро откроем.",
-
   "signOut": "Выйти",
-
   "onboardingStubTitle": "Онбординг",
-
   "onboardingStubBody": "Здесь будет онбординг.",
-
   "settingsTitle": "Настройки",
   "settingsSectionAccount": "Аккаунт",
   "settingsSectionLanguage": "Язык",
@@ -415,7 +434,6 @@
   "settingsSectionAiMemory": "Память тренера",
   "settingsSectionDataExport": "Экспорт и удаление",
   "settingsSectionAbout": "О приложении",
-
   "accountEmail": "Email",
   "accountGuestNotice": "Ты в гостевом режиме — прогресс сохраняется.",
   "accountSignOut": "Выйти",
@@ -423,20 +441,17 @@
   "accountSignOutConfirmBody": "Можно зайти снова в любой момент.",
   "accountSignOutCancel": "Отмена",
   "accountSignOutAction": "Выйти",
-
   "languagePickerTitle": "Язык приложения",
   "languageRu": "Русский",
   "languageEn": "English",
   "languageSystem": "Системный",
   "languageSaveError": "Не удалось поменять язык. Попробуй ещё раз.",
-
   "notifTitle": "Уведомления",
   "notifTasks": "Напоминания о задачах",
   "notifHabits": "Напоминания о привычках",
   "notifGoals": "Цели",
   "notifRoutines": "Рутины",
   "notifCoach": "Сообщения тренера",
-
   "reminderSheetTitle": "Напоминание",
   "reminderModeOnce": "Разовое",
   "reminderModeRepeating": "Повторяющееся",
@@ -467,7 +482,6 @@
   "notifQuietEnd": "До",
   "notifPermissionDenied": "Уведомления отключены в системных настройках.",
   "notifPermissionEnable": "Открыть настройки",
-
   "consentsTitle": "Приватность",
   "consentsSectionAi": "Что AI может использовать",
   "consentsSectionSocial": "Социальное",
@@ -486,7 +500,6 @@
   "consentIntegrationCalendarWrite": "Писать в календарь",
   "consentIntegrationHealthRead": "Читать Health/Health Connect",
   "consentIntegrationTasksSync": "Синхронизация с другими таск-менеджерами",
-
   "aiMemoryTitle": "Память тренера",
   "aiMemoryEnabledLabel": "Тренер запоминает контекст",
   "aiMemoryEnabledBody": "AI ведёт заметки о твоих целях и паттернах, чтобы быть полезнее.",
@@ -495,14 +508,18 @@
   "aiMemoryClearBody": "Тренер забудет всё, что узнал о тебе.",
   "aiMemoryClearError": "Не удалось стереть. Попробуй ещё раз.",
   "aiMemoryClearSuccess": "Память очищена.",
-
   "dataExportTitle": "Экспорт и удаление",
   "dataExportDownload": "Скачать мои данные",
   "dataExportPreparing": "Готовим архив…",
   "dataExportSaved": "Сохранено: {path}",
-  "@dataExportSaved": { "placeholders": { "path": { "type": "String" } } },
+  "@dataExportSaved": {
+    "placeholders": {
+      "path": {
+        "type": "String"
+      }
+    }
+  },
   "dataExportError": "Не удалось экспортировать. Попробуй ещё раз.",
-
   "accountDeleteSection": "Опасная зона",
   "accountDelete": "Удалить аккаунт",
   "accountDeleteConfirmTitle": "Удалить аккаунт?",
@@ -510,33 +527,46 @@
   "accountDeleteConfirmAction": "Удалить",
   "accountDeleteCancel": "Отмена",
   "accountDeleteScheduled": "Удаление назначено на {date}.",
-  "@accountDeleteScheduled": { "placeholders": { "date": { "type": "String" } } },
+  "@accountDeleteScheduled": {
+    "placeholders": {
+      "date": {
+        "type": "String"
+      }
+    }
+  },
   "accountDeleteError": "Не удалось запросить удаление. Попробуй ещё раз.",
   "accountDeleteCancelled": "Удаление отменено. С возвращением.",
   "accountDeleteCancelFailed": "Не удалось отменить удаление аккаунта — оно всё ещё запланировано. Проверь соединение и войди ещё раз.",
-
   "aboutVersion": "Версия {version}",
-  "@aboutVersion": { "placeholders": { "version": { "type": "String" } } },
+  "@aboutVersion": {
+    "placeholders": {
+      "version": {
+        "type": "String"
+      }
+    }
+  },
   "aboutPrivacyPolicy": "Политика конфиденциальности",
   "aboutTermsOfService": "Условия использования",
   "aboutOpenSourceLicenses": "Open source лицензии",
-
   "rewardsTitle": "Награды",
   "rewardsTabAll": "Все",
   "rewardsTabUnlocked": "Полученные",
   "rewardsTabLocked": "Заблокированные",
   "rewardsEmpty": "Получи первую награду, закрыв задачу.",
-
   "rarityCommon": "Обычная",
   "rarityRare": "Редкая",
   "rarityEpic": "Эпическая",
   "rarityLegendary": "Легендарная",
-
   "achievementUnlockedTitle": "Достижение открыто",
   "achievementRewardXp": "+{xp} XP",
-  "@achievementRewardXp": { "placeholders": { "xp": { "type": "int" } } },
+  "@achievementRewardXp": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
   "achievementClose": "Класс",
-
   "achievementStreak3Title": "Искра пути",
   "achievementStreak3Body": "3 дня подряд",
   "achievementStreak5Title": "Пламя первых дней",
@@ -545,35 +575,28 @@
   "achievementStreak7Body": "7 дней подряд",
   "achievementStreak21Title": "Закалка привычки",
   "achievementStreak21Body": "21 день регулярности",
-
   "achievementLevel5Title": "Новичок пути",
   "achievementLevel5Body": "Достичь 5 уровня",
   "achievementLevel10Title": "Искатель роста",
   "achievementLevel10Body": "Достичь 10 уровня",
   "achievementLevel30Title": "Ветеран пути",
   "achievementLevel30Body": "Достичь 30 уровня",
-
   "achievementFirstGoalTitle": "Первый квест",
   "achievementFirstGoalBody": "Создай первую цель",
   "achievementFirstGoalDoneTitle": "Квест завершён",
   "achievementFirstGoalDoneBody": "Заверши цель",
-
   "achievementHabit7Title": "Ритм недели",
   "achievementHabit7Body": "Держи привычку 7 дней",
   "achievementHabit21Title": "Новая часть тебя",
   "achievementHabit21Body": "Держи привычку 21 день",
-
   "achievementTask100Title": "Сто шагов",
   "achievementTask100Body": "Закрой 100 задач",
-
   "achievementSocialFirstFriendTitle": "Союзник найден",
   "achievementSocialFirstFriendBody": "Добавь первого друга",
-
   "achievementChallengeFirstTitle": "Вызов принят",
   "achievementChallengeFirstBody": "Вступи в челлендж",
   "achievementChallengeCompleteTitle": "Победитель вызова",
   "achievementChallengeCompleteBody": "Заверши челлендж",
-
   "socialTitle": "Социальное",
   "navSocial": "Соц",
   "socialTabFriends": "Друзья",
@@ -586,7 +609,6 @@
   "socialSearch": "Поиск по нику",
   "socialSearchHint": "@ник или имя",
   "socialSearchEmpty": "Никого не нашли.",
-
   "friendActionSend": "Отправить",
   "friendActionAccept": "Принять",
   "friendActionDecline": "Отклонить",
@@ -599,24 +621,53 @@
   "friendRequestRateLimited": "Слишком много заявок за день. Попробуй завтра.",
   "friendRequestExists": "Заявка уже отправлена.",
   "friendActionError": "Не получилось. Попробуй ещё раз.",
-
   "publicProfileTitle": "Профиль",
   "publicProfileLevel": "Уровень {level}",
-  "@publicProfileLevel": { "placeholders": { "level": { "type": "int" } } },
+  "@publicProfileLevel": {
+    "placeholders": {
+      "level": {
+        "type": "int"
+      }
+    }
+  },
   "publicProfileStreak": "Серия {days} дней",
-  "@publicProfileStreak": { "placeholders": { "days": { "type": "int" } } },
+  "@publicProfileStreak": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "publicProfileAchievementsCount": "Достижений: {count}",
-  "@publicProfileAchievementsCount": { "placeholders": { "count": { "type": "int" } } },
-
+  "@publicProfileAchievementsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
   "feedAchievementUnlocked": "{name} получил «{title}»",
   "@feedAchievementUnlocked": {
-    "placeholders": { "name": { "type": "String" }, "title": { "type": "String" } }
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "title": {
+        "type": "String"
+      }
+    }
   },
   "feedLevelUp": "{name} достиг {level} уровня",
   "@feedLevelUp": {
-    "placeholders": { "name": { "type": "String" }, "level": { "type": "int" } }
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "level": {
+        "type": "int"
+      }
+    }
   },
-
   "reportTitle": "Пожаловаться",
   "reportReason": "Причина",
   "reportReasonSpam": "Спам",
@@ -627,15 +678,18 @@
   "reportSubmit": "Отправить",
   "reportSent": "Принято. Спасибо.",
   "reportRateLimited": "Слишком много жалоб за день.",
-
   "blockConfirmTitle": "Заблокировать {name}?",
-  "@blockConfirmTitle": { "placeholders": { "name": { "type": "String" } } },
+  "@blockConfirmTitle": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
   "blockConfirmBody": "Он не увидит профиль и не сможет найти тебя.",
   "blockConfirm": "Заблокировать",
   "blockCancel": "Отмена",
-
   "consentSocialShowStreak": "Показывать серию друзьям",
-
   "challengesTitle": "Челленджи",
   "challengesAllTab": "Все",
   "challengesMineTab": "Мои",
@@ -650,24 +704,37 @@
   "challengesProgressLabel": "{cur}/{target}",
   "@challengesProgressLabel": {
     "placeholders": {
-      "cur": { "type": "String" },
-      "target": { "type": "String" }
+      "cur": {
+        "type": "String"
+      },
+      "target": {
+        "type": "String"
+      }
     }
   },
   "challengesDaysLeft": "Осталось {days} дн.",
-  "@challengesDaysLeft": { "placeholders": { "days": { "type": "int" } } },
+  "@challengesDaysLeft": {
+    "placeholders": {
+      "days": {
+        "type": "int"
+      }
+    }
+  },
   "challengesDaysEnded": "Завершён",
   "challengesActionError": "Не получилось. Попробуй ещё раз.",
   "challengesRewardCompleted": "Награда: +{xp} XP",
-  "@challengesRewardCompleted": { "placeholders": { "xp": { "type": "int" } } },
-
+  "@challengesRewardCompleted": {
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
+  },
   "challengeSevenDaysActivityTitle": "Семь дней действия",
   "challengeSevenDaysActivityBody": "Выполни хотя бы 1 задачу каждый день 7 дней подряд.",
   "challengeMonthlyStepsTitle": "Месячный забег",
   "challengeMonthlyStepsBody": "Пройди или пробеги 30 км за месяц.",
-
   "navChallenges": "Квесты",
-
   "healthScreenTitle": "Здоровье",
   "healthConnectTitle": "Подключить Apple Health / Health Connect",
   "healthConnectBody": "Hero прочитает шаги и тренировки для прогресса и челленджей.",
@@ -680,14 +747,31 @@
   "healthStatusConnected": "Подключено",
   "healthStatusNotConnected": "Не подключено",
   "healthTodaySteps": "{steps} шагов сегодня",
-  "@healthTodaySteps": { "placeholders": { "steps": { "type": "int" } } },
+  "@healthTodaySteps": {
+    "placeholders": {
+      "steps": {
+        "type": "int"
+      }
+    }
+  },
   "healthTodayDistance": "{km} км сегодня",
-  "@healthTodayDistance": { "placeholders": { "km": { "type": "String" } } },
+  "@healthTodayDistance": {
+    "placeholders": {
+      "km": {
+        "type": "String"
+      }
+    }
+  },
   "healthLastSync": "Последняя синхронизация: {when}",
-  "@healthLastSync": { "placeholders": { "when": { "type": "String" } } },
+  "@healthLastSync": {
+    "placeholders": {
+      "when": {
+        "type": "String"
+      }
+    }
+  },
   "healthAndroidNeedsHealthConnect": "Нужно приложение Health Connect. Открыть Play Store?",
   "healthOpenPlayStore": "Открыть",
-
   "calendarScreenTitle": "Календарь",
   "calendarConnectButton": "Подключить календарь",
   "calendarDisconnectButton": "Отключить",
@@ -698,7 +782,6 @@
   "calendarTodayEventsEmpty": "Событий нет.",
   "calendarStatusConnected": "Подключено",
   "calendarStatusNotConnected": "Не подключено",
-
   "siriScreenTitle": "Голосовые команды",
   "siriIosOnlyNotice": "Голосовые команды работают через Siri на iOS.",
   "siriAndroidComingSoon": "Скоро на Android.",
@@ -707,14 +790,12 @@
   "siriExampleAskCoach": "«Привет, Siri, спроси тренера Hero»",
   "siriExampleShowToday": "«Привет, Siri, покажи задачи на сегодня в Hero»",
   "siriExampleCreateHabit": "«Привет, Siri, создай привычку в Hero — читать 10 страниц»",
-
   "siriSettingsHowTitle": "Как использовать",
   "siriSettingsHowBody": "Скажи «Привет, Siri» и одну из фраз ниже. При первом использовании Siri может попросить произнести фразу образцом.",
   "siriSettingsOpenSystem": "Открыть системные настройки",
   "siriCommandSuccess": "Готово.",
   "siriCommandError": "Не получилось.",
   "siriCommandAuthRequired": "Сначала войди в Hero.",
-
   "siriIntentCreateTaskTitle": "Добавить задачу",
   "siriIntentCreateTaskDescription": "Добавляет задачу в список Hero.",
   "siriIntentCreateTaskParamTitle": "Какая задача?",
@@ -726,7 +807,6 @@
   "siriIntentAskCoachDescription": "Открывает чат тренера Hero.",
   "siriIntentShowTodayTitle": "Показать сегодня",
   "siriIntentShowTodayDescription": "Открывает задачи на сегодня.",
-
   "commonCancel": "Отмена",
   "commonSave": "Сохранить",
   "commonDelete": "Удалить",
@@ -738,7 +818,6 @@
   "createTaskRecurringDaily": "Каждый день",
   "createTaskRecurringWeekly": "Каждую неделю",
   "createTaskRecurringHint": "Когда отметишь как готово — копия появится на следующий день. Стрика нет, это просто напоминание.",
-
   "notesTitle": "Заметки",
   "notesPrivateTab": "Личные",
   "notesAiAllowedTab": "Доступно AI",
@@ -758,11 +837,9 @@
   "noteVisibilityPrivateHint": "Никто кроме тебя не увидит. AI её не читает.",
   "noteVisibilityAiAllowed": "Доступно AI",
   "noteVisibilityAiAllowedHint": "Тренер может ссылаться на заметку, если включён переключатель «AI может использовать заметки».",
-
   "settingsNotesRow": "Заметки",
   "privacyAiCanUseNotesTitle": "AI может использовать заметки",
   "privacyAiCanUseNotesBody": "Когда включено, тренер может ссылаться на заметки с пометкой «Доступно AI». Личные заметки всегда скрыты.",
-
   "habitTypeGood": "Развить",
   "habitTypeBad": "Бросить",
   "createHabitTitleLabelBad": "Что бросить?",
@@ -770,7 +847,6 @@
   "habitSlipAction": "Я сорвался",
   "habitDaysCleanLabel": "{count, plural, =0{сегодня сорвался} =1{1 день без срыва} few{{count} дня без срыва} many{{count} дней без срыва} other{{count} дней без срыва}}",
   "habitSlipSnack": "Записано. Завтра — заново.",
-
   "profileTitle": "Профиль",
   "profileXpTotal": "{xp} XP всего",
   "profileStatsSectionTitle": "Характеристики",
@@ -784,10 +860,8 @@
   "profileChangeAvatarColor": "Сменить цвет аватара",
   "profileEditDisplayName": "Изменить имя",
   "profileDisplayNameLabel": "Имя",
-
   "energyNotEnoughTitle": "Недостаточно энергии",
   "energyNotEnoughBody": "У тебя {have}, нужно {needed}. Заверши задачи, отметь привычки или подожди — энергия восполняется каждый час, плюс бонус каждое утро.",
-
   "challengesFilterAll": "Все",
   "challengesFilterWeekly": "Недельные",
   "challengesFilterSeasonal": "Сезонные",
@@ -799,7 +873,6 @@
   "challengeWeeklyActiveDaysBody": "Будь активен 5 дней из 7.",
   "challengeSummer2026Title": "Лето 2026",
   "challengeSummer2026Body": "Выполни 100 задач до сентября.",
-
   "challengeCreateTitle": "Новый челлендж",
   "challengeCreateTitleLabel": "Название",
   "challengeCreateTitleHint": "Пробежать 100км / Прочитать 5 книг / 30 дней без сладкого",
@@ -814,6 +887,85 @@
   "challengeCreateSubmit": "Создать",
   "challengeCreateInvalid": "Заполни название и положительную цель.",
   "challengeCreateError": "Не удалось создать челлендж",
-
-  "goalDetailNoSteps": "Шагов нет. Попробуй перегенерировать план."
+  "goalDetailNoSteps": "Шагов нет. Попробуй перегенерировать план.",
+  "onboardingStepLabel": "Шаг {step}",
+  "@onboardingStepLabel": {
+    "placeholders": {
+      "step": {
+        "type": "int"
+      }
+    }
+  },
+  "onboardingNameTitle": "Как тебя называть?",
+  "onboardingNameSubtitle": "Так к тебе будет обращаться твой AI-тренер",
+  "onboardingNameHint": "Твоё имя",
+  "onboardingNameNote": "Можно поменять в любой момент в профиле.",
+  "onboardingAreaStrength": "Сила",
+  "onboardingLifeChangeSubtitleV2": "Выбери до 3 направлений — Hero подстроит первые задания под них",
+  "onboardingInsightTitle": "Hero понял",
+  "onboardingInsightTitleNamed": "{name}, Hero понял",
+  "@onboardingInsightTitleNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "onboardingInsightSubtitle": "Вот что построим на основе твоих ответов",
+  "onboardingInsightPromise1": "Персональный план из маленьких шагов — без перегруза",
+  "onboardingInsightPromise2": "Задания и привычки в выбранных направлениях",
+  "onboardingInsightPromise3": "Твой герой растёт вместе с тобой — уровень за уровнем",
+  "onboardingObstacleNoStart": "Не знаю, с чего начать",
+  "onboardingTime5Desc": "Разогрев",
+  "onboardingTime15Desc": "Стабильный темп",
+  "onboardingTime30Desc": "Серьёзный настрой",
+  "onboardingTime60Desc": "Полное погружение",
+  "onboardingPreferredTitle": "Когда тебе удобнее заниматься собой?",
+  "onboardingPreferredSubtitle": "Подстроим напоминания под твой ритм",
+  "onboardingPreferredMorning": "Утро",
+  "onboardingPreferredMorningDesc": "Пока день не затянул",
+  "onboardingPreferredAfternoon": "День",
+  "onboardingPreferredAfternoonDesc": "На пике активности",
+  "onboardingPreferredEvening": "Вечер",
+  "onboardingPreferredEveningDesc": "Когда всё стихает",
+  "onboardingHabitsSubtitleV2": "Подобрали под твои направления. Выбери 1–3 — это будут первые квесты",
+  "onboardingHabitStretch": "Разминка 5 минут",
+  "onboardingHabitExpenses": "Записать расходы",
+  "onboardingHabitCall": "Позвонить близкому",
+  "onboardingHabitSketch": "Скетч 10 минут",
+  "onboardingNotifTitle": "Не дай привычкам угаснуть",
+  "onboardingNotifSubtitle": "Hero напомнит в нужный момент — мягко и вовремя",
+  "onboardingNotifEnable": "Включить напоминания",
+  "onboardingNotifLater": "Позже",
+  "onboardingNotifBenefit1": "Напоминания о привычках в удобное тебе время",
+  "onboardingNotifBenefit2": "Не потеряешь стрик из-за забытого чек-ина",
+  "onboardingNotifBenefit3": "Никакого спама — только твои квесты",
+  "onboardingFirstMissionTitleNamed": "{name}, твой Герой готов",
+  "@onboardingFirstMissionTitleNamed": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "wishlistTitle": "Хочу попробовать",
+  "wishlistCaptureHint": "Что хочешь попробовать?",
+  "wishlistAddError": "Не сохранилось. Попробуй ещё раз.",
+  "wishlistLoadError": "Не удалось загрузить список.",
+  "wishlistTriedSection": "ПОПРОБОВАНО",
+  "wishlistActionToTask": "В задачу",
+  "wishlistActionTried": "Готово",
+  "wishlistActionUntried": "Вернуть",
+  "wishlistInTasks": "→ уже в задачах",
+  "wishlistConverted": "«{title}» теперь задача",
+  "@wishlistConverted": {
+    "placeholders": {
+      "title": {
+        "type": "String"
+      }
+    }
+  },
+  "wishlistConvertError": "Не удалось создать задачу.",
+  "wishlistEmptyTitle": "Лови идеи на лету",
+  "wishlistEmptyBody": "Керамика, скалодром, новый язык — запиши сюда всё, что когда-нибудь хочется попробовать. Без обязательств."
 }

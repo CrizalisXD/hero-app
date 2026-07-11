@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../app/theme/app_colors.dart';
 import '../../../core/l10n/l10n.dart';
 import '../application/onboarding_controller.dart';
 import 'widgets/onboarding_shell.dart';
+import 'widgets/selectable_card_grid.dart';
 
+/// Шаг 9: стиль AI-тренера.
 class SupportStyleScreen extends ConsumerStatefulWidget {
   const SupportStyleScreen({super.key});
 
@@ -16,92 +17,68 @@ class SupportStyleScreen extends ConsumerStatefulWidget {
 }
 
 class _SupportStyleScreenState extends ConsumerState<SupportStyleScreen> {
-  String _selected = '';
+  String? _selected;
 
   @override
   void initState() {
     super.initState();
-    _selected = ref.read(onboardingControllerProvider).supportStyle;
+    final existing = ref.read(onboardingControllerProvider).supportStyle;
+    if (existing.isNotEmpty) _selected = existing;
   }
 
   @override
   Widget build(BuildContext context) {
     final l = context.l10n;
     final options = [
-      (key: 'direct', label: l.onboardingSupportDirect, desc: l.onboardingSupportDirectDesc),
-      (key: 'gentle', label: l.onboardingSupportGentle, desc: l.onboardingSupportGentleDesc),
-      (key: 'humorous', label: l.onboardingSupportHumorous, desc: l.onboardingSupportHumorousDesc),
-      (key: 'neutral', label: l.onboardingSupportNeutral, desc: l.onboardingSupportNeutralDesc),
+      CardGridOption(
+        key: 'direct',
+        label: l.onboardingSupportDirect,
+        description: l.onboardingSupportDirectDesc,
+        icon: Icons.speed,
+      ),
+      CardGridOption(
+        key: 'gentle',
+        label: l.onboardingSupportGentle,
+        description: l.onboardingSupportGentleDesc,
+        icon: Icons.spa,
+      ),
+      CardGridOption(
+        key: 'humorous',
+        label: l.onboardingSupportHumorous,
+        description: l.onboardingSupportHumorousDesc,
+        icon: Icons.sentiment_very_satisfied,
+      ),
+      CardGridOption(
+        key: 'neutral',
+        label: l.onboardingSupportNeutral,
+        description: l.onboardingSupportNeutralDesc,
+        icon: Icons.analytics_outlined,
+      ),
     ];
 
     return OnboardingShell(
-      step: 6,
-      totalSteps: 9,
+      step: 9,
+      totalSteps: 12,
       title: l.onboardingSupportTitle,
       subtitle: l.onboardingSupportSubtitle,
-      continueEnabled: _selected.isNotEmpty,
-      onBack: () => context.go('/onboarding/failure-reason'),
+      onBack: () => context.go('/onboarding/preferred-time'),
+      continueEnabled: _selected != null,
       onContinue: () {
         ref
             .read(onboardingControllerProvider.notifier)
-            .setSupportStyle(_selected);
+            .setSupportStyle(_selected!);
         context.go('/onboarding/habits');
       },
       content: Column(
-        children: options.map((opt) {
-          final isSelected = _selected == opt.key;
-          return GestureDetector(
-            onTap: () => setState(() => _selected = opt.key),
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 150),
-              margin: const EdgeInsets.only(bottom: 12),
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: isSelected ? AppColors.accentDim : AppColors.bgCard,
-                borderRadius: BorderRadius.circular(14),
-                border: Border.all(
-                  color: isSelected ? AppColors.accent : AppColors.border,
-                  width: isSelected ? 1.5 : 1,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          opt.label,
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.w600,
-                            color: isSelected
-                                ? AppColors.textPrimary
-                                : AppColors.textSecondary,
-                          ),
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          opt.desc,
-                          style: const TextStyle(
-                            fontSize: 13,
-                            color: AppColors.textMuted,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (isSelected)
-                    const Icon(
-                      Icons.check_circle,
-                      color: AppColors.accent,
-                      size: 20,
-                    ),
-                ],
-              ),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final o in options)
+            SelectableRowCard(
+              option: o,
+              selected: _selected == o.key,
+              onTap: () => setState(() => _selected = o.key),
             ),
-          );
-        }).toList(),
+        ],
       ),
     );
   }
