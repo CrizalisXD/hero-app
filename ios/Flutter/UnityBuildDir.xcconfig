@@ -1,0 +1,14 @@
+// Base configuration for the Unity targets in UnityLibrary/Unity-iPhone.xcodeproj.
+// Attached by the pin_unity_to_flutter_build_dir hook in ios/Podfile.
+//
+// Flutter injects CONFIGURATION_BUILD_DIR (build/ios/iphoneos) into Generated.xcconfig
+// for `flutter run`, and omits it for `flutter build ios`. Generated.xcconfig only
+// reaches the Runner project, so without this include the Unity targets keep using the
+// default $(SYMROOT)/$(CONFIGURATION)$(EFFECTIVE_PLATFORM_NAME) and drift away from
+// Runner exactly when the override is present — leaving Runner's BUILT_PRODUCTS_DIR
+// reference and Embed Frameworks phase pointing at a UnityFramework.framework that
+// isn't there. Including the file makes the Unity targets follow Runner in both cases.
+//
+// #include? (optional form) so the Unity project still opens standalone in Xcode when
+// Generated.xcconfig hasn't been produced yet.
+#include? "Generated.xcconfig"

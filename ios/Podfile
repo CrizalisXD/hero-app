@@ -23,6 +23,44 @@ def flutter_root
   raise "FLUTTER_ROOT not found in #{generated_xcode_build_settings_path}. Try deleting Generated.xcconfig, then run flutter pub get"
 end
 
+# Keep the Unity targets' product directory in sync with Runner's.
+#
+# Flutter injects CONFIGURATION_BUILD_DIR (build/ios/iphoneos) into Generated.xcconfig for
+# `flutter run` and omits it for `flutter build ios`, but that xcconfig only reaches the
+# Runner project. The Unity targets live in Unity-iPhone.xcodeproj, so when the override is
+# present they keep writing to the default build/ios/$(CONFIGURATION)-iphoneos while Runner
+# looks for UnityFramework.framework in build/ios/iphoneos — the "No such file or directory"
+# failure. Attaching UnityBuildDir.xcconfig (which includes Generated.xcconfig) as their base
+# configuration makes them follow Runner in both cases; a literal path would go stale, since
+# pod install does not re-run on every flutter run.
+#
+# Both targets in the chain need it: GameAssembly emits il2cpp.a / libGameAssembly.a into
+# $CONFIGURATION_BUILD_DIR, and UnityFramework links against them via the same variable.
+UNITY_PINNED_TARGETS = %w[UnityFramework GameAssembly].freeze
+
+def pin_unity_to_flutter_build_dir
+  unity_project_path = File.expand_path(File.join('..', 'UnityLibrary', 'Unity-iPhone.xcodeproj'), __FILE__)
+  return unless File.exist?(unity_project_path)
+
+  unity_project = Xcodeproj::Project.open(unity_project_path)
+
+  # Match on basename: new_file stores the path relative to the project (../Flutter/...),
+  # so looking it up by absolute path never hits and every pod install would add a duplicate.
+  xcconfig_path = File.expand_path(File.join('..', 'Flutter', 'UnityBuildDir.xcconfig'), __FILE__)
+  xcconfig_ref = unity_project.files.find { |f| File.basename(f.path.to_s) == 'UnityBuildDir.xcconfig' } ||
+                 unity_project.new_file(xcconfig_path)
+
+  UNITY_PINNED_TARGETS.each do |target_name|
+    target = unity_project.targets.find { |t| t.name == target_name }
+    raise "#{target_name} target not found in Unity-iPhone.xcodeproj" if target.nil?
+
+    target.build_configurations.each do |config|
+      config.base_configuration_reference = xcconfig_ref
+    end
+  end
+  unity_project.save
+end
+
 require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelper'), flutter_root)
 
 flutter_ios_podfile_setup
@@ -37,8 +75,24 @@ target 'Runner' do
 end
 
 post_install do |installer|
+  pin_unity_to_flutter_build_dir
+
   installer.pods_project.targets.each do |target|
     flutter_additional_ios_build_settings(target)
+
+    # flutter_unity_widget imports UnityFramework, but its podspec only searches
+    # ${PODS_CONFIGURATION_BUILD_DIR} (build/ios/$(CONFIGURATION)-iphoneos). The Unity
+    # targets follow Runner instead (see pin_unity_to_flutter_build_dir), which lands them
+    # in build/ios/iphoneos whenever Flutter sets CONFIGURATION_BUILD_DIR. Search both
+    # candidates — Xcode ignores the one that doesn't exist for the current invocation.
+    if target.name == 'flutter_unity_widget'
+      target.build_configurations.each do |config|
+        config.build_settings['FRAMEWORK_SEARCH_PATHS'] = [
+          '$(inherited)',
+          '"${PODS_ROOT}/../../build/ios/iphoneos"',
+        ]
+      end
+    end
 
     # permission_handler — disable all permissions we DON'T use so the
     # app doesn't abort at launch for missing Info.plist usage descriptions.
