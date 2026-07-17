@@ -38,11 +38,37 @@ end
 # $CONFIGURATION_BUILD_DIR, and UnityFramework links against them via the same variable.
 UNITY_PINNED_TARGETS = %w[UnityFramework GameAssembly].freeze
 
+# Xcode builds the whole workspace under a single configuration name. Runner has
+# Debug/Release/Profile, but the Unity export only ships Release/ReleaseForProfiling/
+# ReleaseForRunning/Debug. With no `Profile`, the Unity project silently falls back to its
+# default configuration (Release) and writes to build/ios/Release-iphoneos, while Runner and
+# the pods use build/ios/Profile-iphoneos — so `flutter run --profile` fails with
+# "module 'UnityFramework' not found". Clone Release into a real Profile configuration;
+# IL2CPP still compiles optimized, since its build script only checks CONFIGURATION == "Debug".
+def ensure_unity_profile_configuration(unity_project)
+  lists = [unity_project.build_configuration_list] +
+          unity_project.targets.map(&:build_configuration_list)
+  lists.each do |list|
+    next if list.build_configurations.any? { |c| c.name == 'Profile' }
+
+    source = list['Release']
+    next if source.nil?
+
+    profile = unity_project.new(Xcodeproj::Project::Object::XCBuildConfiguration)
+    profile.name = 'Profile'
+    profile.build_settings = source.build_settings.dup
+    profile.base_configuration_reference = source.base_configuration_reference
+    list.build_configurations << profile
+  end
+end
+
 def pin_unity_to_flutter_build_dir
   unity_project_path = File.expand_path(File.join('..', 'UnityLibrary', 'Unity-iPhone.xcodeproj'), __FILE__)
   return unless File.exist?(unity_project_path)
 
   unity_project = Xcodeproj::Project.open(unity_project_path)
+  # Must run before the base-config pass below, so Profile gets the xcconfig too.
+  ensure_unity_profile_configuration(unity_project)
 
   # Match on basename: new_file stores the path relative to the project (../Flutter/...),
   # so looking it up by absolute path never hits and every pod install would add a duplicate.
