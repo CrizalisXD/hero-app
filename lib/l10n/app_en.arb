@@ -1590,6 +1590,48 @@
       }
     }
   },
+  "dreamsCaptureHint": "What do you dream of?",
+  "dreamsFilterAll": "Popular",
+  "dreamsFilterMine": "Mine",
+  "dreamsWant": "I want this too",
+  "dreamsWantRemove": "Not anymore",
+  "dreamsToGoal": "To goal",
+  "dreamsToChallenge": "To challenge",
+  "dreamsStatWant": "want this",
+  "dreamsStatDifficulty": "difficulty",
+  "dreamsStatWorth": "worth it",
+  "dreamsUncharted": "nobody tried yet",
+  "dreamsBeFirst": "Be the first",
+  "dreamsDoersCount": "{count} already did it",
+  "@dreamsDoersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dreamsSimilarHint": "This dream already exists",
+  "dreamsAddError": "Not saved. Try again.",
+  "dreamsLoadError": "Couldn't load dreams.",
+  "dreamsEmptyTitle": "No dreams yet",
+  "dreamsEmptyBody": "Write what you want to do in life. Not a goal — just a dream.",
+  "dreamDetailDone": "I did this",
+  "dreamDetailUndone": "Mark as not done",
+  "dreamDetailWorthQuestion": "Was it worth it?",
+  "dreamDetailDifficultyQuestion": "How hard is it to pull off?",
+  "dreamDetailPublicToggle": "Show me in “who did it”",
+  "dreamDetailDoersTitle": "Who already did it",
+  "dreamDetailDoersEmpty": "Nobody yet. Be the first.",
+  "dreamDetailCommentsTitle": "Discussion",
+  "dreamDetailCommentsEmpty": "Quiet here. Start the conversation.",
+  "dreamDetailCommentHint": "Share your thoughts on this dream",
+  "dreamDetailFromDoer": "did it",
+  "dreamDetailReport": "Report",
+  "dreamDetailReported": "Thanks, we’ll take a look",
+  "dreamSearchTitle": "Search dreams",
+  "dreamSearchHint": "Find a dream among popular ones",
+  "dreamSearchEmpty": "Nothing found. Create your own dream.",
+  "dreamActionOpen": "Open",
   "wishlistTitle": "Want to try",
   "wishlistCaptureHint": "What do you want to try?",
   "wishlistAddError": "Couldn't save. Try again.",

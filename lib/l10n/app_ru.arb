@@ -948,6 +948,48 @@
       }
     }
   },
+  "dreamsCaptureHint": "О чём мечтаешь?",
+  "dreamsFilterAll": "Популярное",
+  "dreamsFilterMine": "Мои",
+  "dreamsWant": "Тоже хочу",
+  "dreamsWantRemove": "Уже не хочу",
+  "dreamsToGoal": "В цель",
+  "dreamsToChallenge": "В челлендж",
+  "dreamsStatWant": "тоже хотят",
+  "dreamsStatDifficulty": "сложность",
+  "dreamsStatWorth": "стоило того",
+  "dreamsUncharted": "никто не пробовал",
+  "dreamsBeFirst": "Стань первым",
+  "dreamsDoersCount": "{count} уже сделали",
+  "@dreamsDoersCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "dreamsSimilarHint": "Уже есть такая мечта",
+  "dreamsAddError": "Не сохранилось. Попробуй ещё раз.",
+  "dreamsLoadError": "Не удалось загрузить мечты.",
+  "dreamsEmptyTitle": "Пока ни одной мечты",
+  "dreamsEmptyBody": "Напиши, что хочешь успеть в жизни. Не цель — просто мечта.",
+  "dreamDetailDone": "Я это сделал",
+  "dreamDetailUndone": "Отметить, что не сделал",
+  "dreamDetailWorthQuestion": "Стоило того?",
+  "dreamDetailDifficultyQuestion": "Насколько сложно это осуществить?",
+  "dreamDetailPublicToggle": "Показывать меня в «кто сделал»",
+  "dreamDetailDoersTitle": "Кто уже сделал",
+  "dreamDetailDoersEmpty": "Пока никто не отметился. Стань первым.",
+  "dreamDetailCommentsTitle": "Обсуждение",
+  "dreamDetailCommentsEmpty": "Пока тихо. Начни разговор.",
+  "dreamDetailCommentHint": "Поделись мыслями об этой мечте",
+  "dreamDetailFromDoer": "сделал(а) это",
+  "dreamDetailReport": "Пожаловаться",
+  "dreamDetailReported": "Спасибо, мы проверим",
+  "dreamSearchTitle": "Поиск мечты",
+  "dreamSearchHint": "Найди мечту среди популярных",
+  "dreamSearchEmpty": "Ничего не нашлось. Создай свою мечту.",
+  "dreamActionOpen": "Открыть",
   "wishlistTitle": "Хочу попробовать",
   "wishlistCaptureHint": "Что хочешь попробовать?",
   "wishlistAddError": "Не сохранилось. Попробуй ещё раз.",

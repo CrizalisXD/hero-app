@@ -57,7 +57,9 @@ import '../features/onboarding/presentation/preferred_time_screen.dart';
 import '../features/onboarding/presentation/support_style_screen.dart';
 import '../features/onboarding/presentation/time_commitment_screen.dart';
 import '../features/tasks/presentation/screens/tasks_screen.dart';
-import '../features/wishlist/presentation/screens/wishlist_screen.dart';
+import '../features/wishlist/presentation/screens/dreams_screen.dart';
+import '../features/wishlist/presentation/screens/dream_detail_screen.dart';
+import '../features/wishlist/presentation/screens/dream_search_screen.dart';
 
 const _publicRoutes = <String>{
   '/splash',
@@ -240,7 +242,18 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: '/wishlist',
-        builder: (_, __) => const WishlistScreen(),
+        builder: (_, __) => const DreamsScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/wishlist/search',
+        builder: (_, __) => const DreamSearchScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/wishlist/:id',
+        builder: (_, s) =>
+            DreamDetailScreen(dreamId: s.pathParameters['id']!),
       ),
 
       // ── Social modals (Phase 13) ──
@@ -265,7 +278,8 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,
         path: '/challenges/new',
-        builder: (_, __) => const CreateChallengeScreen(),
+        builder: (_, s) =>
+            CreateChallengeScreen(initialTitle: s.extra as String?),
       ),
       GoRoute(
         parentNavigatorKey: _rootNavigatorKey,

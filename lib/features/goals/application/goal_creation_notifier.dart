@@ -66,9 +66,20 @@ class GoalCreationNotifier extends Notifier<GoalCreationState> {
 
   GoalsRepository get _repo => ref.read(goalsRepositoryProvider);
 
+  /// Мечта («Хочу попробовать»), из которой запустили создание цели, если
+  /// запустили оттуда. После успешного confirm подписчик на стороне мечт
+  /// проставит converted_goal_id. Обычное создание цели обнуляет это поле.
+  String? _sourceDreamId;
+  String? get sourceDreamId => _sourceDreamId;
+
   // ── Step 1 → 2: capture title and move to archetype picking ──────
 
-  void startArchetypePick({required String title, String? description}) {
+  void startArchetypePick({
+    required String title,
+    String? description,
+    String? sourceDreamId,
+  }) {
+    _sourceDreamId = sourceDreamId;
     state = GoalCreationPickingArchetype(title: title, description: description);
   }
 
@@ -187,7 +198,10 @@ class GoalCreationNotifier extends Notifier<GoalCreationState> {
 
   // ── Reset to start a new goal ─────────────────────────────────────
 
-  void reset() => state = GoalCreationIdle();
+  void reset() {
+    _sourceDreamId = null;
+    state = GoalCreationIdle();
+  }
 }
 
 final goalCreationProvider =

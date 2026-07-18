@@ -12,7 +12,11 @@ import '../../application/challenges_notifier.dart';
 /// `create_user_challenge` RPC behind the scenes and pops with the new
 /// challenge id so the caller can navigate into the detail screen.
 class CreateChallengeScreen extends ConsumerStatefulWidget {
-  const CreateChallengeScreen({super.key});
+  const CreateChallengeScreen({super.key, this.initialTitle});
+
+  /// Предзаполнение названия — например, когда челлендж заводят из мечты
+  /// («Хочу попробовать»). Метрику и срок пользователь всё равно задаёт сам.
+  final String? initialTitle;
 
   @override
   ConsumerState<CreateChallengeScreen> createState() =>
@@ -21,7 +25,7 @@ class CreateChallengeScreen extends ConsumerStatefulWidget {
 
 class _CreateChallengeScreenState
     extends ConsumerState<CreateChallengeScreen> {
-  final _titleCtrl = TextEditingController();
+  late final _titleCtrl = TextEditingController(text: widget.initialTitle ?? '');
   final _descCtrl = TextEditingController();
   final _targetCtrl = TextEditingController(text: '10');
   String _metric = 'count';
