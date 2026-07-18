@@ -16,12 +16,15 @@ Widget _wrap(Widget child) => MaterialApp(
 ChallengeParticipant _participant({
   double progress = 0.65,
   ChallengeStatus status = ChallengeStatus.joined,
+  String? titleKey = 'challengeMonthlyStepsTitle',
+  String? titleCustom,
 }) =>
     ChallengeParticipant(
       participantId: 'p1',
       challengeId: 'c1',
       metricType: ChallengeMetricType.distance,
-      titleKey: 'challengeMonthlyStepsTitle',
+      titleKey: titleKey,
+      titleCustom: titleCustom,
       targetValue: 100,
       progressValue: 100 * progress,
       status: status,
@@ -55,6 +58,20 @@ void main() {
     // Завершённый не показывает живой процент и кольцо.
     expect(find.text('65%'), findsNothing);
     expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+  testWidgets('пользовательский челлендж: показывает свой текст, не падает',
+      (t) async {
+    // Регрессия: user-челленджи имеют title_custom и пустой title_key —
+    // раньше это роняло всю вкладку «Мои».
+    await t.pumpWidget(_wrap(
+      ChallengeCard.participant(
+        _participant(titleKey: null, titleCustom: 'Мой личный вызов'),
+        onTap: () {},
+      ),
+    ));
+    expect(t.takeException(), isNull);
+    expect(find.text('Мой личный вызов'), findsOneWidget);
   });
 
   testWidgets('тап по карточке срабатывает', (t) async {

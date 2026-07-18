@@ -109,8 +109,15 @@ class ChallengeDetailScreen extends ConsumerWidget {
           if (challenge == null && p == null) {
             return Center(child: Text(l.challengesEmpty));
           }
-          final titleKey = challenge?.titleKey ?? p!.titleKey;
+          final titleKey = challenge?.titleKey ?? p?.titleKey;
           final bodyKey = challenge?.descriptionKey ?? p?.descriptionKey;
+          final titleCustom = challenge?.titleCustom ?? p?.titleCustom;
+          final bodyCustom =
+              challenge?.descriptionCustom ?? p?.descriptionCustom;
+          final title = titleCustom ??
+              (titleKey != null ? challengeTitle(context, titleKey) : '');
+          final body = bodyCustom ??
+              (bodyKey != null ? challengeBody(context, bodyKey) : null);
           final rewardXp = challenge?.rewardXp ?? p!.rewardXp;
           final isJoined = p?.status == ChallengeStatus.joined;
           final completed = p?.status == ChallengeStatus.completed;
@@ -119,16 +126,16 @@ class ChallengeDetailScreen extends ConsumerWidget {
             padding: const EdgeInsets.all(20),
             children: [
               Text(
-                challengeTitle(context, titleKey),
+                title,
                 style: const TextStyle(
                   fontSize: 22,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              if (bodyKey != null) ...[
+              if (body != null) ...[
                 const SizedBox(height: 8),
                 Text(
-                  challengeBody(context, bodyKey),
+                  body,
                   style: const TextStyle(color: AppColors.textSecondary),
                 ),
               ],

@@ -37,8 +37,16 @@ class ChallengeCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final l = context.l10n;
 
-    final titleKey = challenge?.titleKey ?? participant!.titleKey;
+    final titleKey = challenge?.titleKey ?? participant?.titleKey;
     final bodyKey = challenge?.descriptionKey ?? participant?.descriptionKey;
+    final titleCustom = challenge?.titleCustom ?? participant?.titleCustom;
+    final bodyCustom =
+        challenge?.descriptionCustom ?? participant?.descriptionCustom;
+    // Пользовательские челленджи несут свой текст; системные — ключ локали.
+    final title = titleCustom ??
+        (titleKey != null ? challengeTitle(context, titleKey) : '');
+    final body = bodyCustom ??
+        (bodyKey != null ? challengeBody(context, bodyKey) : null);
     final rewardXp = challenge?.rewardXp ?? participant!.rewardXp;
     final daysLeft = challenge?.daysLeft ??
         participant!.endAt.difference(DateTime.now()).inDays;
@@ -77,7 +85,7 @@ class ChallengeCard extends StatelessWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          challengeTitle(context, titleKey),
+                          title,
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
@@ -112,10 +120,10 @@ class ChallengeCard extends StatelessWidget {
                         color: AppColors.textSecondary,
                       ),
                     ),
-                  ] else if (bodyKey != null) ...[
+                  ] else if (body != null) ...[
                     const SizedBox(height: 2),
                     Text(
-                      challengeBody(context, bodyKey),
+                      body,
                       style: const TextStyle(
                         fontSize: 12,
                         color: AppColors.textSecondary,

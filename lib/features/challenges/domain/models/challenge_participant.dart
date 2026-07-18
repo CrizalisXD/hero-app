@@ -7,8 +7,10 @@ class ChallengeParticipant {
     required this.participantId,
     required this.challengeId,
     required this.metricType,
-    required this.titleKey,
+    this.titleKey,
     this.descriptionKey,
+    this.titleCustom,
+    this.descriptionCustom,
     required this.targetValue,
     required this.progressValue,
     required this.status,
@@ -21,8 +23,14 @@ class ChallengeParticipant {
   final String participantId;
   final String challengeId;
   final ChallengeMetricType metricType;
-  final String titleKey;
+
+  /// Системные челленджи несут ключ локализации ([titleKey]); пользовательские
+  /// — произвольный текст ([titleCustom]). Всегда задан ровно один. Раньше
+  /// titleKey был non-null и падал на пользовательских — отсюда ошибка «Мои».
+  final String? titleKey;
   final String? descriptionKey;
+  final String? titleCustom;
+  final String? descriptionCustom;
   final num targetValue;
   final num progressValue;
   final ChallengeStatus status;
@@ -45,8 +53,10 @@ class ChallengeParticipant {
         challengeId: j['challenge_id'] as String,
         metricType:
             ChallengeMetricType.fromWire(j['metric_type'] as String?),
-        titleKey: j['title_key'] as String,
+        titleKey: j['title_key'] as String?,
         descriptionKey: j['description_key'] as String?,
+        titleCustom: j['title_custom'] as String?,
+        descriptionCustom: j['description_custom'] as String?,
         targetValue: (j['target_value'] as num?) ?? 0,
         progressValue: (j['progress_value'] as num?) ?? 0,
         status: ChallengeStatus.fromWire(j['status'] as String?),
