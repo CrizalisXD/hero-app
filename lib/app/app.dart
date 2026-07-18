@@ -73,7 +73,6 @@ class _HeroAppState extends ConsumerState<HeroApp>
   void _invalidateUserScopedData() {
     ref.invalidate(homeNotifierProvider);
     ref.invalidate(tasksNotifierProvider);
-    ref.invalidate(todayTasksNotifierProvider);
     ref.invalidate(habitsNotifierProvider);
     ref.invalidate(goalsNotifierProvider);
     ref.invalidate(profileNotifierProvider);
@@ -115,7 +114,6 @@ class _HeroAppState extends ConsumerState<HeroApp>
       // or removed rows show up in the UI without the user pulling-to-
       // refresh manually.
       ref.invalidate(tasksNotifierProvider);
-      ref.invalidate(todayTasksNotifierProvider);
     } catch (_) {
       // Agent already swallows errors; this is a defensive net.
     }

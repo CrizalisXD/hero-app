@@ -206,7 +206,6 @@ class _CreateTaskSheetState extends ConsumerState<CreateTaskSheet> {
     setState(() => _submitting = false);
 
     if (task != null) {
-      unawaited(ref.read(todayTasksNotifierProvider.notifier).refresh());
       // New task should also appear on Home immediately (silent — no skeleton).
       unawaited(ref.read(homeNotifierProvider.notifier).silentRefresh());
       if (context.mounted) Navigator.of(context).pop(task);

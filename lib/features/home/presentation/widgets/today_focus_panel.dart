@@ -34,7 +34,6 @@ class TodayFocusPanel extends ConsumerWidget {
       // skeleton / no Unity reload) + invalidate the Tasks-screen caches so
       // the Today/All tabs aren't stale when opened.
       await ref.read(homeNotifierProvider.notifier).silentRefresh();
-      ref.invalidate(todayTasksNotifierProvider);
       ref.invalidate(tasksNotifierProvider);
       if (res.levelsGained > 0 && context.mounted) {
         await LevelUpOverlay.show(context, newLevel: res.levelAfter);

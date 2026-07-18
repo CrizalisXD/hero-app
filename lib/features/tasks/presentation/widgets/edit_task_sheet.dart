@@ -1,4 +1,3 @@
-import 'dart:async' show unawaited;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -103,9 +102,6 @@ class _EditTaskSheetState extends ConsumerState<EditTaskSheet> {
     setState(() => _submitting = false);
 
     if (result != null) {
-      // Refresh Today list too so the change is visible immediately
-      // without having to swipe back to it.
-      unawaited(ref.read(todayTasksNotifierProvider.notifier).refresh());
       Navigator.of(context).pop(result);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(

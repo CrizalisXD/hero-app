@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../../core/services/supabase_service.dart';
 import '../../integrations/calendar/data/device_calendar_service.dart';
 import '../domain/models/create_task_input.dart';
 import '../domain/models/task.dart';
@@ -238,5 +239,8 @@ class SupabaseTasksRepository implements TasksRepository {
 }
 
 final tasksRepositoryProvider = Provider<TasksRepository>((ref) {
-  return SupabaseTasksRepository(Supabase.instance.client);
+  // Route through supabaseClientProvider like every other repository, so the
+  // client is swappable in tests and follows auth/session changes rather than
+  // pinning the global singleton.
+  return SupabaseTasksRepository(ref.watch(supabaseClientProvider));
 });
