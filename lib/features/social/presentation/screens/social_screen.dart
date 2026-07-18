@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/feature_flags/feature_flag_keys.dart';
 import '../../../../core/feature_flags/feature_flag_providers.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_error_view.dart';
 import '../../application/social_notifiers.dart';
 import '../widgets/feed_tile.dart';
 import '../widgets/friend_request_tile.dart';
@@ -74,7 +75,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen>
         children: [
           friends.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('$e')),
+            error: (e, _) => HeroErrorView(onRetry: () => ref.invalidate(friendsNotifierProvider)),
             data: (list) {
               if (list.isEmpty) return Center(child: Text(l.socialEmptyFriends));
               return RefreshIndicator(
@@ -88,7 +89,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen>
           ),
           reqs.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('$e')),
+            error: (e, _) => HeroErrorView(onRetry: () => ref.invalidate(friendRequestsNotifierProvider)),
             data: (list) {
               if (list.isEmpty) return Center(child: Text(l.socialEmptyRequests));
               return RefreshIndicator(
@@ -104,7 +105,7 @@ class _SocialScreenState extends ConsumerState<SocialScreen>
           ),
           feed.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('$e')),
+            error: (e, _) => HeroErrorView(onRetry: () => ref.invalidate(friendsFeedNotifierProvider)),
             data: (list) {
               if (list.isEmpty) return Center(child: Text(l.socialEmptyFeed));
               return RefreshIndicator(

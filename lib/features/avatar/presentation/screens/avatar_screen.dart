@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_error_view.dart';
 import '../../../../core/widgets/hero_button.dart';
 import '../../../home/application/home_notifier.dart';
 import '../../application/avatar_notifier.dart';
@@ -55,7 +56,7 @@ class _AvatarScreenState extends ConsumerState<AvatarScreen> {
       appBar: AppBar(title: Text(l.avatarScreenTitle)),
       body: avatarAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (Object e, _) => Center(child: Text('$e')),
+        error: (Object e, _) => HeroErrorView(onRetry: () => ref.invalidate(avatarNotifierProvider)),
         data: (Avatar avatar) {
           final currentColor = _dirtyColor ?? avatar.primaryColor;
           return ListView(

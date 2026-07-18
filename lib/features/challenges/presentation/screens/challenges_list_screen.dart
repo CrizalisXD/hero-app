@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_error_view.dart';
 import '../../application/challenges_notifier.dart';
 import '../../domain/models/challenge.dart';
 import '../widgets/challenge_card.dart';
@@ -67,7 +68,7 @@ class _ChallengesListScreenState extends ConsumerState<ChallengesListScreen>
           ),
           mine.when(
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (e, _) => Center(child: Text('$e')),
+            error: (e, _) => HeroErrorView(onRetry: () => ref.invalidate(myChallengesNotifierProvider)),
             data: (list) => list.isEmpty
                 ? Center(child: Text(l.challengesEmptyMine))
                 : RefreshIndicator(
@@ -108,7 +109,7 @@ class _AllTab extends ConsumerWidget {
     final l = context.l10n;
     return state.when(
       loading: () => const Center(child: CircularProgressIndicator()),
-      error: (e, _) => Center(child: Text('$e')),
+      error: (e, _) => HeroErrorView(onRetry: () => ref.invalidate(systemChallengesNotifierProvider)),
       data: (raw) {
         // Apply chip filter.
         final list = filter == null

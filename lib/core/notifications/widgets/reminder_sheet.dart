@@ -145,10 +145,11 @@ class _ReminderSheetState extends ConsumerState<ReminderSheet> {
     try {
       await repo.create(body);
     } catch (e) {
+      debugPrint('reminder create failed: $e');
       if (mounted) {
         setState(() => _saving = false);
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('$e')));
+            .showSnackBar(SnackBar(content: Text(context.l10n.errorGeneric)));
       }
       return;
     }

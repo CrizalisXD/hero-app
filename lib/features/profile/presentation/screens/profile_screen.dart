@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_error_view.dart';
 import '../../../../core/widgets/animated_fill_bar.dart';
 import '../../../../core/widgets/hero_button.dart';
 import '../../../../core/widgets/hero_card.dart';
@@ -25,7 +26,7 @@ class ProfileScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l.profileTitle)),
       body: state.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('$e')),
+        error: (e, _) => HeroErrorView(onRetry: () => ref.invalidate(profileNotifierProvider)),
         data: (p) => RefreshIndicator(
           onRefresh: () =>
               ref.read(profileNotifierProvider.notifier).refresh(),

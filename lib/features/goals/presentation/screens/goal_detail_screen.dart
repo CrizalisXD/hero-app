@@ -9,6 +9,7 @@ import '../../../../../app/theme/app_colors.dart';
 import '../../../../../app/theme/app_radius.dart';
 import '../../../../../app/theme/app_spacing.dart';
 import '../../../../../core/l10n/l10n.dart';
+import '../../../../../core/widgets/hero_error_view.dart';
 import '../../../../../core/notifications/widgets/reminder_sheet.dart';
 import '../../../../../core/widgets/animated_fill_bar.dart';
 import '../../../../../core/widgets/hero_button.dart';
@@ -104,9 +105,9 @@ class _GoalDetailBody extends ConsumerWidget {
               padding: EdgeInsets.all(24),
               child: Center(child: CircularProgressIndicator()),
             ),
-            error: (e, _) => Padding(
-              padding: const EdgeInsets.all(AppSpacing.l),
-              child: Text('$e'),
+            error: (e, _) => HeroErrorView(
+              compact: true,
+              onRetry: () => ref.invalidate(goalChildrenProvider(goal.id)),
             ),
             data: (children) {
               final empty = children.tasks.isEmpty &&

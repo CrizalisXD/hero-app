@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_error_view.dart';
 import '../../application/notes_notifier.dart';
 import '../../domain/models/note.dart';
 import '../../domain/models/note_visibility.dart';
@@ -42,7 +43,7 @@ class NotesScreen extends ConsumerWidget {
             ],
           ),
           loading: () => const Center(child: CircularProgressIndicator()),
-          error: (e, _) => Center(child: Text('$e')),
+          error: (e, _) => HeroErrorView(onRetry: () => ref.invalidate(notesNotifierProvider)),
         ),
         floatingActionButton: FloatingActionButton(
           onPressed: () => context.push('/notes/new'),

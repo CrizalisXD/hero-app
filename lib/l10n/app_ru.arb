@@ -5,6 +5,7 @@
   "splashLoading": "Загрузка…",
   "loadingGeneric": "Загрузка…",
   "errorGeneric": "Что-то пошло не так. Попробуй ещё раз.",
+  "commonRetry": "Повторить",
   "errorNoInternet": "Нет связи. Проверь интернет.",
   "errorServerUnavailable": "Сервер недоступен. Попробуй позже.",
   "welcomeTitle": "Твоя жизнь. Твой герой.",

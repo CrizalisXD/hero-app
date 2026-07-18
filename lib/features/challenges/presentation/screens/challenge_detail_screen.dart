@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_error_view.dart';
 import '../../../../core/widgets/hero_button.dart';
 import '../../../rewards/application/achievements_notifier.dart';
 import '../../../rewards/presentation/widgets/achievement_unlocked_sheet.dart';
@@ -99,7 +100,7 @@ class ChallengeDetailScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l.challengesTitle)),
       body: all.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('$e')),
+        error: (e, _) => HeroErrorView(onRetry: () => ref.invalidate(systemChallengesNotifierProvider)),
         data: (_) {
           final challenge = _findCatalog(all);
           final p = _findMine(mine);

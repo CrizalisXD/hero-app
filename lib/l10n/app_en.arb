@@ -12,6 +12,8 @@
   "@loadingGeneric": {},
   "errorGeneric": "Something went wrong. Try again.",
   "@errorGeneric": {},
+  "commonRetry": "Retry",
+  "@commonRetry": {},
   "errorNoInternet": "No connection. Check your internet.",
   "@errorNoInternet": {},
   "errorServerUnavailable": "Server is unavailable. Try later.",

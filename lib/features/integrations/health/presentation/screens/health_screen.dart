@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../core/l10n/l10n.dart';
+import '../../../../../core/widgets/hero_error_view.dart';
 import '../../../../../core/widgets/hero_button.dart';
 import '../../../../../core/widgets/hero_card.dart';
 import '../../../../settings/data/user_consents_repository.dart';
@@ -45,7 +46,7 @@ class HealthScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l.healthScreenTitle)),
       body: state.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('$e')),
+        error: (e, _) => HeroErrorView(onRetry: () => ref.invalidate(healthConnectionProvider)),
         data: (s) => ListView(
           padding: const EdgeInsets.all(20),
           children: [

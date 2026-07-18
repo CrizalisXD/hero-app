@@ -5,6 +5,7 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../app/theme/app_radius.dart';
 import '../../../../core/widgets/hero_card.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_error_view.dart';
 import '../../application/achievement_l10n.dart';
 import '../../application/achievements_notifier.dart';
 import '../../domain/models/achievement.dart';
@@ -150,7 +151,7 @@ class _RewardsScreenState extends ConsumerState<RewardsScreen>
       ),
       body: state.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('$e')),
+        error: (e, _) => HeroErrorView(onRetry: () => ref.invalidate(achievementsNotifierProvider)),
         data: (view) {
           List<Achievement> filter(int tab) {
             final list = view.all;

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
+import '../../../../core/widgets/hero_error_view.dart';
 import '../../data/supabase_social_repository.dart';
 import '../../domain/models/public_profile.dart';
 
@@ -74,7 +75,7 @@ class _FriendSearchScreenState extends ConsumerState<FriendSearchScreen> {
           Expanded(
             child: _results.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) => Center(child: Text('$e')),
+              error: (e, _) => const HeroErrorView(),
               data: (list) {
                 if (list.isEmpty && _ctrl.text.trim().length >= 2) {
                   return Center(child: Text(l.socialSearchEmpty));
