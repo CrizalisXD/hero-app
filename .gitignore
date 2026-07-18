@@ -93,3 +93,7 @@ ios/UnityLibrary/Frameworks/UnityRuntime.framework/
 # Burst debug-символы — Unity помечает как «DoNotShip», регенерируются
 # экспортом, только раздувают историю.
 ios/UnityLibrary/*BurstDebugInformation_DoNotShip/
+# IL2CPP-логи компиляции — перезаписываются каждой iOS-сборкой, вечно висят
+# в git status как изменённые. Это выхлоп сборки, не исходники.
+ios/UnityLibrary/Il2CppOutputProject/Source/il2cppOutput/il2cpp-compile.traceevents
+ios/UnityLibrary/Il2CppOutputProject/Source/il2cppOutput/profile.json
