@@ -1,20 +1,21 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/theme/app_colors.dart';
-import '../../../../app/theme/app_radius.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/widgets/hero_card.dart';
-import '../../../../core/widgets/xp_badge.dart';
 import '../../application/challenge_l10n.dart';
 import '../../domain/models/challenge.dart';
 import '../../domain/models/challenge_metric_type.dart';
 import '../../domain/models/challenge_participant.dart';
 import 'challenge_art.dart';
-import 'challenge_progress_bar.dart';
 
 /// Universal card used in three places:
 ///   - "All" tab: ChallengeCard.system(challenge)
 ///   - "Joined" tab + ActiveChallengesBlock: ChallengeCard.participant(p)
+///
+/// Redesign: bright gradient art, a progress ring around the art for joined
+/// challenges (more glanceable than a bar), and pill chips for the meta
+/// (XP, days left). Only real model data — no invented "N participants".
 class ChallengeCard extends StatelessWidget {
   const ChallengeCard.system(
     Challenge this.challenge, {
@@ -48,32 +49,31 @@ class ChallengeCard extends StatelessWidget {
     final completed = participant?.status == ChallengeStatus.completed;
     final metric = participant?.metricType ?? ChallengeMetricType.count;
     final art = ChallengeArt.forParts(titleKey: titleKey, metric: metric);
+    final accent = completed ? AppColors.success : art.tint;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
       child: HeroCard(
         onTap: onTap,
-        borderColor: completed ? AppColors.success : art.tint.withValues(alpha: 0.3),
+        glow: true,
+        borderColor: accent.withValues(alpha: 0.35),
         child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Per-challenge art icon — distinct color/icon per metric or seed.
-            Container(
-              height: 48,
-              width: 48,
-              decoration: BoxDecoration(
-                gradient: art.gradient,
-                borderRadius: BorderRadius.circular(AppRadius.m),
-                border: Border.all(color: art.tint.withValues(alpha: 0.4)),
-              ),
-              child: Icon(art.icon, color: art.tint, size: 26),
+            _ArtBadge(
+              art: art,
+              // Кольцо только для своих челленджей — у системных в списке
+              // прогресса ещё нет.
+              progress: participant != null && !completed ? progress : null,
+              completed: completed,
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
                         child: Text(
@@ -81,27 +81,25 @@ class ChallengeCard extends StatelessWidget {
                           style: const TextStyle(
                             fontSize: 15,
                             fontWeight: FontWeight.w600,
+                            color: Colors.white,
                           ),
                         ),
                       ),
-                      const SizedBox(width: 8),
-                      XpBadge(xp: rewardXp),
+                      if (participant != null && !completed) ...[
+                        const SizedBox(width: 8),
+                        Text(
+                          '${(progress * 100).round()}%',
+                          style: TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w600,
+                            color: accent,
+                          ),
+                        ),
+                      ],
                     ],
                   ),
-                  if (bodyKey != null) ...[
-                    const SizedBox(height: 4),
-                    Text(
-                      challengeBody(context, bodyKey),
-                      style: const TextStyle(
-                        fontSize: 12,
-                        color: AppColors.textSecondary,
-                      ),
-                    ),
-                  ],
                   if (participant != null) ...[
-                    const SizedBox(height: 10),
-                    ChallengeProgressBar(value: progress),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 2),
                     Text(
                       formatProgress(
                         context,
@@ -110,46 +108,154 @@ class ChallengeCard extends StatelessWidget {
                         participant!.targetValue,
                       ),
                       style: const TextStyle(
-                        fontSize: 11,
+                        fontSize: 12,
                         color: AppColors.textSecondary,
                       ),
                     ),
-                  ],
-                  if (completed || !isOpen) ...[
-                    const SizedBox(height: 6),
-                    if (completed)
-                      Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: AppColors.success.withValues(alpha: 0.2),
-                          borderRadius: BorderRadius.circular(AppRadius.xs),
-                        ),
-                        child: Text(
-                          l.challengesCompletedBadge,
-                          style: const TextStyle(
-                            fontSize: 10,
-                            color: AppColors.success,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      )
-                    else
-                      Text(
-                        l.challengesDaysLeft(daysLeft),
-                        style: const TextStyle(
-                          fontSize: 11,
-                          color: AppColors.textSecondary,
-                        ),
+                  ] else if (bodyKey != null) ...[
+                    const SizedBox(height: 2),
+                    Text(
+                      challengeBody(context, bodyKey),
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: AppColors.textSecondary,
                       ),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ],
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 6,
+                    runSpacing: 6,
+                    children: [
+                      _MetricChip(
+                        icon: Icons.bolt,
+                        label: '$rewardXp XP',
+                        color: const Color(0xFFFFB74D),
+                      ),
+                      if (completed)
+                        _MetricChip(
+                          icon: Icons.check_circle,
+                          label: l.challengesCompletedBadge,
+                          color: AppColors.success,
+                        )
+                      else if (!isOpen)
+                        _MetricChip(
+                          icon: Icons.schedule,
+                          label: l.challengesDaysLeft(daysLeft),
+                          color: const Color(0xFFFF6FB5),
+                        ),
+                    ],
+                  ),
                 ],
               ),
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Арт-иконка челленджа. Для своих челленджей вокруг рисуется кольцо
+/// прогресса — нагляднее линейной полосы и не занимает отдельную строку.
+class _ArtBadge extends StatelessWidget {
+  const _ArtBadge({
+    required this.art,
+    required this.completed,
+    this.progress,
+  });
+
+  final ChallengeArt art;
+  final double? progress;
+  final bool completed;
+
+  @override
+  Widget build(BuildContext context) {
+    const size = 56.0;
+    final ring = progress != null;
+
+    return SizedBox(
+      height: size,
+      width: size,
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          if (ring)
+            SizedBox(
+              height: size,
+              width: size,
+              child: CircularProgressIndicator(
+                value: progress!.clamp(0.0, 1.0),
+                strokeWidth: 4,
+                strokeCap: StrokeCap.round,
+                backgroundColor: Colors.white.withValues(alpha: 0.08),
+                valueColor: AlwaysStoppedAnimation(art.tint),
+              ),
+            ),
+          // Внутренний градиентный кружок с иконкой. Меньше, если есть кольцо.
+          Container(
+            height: ring ? 40 : 56,
+            width: ring ? 40 : 56,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  art.tint,
+                  art.tint.withValues(alpha: 0.55),
+                ],
+              ),
+              borderRadius: BorderRadius.circular(ring ? 12 : 14),
+            ),
+            child: Icon(
+              completed ? Icons.check : art.icon,
+              // Тёмная иконка поверх яркого градиента читается лучше белой.
+              color: const Color(0xFF16161E),
+              size: ring ? 20 : 28,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// Пилюля-чип метаданных: иконка + подпись на цветной подложке.
+class _MetricChip extends StatelessWidget {
+  const _MetricChip({
+    required this.icon,
+    required this.label,
+    required this.color,
+  });
+
+  final IconData icon;
+  final String label;
+  final Color color;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: color),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 11,
+              color: color,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        ],
       ),
     );
   }
