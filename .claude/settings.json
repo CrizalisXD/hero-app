@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR/tool/build_obsidian_graph.py\" 2>/dev/null || true",
+            "timeout": 30,
+            "statusMessage": "Обновляю Obsidian-граф…"
+          }
+        ]
+      }
+    ]
+  }
+}

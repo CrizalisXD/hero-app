@@ -97,3 +97,6 @@ ios/UnityLibrary/*BurstDebugInformation_DoNotShip/
 # в git status как изменённые. Это выхлоп сборки, не исходники.
 ios/UnityLibrary/Il2CppOutputProject/Source/il2cppOutput/il2cpp-compile.traceevents
 ios/UnityLibrary/Il2CppOutputProject/Source/il2cppOutput/profile.json
+
+# Claude Code — personal, machine-specific settings (permissions, local overrides)
+.claude/settings.local.json
