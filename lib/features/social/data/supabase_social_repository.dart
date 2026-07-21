@@ -54,8 +54,11 @@ class SupabaseSocialRepository {
 
   // ── Search & profile ──────────────────────────────────────────
   Future<List<PublicProfile>> search(String query) async {
-    final rows = await _client
-        .rpc<dynamic>('search_users', params: {'p_query': query});
+    // Users type "@nick" out of habit, but usernames are stored without the
+    // leading @ — strip it so "@crizalis" matches "crizalis".
+    final q = query.replaceFirst(RegExp(r'^@+'), '').trim();
+    final rows =
+        await _client.rpc<dynamic>('search_users', params: {'p_query': q});
     if (rows is! List) return const [];
     return rows.map((e) {
       final m = (e as Map).cast<String, dynamic>();

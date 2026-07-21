@@ -22,7 +22,23 @@ class _FriendSearchScreenState extends ConsumerState<FriendSearchScreen> {
   final _ctrl = TextEditingController();
   Timer? _debounce;
 
+  /// Which field to match. The RPC returns matches on both username and
+  /// display_name; this toggle narrows the shown results to the chosen one.
+  bool _byNick = true;
+
   AsyncValue<List<PublicProfile>> _results = const AsyncData([]);
+
+  /// Client-side field filter for the [_byNick] toggle. Mirrors the RPC's
+  /// per-field rule: username = prefix, display_name = substring.
+  List<PublicProfile> _filter(List<PublicProfile> list) {
+    final q = _ctrl.text.replaceFirst(RegExp(r'^@+'), '').trim().toLowerCase();
+    if (q.isEmpty) return list;
+    return list.where((p) {
+      return _byNick
+          ? p.username.toLowerCase().startsWith(q)
+          : p.displayName.toLowerCase().contains(q);
+    }).toList();
+  }
 
   @override
   void dispose() {
@@ -72,18 +88,39 @@ class _FriendSearchScreenState extends ConsumerState<FriendSearchScreen> {
               onChanged: _onChanged,
             ),
           ),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+            child: SegmentedButton<bool>(
+              showSelectedIcon: false,
+              segments: [
+                ButtonSegment(
+                  value: true,
+                  label: Text(l.socialSearchByNick),
+                  icon: const Icon(Icons.alternate_email, size: 16),
+                ),
+                ButtonSegment(
+                  value: false,
+                  label: Text(l.socialSearchByName),
+                  icon: const Icon(Icons.person_outline, size: 16),
+                ),
+              ],
+              selected: {_byNick},
+              onSelectionChanged: (s) => setState(() => _byNick = s.first),
+            ),
+          ),
           Expanded(
             child: _results.when(
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, _) => const HeroErrorView(),
               data: (list) {
-                if (list.isEmpty && _ctrl.text.trim().length >= 2) {
+                final filtered = _filter(list);
+                if (filtered.isEmpty && _ctrl.text.trim().length >= 2) {
                   return Center(child: Text(l.socialSearchEmpty));
                 }
                 return ListView.builder(
-                  itemCount: list.length,
+                  itemCount: filtered.length,
                   itemBuilder: (c, i) {
-                    final p = list[i];
+                    final p = filtered[i];
                     return ListTile(
                       leading: CircleAvatar(
                         backgroundColor: AppColors.bgElevated,

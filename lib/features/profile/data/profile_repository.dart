@@ -58,6 +58,13 @@ class ProfileRepository {
         _client.from('meta_stats').select().maybeSingle(),
         null,
       ),
+      _orElse<Map<String, dynamic>?>(
+        _client
+            .from('user_public_profiles')
+            .select('username')
+            .maybeSingle(),
+        null,
+      ),
     ]);
 
     final stats = results[1] as Map<String, dynamic>?;
@@ -70,9 +77,11 @@ class ProfileRepository {
         .toList();
     final meta =
         MetaStats.fromJson(results[4] as Map<String, dynamic>? ?? const {});
+    final pp = results[5] as Map<String, dynamic>? ?? const {};
 
     return ProfileOverview(
       displayName: userRow['display_name'] as String? ?? 'Hero',
+      username: pp['username'] as String?,
       email: userRow['email'] as String?,
       level: (stats['level'] as num?)?.toInt() ?? 1,
       xpCurrent: (stats['xp_current'] as num?)?.toInt() ?? 0,

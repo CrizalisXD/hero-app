@@ -52,6 +52,7 @@ class MetaStats {
 class ProfileOverview {
   const ProfileOverview({
     required this.displayName,
+    required this.username,
     required this.email,
     required this.level,
     required this.xpCurrent,
@@ -65,6 +66,10 @@ class ProfileOverview {
   });
 
   final String displayName;
+
+  /// Public @handle from user_public_profiles. Null only if the public
+  /// profile row hasn't been created yet.
+  final String? username;
   final String? email;
   final int level;
   final int xpCurrent;
