@@ -52,6 +52,37 @@ class HabitsNotifier extends AsyncNotifier<HabitsView> {
     }
   }
 
+  /// Narrow edit (title + description). Replaces the habit in place on
+  /// success; returns null on failure so the caller can surface a snackbar
+  /// without flipping the whole screen into an error state.
+  Future<Habit?> updateHabit(
+    String habitId, {
+    required String title,
+    String? description,
+  }) async {
+    try {
+      final updated = await _repo.update(
+        habitId,
+        title: title,
+        description: description,
+      );
+      final current = state.value;
+      if (current != null) {
+        state = AsyncData(
+          current.copyWith(
+            habits: [
+              for (final h in current.habits)
+                if (h.id == habitId) updated else h,
+            ],
+          ),
+        );
+      }
+      return updated;
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Optimistic check-in + rollback on error.
   /// Returns null if the habit is already checked today.
   Future<HabitCheckinResult?> checkin(String habitId) async {

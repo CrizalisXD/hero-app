@@ -9,6 +9,7 @@ import '../../application/habits_notifier.dart';
 import '../../domain/models/habit.dart';
 import '../../domain/models/habit_type.dart';
 import '../widgets/create_habit_sheet.dart';
+import '../widgets/edit_habit_sheet.dart';
 import '../widgets/habit_list_item.dart';
 
 class HabitsScreen extends ConsumerWidget {
@@ -115,6 +116,12 @@ class HabitsScreen extends ConsumerWidget {
     await ref.read(habitsNotifierProvider.notifier).delete(h.id);
   }
 
+  // ─── edit ──────────────────────────────────────────────────────────────────
+
+  Future<void> _edit(BuildContext context, Habit h) async {
+    await EditHabitSheet.show(context, h);
+  }
+
   // ─── build ─────────────────────────────────────────────────────────────────
 
   @override
@@ -164,6 +171,7 @@ class HabitsScreen extends ConsumerWidget {
                   onUncheckin: () => _uncheckin(context, ref, h),
                   onSkip: () => _skip(context, ref, h),
                   onDelete: () => _delete(context, ref, h),
+                  onEdit: () => _edit(context, h),
                 );
               },
             ),

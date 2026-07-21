@@ -60,6 +60,22 @@ class SupabaseHabitsRepository implements HabitsRepository {
   }
 
   @override
+  Future<Habit> update(
+    String habitId, {
+    required String title,
+    String? description,
+  }) async {
+    final row = await _client
+        .from('habits')
+        .update({'title': title, 'description': description})
+        .eq('id', habitId)
+        .eq('user_id', _uid)
+        .select()
+        .single();
+    return Habit.fromJson(row);
+  }
+
+  @override
   Future<HabitCheckinResult> checkin(String habitId) async {
     late final dynamic raw;
     try {

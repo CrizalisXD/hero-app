@@ -6,6 +6,16 @@ abstract class HabitsRepository {
   Future<List<Habit>> listActive();
   Future<Set<String>> habitIdsCheckedToday();
   Future<Habit> create(CreateHabitInput input);
+
+  /// Narrow inline edit: title + optional description only. Category, XP and
+  /// difficulty stay as the classifier set them — same scope as EditTaskSheet,
+  /// so no XP recompute is needed.
+  Future<Habit> update(
+    String habitId, {
+    required String title,
+    String? description,
+  });
+
   Future<HabitCheckinResult> checkin(String habitId);
 
   /// Reverses today's [checkin] call. Used for the undo snackbar.

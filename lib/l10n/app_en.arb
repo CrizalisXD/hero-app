@@ -306,6 +306,10 @@
   "@habitsFabCreate": {},
   "createHabitSheetTitle": "New habit",
   "@createHabitSheetTitle": {},
+  "habitEditTitle": "Edit habit",
+  "@habitEditTitle": {},
+  "habitEditError": "Couldn't save the habit",
+  "@habitEditError": {},
   "createHabitTitleLabel": "What's the habit?",
   "@createHabitTitleLabel": {},
   "createHabitTitleHint": "Drink water / 10 pages / Walk 10 min",
@@ -952,6 +956,12 @@
   "@rewardsTabUnlocked": {},
   "rewardsTabLocked": "Locked",
   "@rewardsTabLocked": {},
+  "rewardsRewardLabel": "Reward",
+  "@rewardsRewardLabel": {},
+  "rewardsUnlockedStatus": "Unlocked",
+  "@rewardsUnlockedStatus": {},
+  "rewardsLockedStatus": "Locked",
+  "@rewardsLockedStatus": {},
   "rewardsEmpty": "Earn your first achievement by completing a task.",
   "@rewardsEmpty": {},
   "rarityCommon": "Common",
@@ -1194,6 +1204,35 @@
       "cur": {
         "type": "String"
       },
+      "target": {
+        "type": "String"
+      }
+    }
+  },
+  "challengesLeaderboardTitle": "Leaderboard",
+  "@challengesLeaderboardTitle": {},
+  "challengesMyRank": "You're #{rank} of {total}",
+  "@challengesMyRank": {
+    "placeholders": {
+      "rank": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "challengesParticipants": "{count} participants",
+  "@challengesParticipants": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "challengesGoal": "Goal: {target}",
+  "@challengesGoal": {
+    "placeholders": {
       "target": {
         "type": "String"
       }

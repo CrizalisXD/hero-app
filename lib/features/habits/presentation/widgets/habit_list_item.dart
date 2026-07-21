@@ -24,6 +24,7 @@ class HabitListItem extends StatelessWidget {
     required this.onUncheckin,
     required this.onSkip,
     required this.onDelete,
+    this.onEdit,
   });
 
   final Habit habit;
@@ -32,6 +33,9 @@ class HabitListItem extends StatelessWidget {
   final VoidCallback onUncheckin;
   final VoidCallback onSkip;
   final VoidCallback onDelete;
+
+  /// Tap on the habit body (not the leading circle) opens the edit sheet.
+  final VoidCallback? onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +55,8 @@ class HabitListItem extends StatelessWidget {
               children: [
                 SlidableAction(
                   onPressed: (_) => onCheckin(),
-                  backgroundColor: isBad ? AppColors.warning : AppColors.success,
+                  backgroundColor:
+                      isBad ? AppColors.warning : AppColors.success,
                   foregroundColor: Colors.white,
                   icon: isBad ? Icons.do_disturb_alt : Icons.check,
                   label: isBad ? l.habitSlipAction : l.habitCheckinAction,
@@ -135,51 +140,55 @@ class HabitListItem extends StatelessWidget {
             ),
             const SizedBox(width: 14),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    habit.title,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: checkedToday
-                          ? AppColors.textSecondary
-                          : AppColors.textPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Row(
-                    children: [
-                      CategoryChip(
-                        category: habit.mainCategory,
-                        small: true,
+              child: GestureDetector(
+                onTap: onEdit,
+                behavior: HitTestBehavior.opaque,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      habit.title,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontWeight: FontWeight.w500,
+                        color: checkedToday
+                            ? AppColors.textSecondary
+                            : AppColors.textPrimary,
                       ),
-                      const SizedBox(width: 8),
-                      if (isBad)
-                        Text(
-                          l.habitDaysCleanLabel(habit.displayStreak),
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        )
-                      else ...[
-                        StreakBadge(days: habit.currentStreak),
-                        const SizedBox(width: 8),
-                        Text(
-                          '+${habit.xpReward} XP',
-                          style: const TextStyle(
-                            fontSize: 11,
-                            color: AppColors.textSecondary,
-                            fontWeight: FontWeight.w500,
-                          ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        CategoryChip(
+                          category: habit.mainCategory,
+                          small: true,
                         ),
+                        const SizedBox(width: 8),
+                        if (isBad)
+                          Text(
+                            l.habitDaysCleanLabel(habit.displayStreak),
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: AppColors.textSecondary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )
+                        else ...[
+                          StreakBadge(days: habit.currentStreak),
+                          const SizedBox(width: 8),
+                          Text(
+                            '+${habit.xpReward} XP',
+                            style: const TextStyle(
+                              fontSize: 11,
+                              color: AppColors.textSecondary,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
                       ],
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
           ],

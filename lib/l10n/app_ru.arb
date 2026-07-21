@@ -149,6 +149,8 @@
   "habitsLoadError": "Не удалось загрузить привычки. Попробуй ещё раз.",
   "habitsFabCreate": "Добавить",
   "createHabitSheetTitle": "Новая привычка",
+  "habitEditTitle": "Редактировать привычку",
+  "habitEditError": "Не удалось сохранить привычку",
   "createHabitTitleLabel": "Какая привычка?",
   "createHabitTitleHint": "Пить воду / 10 страниц / Прогулка 10 минут",
   "createHabitDescriptionLabel": "Заметка (опц.)",
@@ -553,6 +555,9 @@
   "rewardsTabAll": "Все",
   "rewardsTabUnlocked": "Полученные",
   "rewardsTabLocked": "Заблокированные",
+  "rewardsRewardLabel": "Награда",
+  "rewardsUnlockedStatus": "Получено",
+  "rewardsLockedStatus": "Ещё не открыто",
   "rewardsEmpty": "Получи первую награду, закрыв задачу.",
   "rarityCommon": "Обычная",
   "rarityRare": "Редкая",
@@ -713,6 +718,10 @@
       }
     }
   },
+  "challengesLeaderboardTitle": "Лидерборд",
+  "challengesMyRank": "Ты на {rank}-м месте из {total}",
+  "challengesParticipants": "{count} участников",
+  "challengesGoal": "Цель: {target}",
   "challengesDaysLeft": "Осталось {days} дн.",
   "@challengesDaysLeft": {
     "placeholders": {

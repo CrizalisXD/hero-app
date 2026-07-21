@@ -44,3 +44,16 @@ String formatProgress(
   };
   return l.challengesProgressLabel(fmt(cur) + unit, fmt(target) + unit);
 }
+
+/// Target-only label for the detail screen: "Goal: 30000 m" / "Цель: 7".
+String formatTarget(BuildContext c, ChallengeMetricType type, num target) {
+  final l = c.l10n;
+  String fmt(num v) =>
+      v == v.truncateToDouble() ? v.toInt().toString() : v.toStringAsFixed(1);
+  final unit = switch (type) {
+    ChallengeMetricType.distance => ' m',
+    ChallengeMetricType.xp => ' XP',
+    _ => '',
+  };
+  return l.challengesGoal(fmt(target) + unit);
+}
