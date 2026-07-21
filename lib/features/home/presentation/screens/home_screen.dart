@@ -185,7 +185,7 @@ class _CinematicBackground extends StatelessWidget {
 
 // ── Compact HUD ──────────────────────────────────────────────────────────
 
-class _CompactHud extends ConsumerWidget {
+class _CompactHud extends StatelessWidget {
   const _CompactHud({
     required this.displayName,
     required this.character,
@@ -197,11 +197,8 @@ class _CompactHud extends ConsumerWidget {
   final AvatarConfig avatar;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final l = context.l10n;
-    final socialOn = ref
-        .watch(featureFlagResolverOrFallbackProvider)
-        .isEnabled(FeatureFlagKey.socialEnabled);
     final lowEnergy = character.energyProgress < 0.25;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 8, 12, 0),
@@ -251,24 +248,10 @@ class _CompactHud extends ConsumerWidget {
               ],
             ),
           ),
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (socialOn)
-                IconButton(
-                  icon: const Icon(
-                    Icons.people_alt_outlined,
-                    color: Colors.white,
-                  ),
-                  tooltip: l.navSocial,
-                  onPressed: () => context.push('/social'),
-                ),
-              IconButton(
-                icon: const Icon(Icons.settings_outlined, color: Colors.white),
-                tooltip: l.settingsTitle,
-                onPressed: () => context.push('/settings'),
-              ),
-            ],
+          IconButton(
+            icon: const Icon(Icons.settings_outlined, color: Colors.white),
+            tooltip: l.settingsTitle,
+            onPressed: () => context.push('/settings'),
           ),
         ],
       ),
@@ -285,27 +268,32 @@ class _AvatarCircle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final tierColors = AppColors.levelTierGradient(level);
-    return Container(
-      width: 48,
-      height: 48,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        gradient: LinearGradient(colors: tierColors),
-        boxShadow: [
-          BoxShadow(
-            color: tierColors.first.withValues(alpha: 0.5),
-            blurRadius: 10,
-            spreadRadius: 1,
+    return GestureDetector(
+      // Tap the HUD avatar to open the (already-built) profile screen —
+      // it's the app's only entry point to the user's own profile.
+      onTap: () => context.push('/profile'),
+      child: Container(
+        width: 48,
+        height: 48,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          gradient: LinearGradient(colors: tierColors),
+          boxShadow: [
+            BoxShadow(
+              color: tierColors.first.withValues(alpha: 0.5),
+              blurRadius: 10,
+              spreadRadius: 1,
+            ),
+          ],
+        ),
+        padding: const EdgeInsets.all(2.5),
+        child: CircleAvatar(
+          backgroundColor: AppColors.bgCard,
+          child: Icon(
+            Icons.person,
+            color: _hexColor(avatar.primaryColor),
+            size: 24,
           ),
-        ],
-      ),
-      padding: const EdgeInsets.all(2.5),
-      child: CircleAvatar(
-        backgroundColor: AppColors.bgCard,
-        child: Icon(
-          Icons.person,
-          color: _hexColor(avatar.primaryColor),
-          size: 24,
         ),
       ),
     );
@@ -453,6 +441,13 @@ class _QuestMap extends ConsumerWidget {
           label: l.navNotes,
           color: AppColors.info,
           onTap: () => context.push('/notes'),
+        ),
+      if (flags.isEnabled(FeatureFlagKey.socialEnabled))
+        WheelItem(
+          icon: Icons.people_alt_rounded,
+          label: l.navSocial,
+          color: const Color(0xFF4FC3F7),
+          onTap: () => context.push('/social'),
         ),
       WheelItem(
         icon: Icons.lightbulb_outline_rounded,

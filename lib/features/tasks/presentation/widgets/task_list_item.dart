@@ -22,12 +22,16 @@ class TaskListItem extends StatelessWidget {
     required this.onComplete,
     required this.onUncomplete,
     required this.onDelete,
+    this.onEdit,
   });
 
   final Task task;
   final VoidCallback onComplete;
   final VoidCallback onUncomplete;
   final VoidCallback onDelete;
+
+  /// Tap on the row body (not the leading circle) opens the edit sheet.
+  final VoidCallback? onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -79,6 +83,7 @@ class TaskListItem extends StatelessWidget {
         ],
       ),
       child: ListTile(
+        onTap: onEdit,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
         leading: GestureDetector(

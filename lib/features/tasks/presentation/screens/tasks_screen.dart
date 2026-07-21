@@ -11,6 +11,7 @@ import '../../../rewards/presentation/widgets/achievement_unlocked_sheet.dart';
 import '../../application/tasks_notifier.dart';
 import '../../domain/models/task.dart';
 import '../widgets/create_task_sheet.dart';
+import '../widgets/edit_task_sheet.dart';
 import '../widgets/task_list_item.dart';
 
 class TasksScreen extends ConsumerStatefulWidget {
@@ -123,6 +124,7 @@ class _TaskTab extends ConsumerWidget {
                 onUncomplete: (id) => _handleUncomplete(ref, id),
                 onDelete: (id) =>
                     ref.read(tasksNotifierProvider.notifier).deleteTask(id),
+                onEdit: (task) => EditTaskSheet.show(context, task),
               ),
             ),
     );
@@ -207,12 +209,14 @@ class _TaskList extends StatelessWidget {
     required this.onComplete,
     required this.onUncomplete,
     required this.onDelete,
+    required this.onEdit,
   });
 
   final List<Task> tasks;
   final void Function(String taskId) onComplete;
   final void Function(String taskId) onUncomplete;
   final void Function(String taskId) onDelete;
+  final void Function(Task task) onEdit;
 
   @override
   Widget build(BuildContext context) {
@@ -225,6 +229,7 @@ class _TaskList extends StatelessWidget {
         onComplete: () => onComplete(tasks[i].id),
         onUncomplete: () => onUncomplete(tasks[i].id),
         onDelete: () => onDelete(tasks[i].id),
+        onEdit: () => onEdit(tasks[i]),
       ),
     );
   }

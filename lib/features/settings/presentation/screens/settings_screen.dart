@@ -67,13 +67,8 @@ class SettingsScreen extends ConsumerWidget {
               label: l.siriScreenTitle,
               to: '/settings/voice',
             ),
-          if (flags.isEnabled(FeatureFlagKey.notesEnabled))
-            _row(
-              context,
-              icon: Icons.sticky_note_2_outlined,
-              label: l.settingsNotesRow,
-              to: '/notes',
-            ),
+          // Notes & Rewards intentionally live only in the home action wheel,
+          // not here — keeping Settings to genuine settings (Phase 1 cleanup).
           _row(
             context,
             icon: Icons.psychology_outlined,
@@ -86,13 +81,6 @@ class SettingsScreen extends ConsumerWidget {
             label: l.settingsSectionDataExport,
             to: '/settings/data',
           ),
-          if (flags.isEnabled(FeatureFlagKey.rewardsEnabled))
-            _row(
-              context,
-              icon: Icons.emoji_events_outlined,
-              label: l.rewardsTitle,
-              to: '/rewards',
-            ),
           _row(
             context,
             icon: Icons.info_outline,
