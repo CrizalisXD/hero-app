@@ -450,6 +450,12 @@ class _QuestMap extends ConsumerWidget {
           onTap: () => context.push('/social'),
         ),
       WheelItem(
+        icon: Icons.event_repeat_rounded,
+        label: l.navRoutines,
+        color: const Color(0xFF4DD0A0),
+        onTap: () => context.push('/routines'),
+      ),
+      WheelItem(
         icon: Icons.lightbulb_outline_rounded,
         label: l.navWishlist,
         color: const Color(0xFFFF6FB5),

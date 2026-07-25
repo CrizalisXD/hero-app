@@ -33,6 +33,7 @@ import '../features/notes/presentation/screens/note_editor_screen.dart';
 import '../features/notes/presentation/screens/notes_screen.dart';
 import '../features/siri/presentation/screens/siri_settings_screen.dart';
 import '../features/rewards/presentation/screens/rewards_screen.dart';
+import '../features/routines/presentation/screens/routines_screen.dart';
 import '../features/social/presentation/screens/friend_search_screen.dart';
 import '../features/social/presentation/screens/public_profile_screen.dart';
 import '../features/social/presentation/screens/social_screen.dart';
@@ -236,6 +237,13 @@ final routerProvider = Provider<GoRouter>((ref) {
         parentNavigatorKey: _rootNavigatorKey,
         path: '/rewards',
         builder: (_, __) => const RewardsScreen(),
+      ),
+
+      // ── Routines (Phase 21) ──
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/routines',
+        builder: (_, __) => const RoutinesScreen(),
       ),
 
       // ── Wishlist «Хочу попробовать» ──
