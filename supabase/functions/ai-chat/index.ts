@@ -3,8 +3,11 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
 import { corsHeaders } from '../_shared/cors.ts'
 
-const MODEL = 'llama-3.3-70b-versatile'
-const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions'
+const MODEL = 'gemini-flash-latest'
+// Gemini's OpenAI-compatible endpoint — same request/response shape as Groq,
+// so only the URL, model and key change.
+const GEMINI_API_URL =
+  'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'
 const DAILY_LIMIT = 30
 const HISTORY_LIMIT = 10
 const MEMORY_LIMIT = 15
@@ -147,8 +150,8 @@ serve(async (req) => {
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const anonKey = Deno.env.get('SUPABASE_ANON_KEY')
-  const groqKey = Deno.env.get('GROQ_API_KEY')
-  if (!supabaseUrl || !anonKey || !groqKey) return bad('server_misconfigured', 500)
+  const apiKey = Deno.env.get('GEMINI_API_KEY')
+  if (!supabaseUrl || !anonKey || !apiKey) return bad('server_misconfigured', 500)
 
   const client = createClient(supabaseUrl, anonKey, {
     global: { headers: { Authorization: auth } },
@@ -289,7 +292,7 @@ serve(async (req) => {
   }
   console.log(`chat: notes_consent=${notesConsentGranted} onboarding_consent=${onboardingConsentGranted} notes=${notes.length}`)
 
-  // 5) Build messages array for Groq
+  // 5) Build messages array for the LLM
   const messages = [
     {
       role: 'system',
@@ -301,15 +304,15 @@ serve(async (req) => {
     })),
   ]
 
-  // 6) Call Groq
+  // 6) Call Gemini
   let aiJson = ''
   let tokensIn = 0
   let tokensOut = 0
   try {
-    const r = await fetch(GROQ_API_URL, {
+    const r = await fetch(GEMINI_API_URL, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${groqKey}`,
+        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -322,7 +325,7 @@ serve(async (req) => {
     })
     if (!r.ok) {
       const errText = await r.text()
-      console.error('groq error', r.status, errText)
+      console.error('gemini error', r.status, errText)
       return bad(`ai_provider_${r.status}`, 502)
     }
     const data = await r.json()

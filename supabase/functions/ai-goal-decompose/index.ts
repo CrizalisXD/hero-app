@@ -3,7 +3,10 @@ import { serve } from 'https://deno.land/std@0.224.0/http/server.ts'
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0'
 import { corsHeaders } from '../_shared/cors.ts'
 
-const MODEL = 'llama-3.3-70b-versatile'
+const MODEL = 'gemini-flash-latest'
+// Gemini's OpenAI-compatible endpoint — drop-in for the old Groq URL.
+const GEMINI_API_URL =
+  'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions'
 
 const ALLOWED_CATEGORIES = [
   'strength', 'mind', 'endurance', 'health', 'social', 'finance', 'creativity',
@@ -42,6 +45,18 @@ function ok(body: any) {
     JSON.stringify(body),
     { status: 200, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
   )
+}
+
+// Gemini sometimes wraps the JSON in a ```json fence or adds stray prose even
+// with response_format set — pull out the bare object before parsing.
+function extractJson(raw: string): string {
+  let s = (raw ?? '').trim()
+  const fence = s.match(/```(?:json)?\s*([\s\S]*?)```/i)
+  if (fence) s = fence[1].trim()
+  const first = s.indexOf('{')
+  const last = s.lastIndexOf('}')
+  if (first >= 0 && last > first) s = s.slice(first, last + 1)
+  return s
 }
 
 function systemPrompt(locale: string, profile: any, archetype?: string): string {
@@ -115,7 +130,7 @@ serve(async (req) => {
 
   const supabaseUrl = Deno.env.get('SUPABASE_URL')
   const anonKey    = Deno.env.get('SUPABASE_ANON_KEY')
-  const apiKey     = Deno.env.get('GROQ_API_KEY')
+  const apiKey     = Deno.env.get('GEMINI_API_KEY')
   if (!supabaseUrl || !anonKey || !apiKey) return bad('server_misconfigured', 500)
 
   const client = createClient(supabaseUrl, anonKey, {
@@ -166,10 +181,10 @@ serve(async (req) => {
 
   const locale = payload.locale === 'en' ? 'en' : 'ru'
 
-  // ── Groq API call (OpenAI-compatible) ────────────────────────────
+  // ── Gemini API call (OpenAI-compatible) ────────────────────────────
   let aiJson: string
   try {
-    const r = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    const r = await fetch(GEMINI_API_URL, {
       method: 'POST',
       headers: {
         Authorization:  `Bearer ${apiKey}`,
@@ -178,7 +193,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model:           MODEL,
         temperature:     0.4,
-        max_tokens:      1500,
+        max_tokens:      8192,
         response_format: { type: 'json_object' },
         messages: [
           { role: 'system', content: systemPrompt(locale, profile, archetype) },
@@ -197,7 +212,7 @@ serve(async (req) => {
 
     if (!r.ok) {
       const errText = await r.text()
-      console.error('groq error', r.status, errText)
+      console.error('gemini error', r.status, errText)
       return bad(`ai_provider_${r.status}`, 502)
     }
 
@@ -210,7 +225,12 @@ serve(async (req) => {
 
   // ── Parse & validate ─────────────────────────────────────────────
   let parsed: any
-  try { parsed = JSON.parse(aiJson) } catch { return bad('ai_returned_invalid_json', 502) }
+  try {
+    parsed = JSON.parse(extractJson(aiJson))
+  } catch {
+    console.error('decompose invalid json (first 800):', aiJson.slice(0, 800))
+    return bad('ai_returned_invalid_json', 502)
+  }
 
   // Top-level category
   if (!ALLOWED_CATEGORIES.includes(parsed.main_category)) {
