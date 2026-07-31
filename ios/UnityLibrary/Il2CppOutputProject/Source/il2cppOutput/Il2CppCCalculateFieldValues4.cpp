@@ -296,7 +296,7 @@ struct XRDevice_tD076A68EFE413B3EEEEA362BE0364A488B58F194  : public RuntimeObjec
 struct Mobile_t304A73480DF447472BDB16BA19A9E4FE2C8CB2DD  : public RuntimeObject
 {
 };
-struct U3CEmoteFallbackU3Ed__15_tF75CCCF1535FD3A859A78912E13B0FAC40188BA0  : public RuntimeObject
+struct U3CEmoteFallbackU3Ed__18_t96D3C5BB1C9EAF582E5FB59FBD4AB2739BFADCB2  : public RuntimeObject
 {
 	int32_t ___U3CU3E1__state;
 	RuntimeObject* ___U3CU3E2__current;
@@ -3732,6 +3732,9 @@ struct AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4  : public Mono
 	Camera_tA92CC927D7439999BC82DBEDC0AA45B470F9E184* ___sceneCamera;
 	Color_tD001788D726C3A7F1379BEED0260B9591F440C1F ___backgroundColor;
 	bool ___autoCenter;
+	float ___frameFill;
+	float ___shiftLeftFrac;
+	float ___shiftDownFrac;
 	bool ____framedOnce;
 };
 struct Rotate_t3280DFA30ADF04B60D2B142844F3B2364A472EAE  : public MonoBehaviour_t532A11E69716D348D8AA7F854AFCBFCB8AD17F71
@@ -4748,10 +4751,10 @@ IL2CPP_EXTERN_C const int32_t g_FieldOffsetTable12344[8] =
 	static_cast<int32_t>(offsetof(AvatarConfig_tC6F5064D3421B2730B69D3F82B1172A0494592FB, ___primaryColor)),static_cast<int32_t>(offsetof(AvatarConfig_tC6F5064D3421B2730B69D3F82B1172A0494592FB, ___level)),static_cast<int32_t>(offsetof(AvatarConfig_tC6F5064D3421B2730B69D3F82B1172A0494592FB, ___renderer)),static_cast<int32_t>(offsetof(AvatarConfig_tC6F5064D3421B2730B69D3F82B1172A0494592FB, ___bodyType)),static_cast<int32_t>(offsetof(AvatarConfig_tC6F5064D3421B2730B69D3F82B1172A0494592FB, ___faceType)),static_cast<int32_t>(offsetof(AvatarConfig_tC6F5064D3421B2730B69D3F82B1172A0494592FB, ___hairType)),static_cast<int32_t>(offsetof(AvatarConfig_tC6F5064D3421B2730B69D3F82B1172A0494592FB, ___clothingType)),static_cast<int32_t>(offsetof(AvatarConfig_tC6F5064D3421B2730B69D3F82B1172A0494592FB, ___unityAvatarId)),};
 IL2CPP_EXTERN_C const int32_t g_FieldOffsetTable12345[4] = 
 {
-	static_cast<int32_t>(offsetof(U3CEmoteFallbackU3Ed__15_tF75CCCF1535FD3A859A78912E13B0FAC40188BA0, ___U3CU3E1__state)),static_cast<int32_t>(offsetof(U3CEmoteFallbackU3Ed__15_tF75CCCF1535FD3A859A78912E13B0FAC40188BA0, ___U3CU3E2__current)),static_cast<int32_t>(offsetof(U3CEmoteFallbackU3Ed__15_tF75CCCF1535FD3A859A78912E13B0FAC40188BA0, ___U3CU3E4__this)),static_cast<int32_t>(offsetof(U3CEmoteFallbackU3Ed__15_tF75CCCF1535FD3A859A78912E13B0FAC40188BA0, ___emote)),};
-IL2CPP_EXTERN_C const int32_t g_FieldOffsetTable12346[8] = 
+	static_cast<int32_t>(offsetof(U3CEmoteFallbackU3Ed__18_t96D3C5BB1C9EAF582E5FB59FBD4AB2739BFADCB2, ___U3CU3E1__state)),static_cast<int32_t>(offsetof(U3CEmoteFallbackU3Ed__18_t96D3C5BB1C9EAF582E5FB59FBD4AB2739BFADCB2, ___U3CU3E2__current)),static_cast<int32_t>(offsetof(U3CEmoteFallbackU3Ed__18_t96D3C5BB1C9EAF582E5FB59FBD4AB2739BFADCB2, ___U3CU3E4__this)),static_cast<int32_t>(offsetof(U3CEmoteFallbackU3Ed__18_t96D3C5BB1C9EAF582E5FB59FBD4AB2739BFADCB2, ___emote)),};
+IL2CPP_EXTERN_C const int32_t g_FieldOffsetTable12346[11] = 
 {
-	static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ___tintTarget)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ___animator)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ___emoteFallbackSeconds)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ___sceneCamera)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ___backgroundColor)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ___autoCenter)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4_StaticFields, ___IdleHash)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ____framedOnce)),};
+	static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ___tintTarget)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ___animator)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ___emoteFallbackSeconds)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ___sceneCamera)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ___backgroundColor)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ___autoCenter)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ___frameFill)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ___shiftLeftFrac)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ___shiftDownFrac)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4_StaticFields, ___IdleHash)),static_cast<int32_t>(offsetof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4, ____framedOnce)),};
 IL2CPP_EXTERN_C const int32_t g_FieldOffsetTable12347[4] = 
 {
 	static_cast<int32_t>(offsetof(Section_t50C894D0A717C2368EBAAE5477D4E8626D0B5401, ___heading)),static_cast<int32_t>(offsetof(Section_t50C894D0A717C2368EBAAE5477D4E8626D0B5401, ___text)),static_cast<int32_t>(offsetof(Section_t50C894D0A717C2368EBAAE5477D4E8626D0B5401, ___linkText)),static_cast<int32_t>(offsetof(Section_t50C894D0A717C2368EBAAE5477D4E8626D0B5401, ___url)),};

@@ -1,11 +1,12 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
-/// Draws a dashed, glowing circular arc — the track of the action wheel.
+/// Draws a smooth, glowing circular arc — the track of the action wheel.
 ///
 /// The arc is a real circle segment (centre off-screen) so the nodes that sit
-/// on it read as a wheel, exactly like the Home reference.
+/// on it read as beads on a single continuous string. A soft SweepGradient
+/// fades the line out at both ends, so the track emerges and recedes instead
+/// of stopping abruptly — the whole thing reads as one composition rather than
+/// a row of separate marks (the old dashed style looked fragmented).
 class QuestArcPainter extends CustomPainter {
   const QuestArcPainter({
     required this.center,
@@ -26,54 +27,27 @@ class QuestArcPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    if (radius <= 0) return;
+    if (radius <= 0 || sweepAngle == 0) return;
     final rect = Rect.fromCircle(center: center, radius: radius);
 
+    // One clean, solid glowing line through every node — no dashes, no
+    // gradient (a SweepGradient over a negative start angle was blanking half
+    // the arc). Round caps soften the ends.
     final glow = Paint()
-      ..color = color.withValues(alpha: 0.22)
-      ..strokeWidth = 8
+      ..color = color.withValues(alpha: 0.30)
+      ..strokeWidth = 10
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6);
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
 
-    final dash = Paint()
-      ..color = color.withValues(alpha: 0.85)
-      ..strokeWidth = 2
+    final line = Paint()
+      ..color = color.withValues(alpha: 0.9)
+      ..strokeWidth = 3
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
 
-    // Dash/gap expressed as arc lengths converted to angular steps.
-    final dashA = 9 / radius;
-    final gapA = 7 / radius;
-    final glowDashA = 14 / radius;
-    final glowGapA = 9 / radius;
-
-    _dashedArc(canvas, rect, startAngle, sweepAngle, glow, glowDashA, glowGapA);
-    _dashedArc(canvas, rect, startAngle, sweepAngle, dash, dashA, gapA);
-  }
-
-  void _dashedArc(
-    Canvas canvas,
-    Rect rect,
-    double start,
-    double sweep,
-    Paint paint,
-    double dashA,
-    double gapA,
-  ) {
-    final end = start + sweep;
-    var a = start;
-    var draw = true;
-    final step = dashA + gapA;
-    if (step <= 0) return;
-    while (a < end) {
-      if (draw) {
-        final seg = math.min(dashA, end - a);
-        canvas.drawArc(rect, a, seg, false, paint);
-      }
-      a += draw ? dashA : gapA;
-      draw = !draw;
-    }
+    canvas.drawArc(rect, startAngle, sweepAngle, false, glow);
+    canvas.drawArc(rect, startAngle, sweepAngle, false, line);
   }
 
   @override

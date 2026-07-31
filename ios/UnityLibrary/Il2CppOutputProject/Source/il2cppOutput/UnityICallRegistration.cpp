@@ -930,6 +930,10 @@ void RegisterAllStrippedInternalCalls()
 		void Register_UnityEngine_Camera_get_worldToCameraMatrix_Injected();
 		Register_UnityEngine_Camera_get_worldToCameraMatrix_Injected();
 
+		//System.Void UnityEngine.Camera::set_allowMSAA_Injected(System.IntPtr,System.Boolean)
+		void Register_UnityEngine_Camera_set_allowMSAA_Injected();
+		Register_UnityEngine_Camera_set_allowMSAA_Injected();
+
 		//System.Void UnityEngine.Camera::set_backgroundColor_Injected(System.IntPtr,UnityEngine.Color&)
 		void Register_UnityEngine_Camera_set_backgroundColor_Injected();
 		Register_UnityEngine_Camera_set_backgroundColor_Injected();

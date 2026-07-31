@@ -1835,7 +1835,7 @@ struct U3CFindStaticMethodsWithAttributeU3Ed__8_t9565042EF80F7F2F1874A35DAA7C549
 struct Mobile_t304A73480DF447472BDB16BA19A9E4FE2C8CB2DD  : public RuntimeObject
 {
 };
-struct U3CEmoteFallbackU3Ed__15_tF75CCCF1535FD3A859A78912E13B0FAC40188BA0  : public RuntimeObject
+struct U3CEmoteFallbackU3Ed__18_t96D3C5BB1C9EAF582E5FB59FBD4AB2739BFADCB2  : public RuntimeObject
 {
 	int32_t ___U3CU3E1__state;
 	RuntimeObject* ___U3CU3E2__current;
@@ -15294,6 +15294,9 @@ struct AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4  : public Mono
 	Camera_tA92CC927D7439999BC82DBEDC0AA45B470F9E184* ___sceneCamera;
 	Color_tD001788D726C3A7F1379BEED0260B9591F440C1F ___backgroundColor;
 	bool ___autoCenter;
+	float ___frameFill;
+	float ___shiftLeftFrac;
+	float ___shiftDownFrac;
 	bool ____framedOnce;
 };
 struct CullingJob_t4206A6B00371EC11303617597A8DA5BFCCF92681 
@@ -20474,7 +20477,7 @@ const Il2CppTypeDefinitionSizes g_typeDefinitionSize12343 = { sizeof(SceneLoader
 IL2CPP_EXTERN_C_CONST Il2CppTypeDefinitionSizes g_typeDefinitionSize12344;
 const Il2CppTypeDefinitionSizes g_typeDefinitionSize12344 = { sizeof(AvatarConfig_tC6F5064D3421B2730B69D3F82B1172A0494592FB), -1, 0, 0 };
 IL2CPP_EXTERN_C_CONST Il2CppTypeDefinitionSizes g_typeDefinitionSize12345;
-const Il2CppTypeDefinitionSizes g_typeDefinitionSize12345 = { sizeof(U3CEmoteFallbackU3Ed__15_tF75CCCF1535FD3A859A78912E13B0FAC40188BA0), -1, 0, 0 };
+const Il2CppTypeDefinitionSizes g_typeDefinitionSize12345 = { sizeof(U3CEmoteFallbackU3Ed__18_t96D3C5BB1C9EAF582E5FB59FBD4AB2739BFADCB2), -1, 0, 0 };
 IL2CPP_EXTERN_C_CONST Il2CppTypeDefinitionSizes g_typeDefinitionSize12346;
 const Il2CppTypeDefinitionSizes g_typeDefinitionSize12346 = { sizeof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4), -1, sizeof(AvatarController_t85BF2F7536EE84AE831EEEF9269E4232BEFA1BA4_StaticFields), 0 };
 IL2CPP_EXTERN_C_CONST Il2CppTypeDefinitionSizes g_typeDefinitionSize12347;

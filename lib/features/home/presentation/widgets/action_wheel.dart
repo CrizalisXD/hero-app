@@ -168,8 +168,15 @@ class _ActionWheelState extends State<ActionWheel>
         // active zone (angle 0); orbs fade out and stop responding past it,
         // so the wheel always shows a clean set of four-ish big orbs.
         const windowHalf = _detent * 2.0;
-        // Track extends a touch past the window to hint "there's more".
-        const trackHalf = windowHalf + _detent * 0.9;
+        // Track sweeps well past the window on both ends so the line reads as
+        // one long continuous arc curving up-left behind the hero and down off
+        // the bottom — not a short stub around the visible nodes.
+        const trackHalf = windowHalf + _detent * 1.7;
+        // Node zones: the 4 orbs nearest the active zone stay fully SHARP; only
+        // an orb that rotates PAST that set blurs/fades out (and the next one
+        // fades in). The 4th orb sits at ±1.5·detent, so keep clearHalf above.
+        const clearHalf = _detent * 1.7;
+        const fadeEnd = _detent * 2.7;
 
         final children = <Widget>[
           // Track.
@@ -189,16 +196,20 @@ class _ActionWheelState extends State<ActionWheel>
           final item = widget.items[i];
           final angle = _angleOf(i, _rotation);
           final dist = angle.abs();
-          if (dist > windowHalf) continue; // outside the 4-orb window
+          if (dist > fadeEnd) continue; // fully outside the visible set
 
           final x = c.dx + r * math.cos(angle);
           final y = c.dy + r * math.sin(angle);
 
-          // Peek: fade + shrink toward the window edges; big in the middle.
-          final t = (dist / windowHalf).clamp(0.0, 1.0);
-          final opacity = (1.0 - t * t).clamp(0.0, 1.0);
-          final scale = 1.0 - 0.14 * t;
-          final orbSize = 70.0 - 10.0 * t; // bigger orbs, per reference
+          // Sharp within the 4-orb clear zone; only orbs rotating past it fade
+          // and shrink — so all four visible orbs read crisp and equal.
+          final fade = dist <= clearHalf
+              ? 1.0
+              : (1.0 - (dist - clearHalf) / (fadeEnd - clearHalf))
+                  .clamp(0.0, 1.0);
+          final opacity = fade;
+          final scale = 0.88 + 0.12 * fade;
+          const orbSize = 70.0;
 
           children.add(
             Positioned(

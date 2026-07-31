@@ -1,6 +1,3 @@
-import 'dart:math' as math;
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,7 +15,6 @@ import '../widgets/action_wheel.dart';
 import '../widgets/hero_avatar_stage.dart';
 import '../widgets/home_error_state.dart';
 import '../widgets/home_skeleton.dart';
-import '../widgets/quest_arc_painter.dart';
 
 /// Immersive RPG home (Quest Map): a cinematic full-screen backdrop, a compact
 /// HUD with the hero avatar at the top, four quest-map nodes connected by a
@@ -71,50 +67,40 @@ class _ImmersiveHome extends StatefulWidget {
 class _ImmersiveHomeState extends State<_ImmersiveHome> {
   @override
   Widget build(BuildContext context) {
+    // Clean z-layering per design feedback:
+    //   0 — cinematic background (full screen)
+    //   1 — Unity hero, FULL SCREEN + transparent, so there's no rectangular
+    //       "window" seam / hazy edge where it used to end
+    //   2 — HUD + action wheel, always on top of Unity (the arc/labels must
+    //       never be occluded by the platform view)
+    // ВАЖНО: слой Unity НЕ оборачивать в Opacity/AnimatedOpacity — opacity-
+    // группа заставляет движок компоновать platform view с непрозрачным
+    // чёрным фоном (это и был «чёрный квадрат»).
     return Stack(
       fit: StackFit.expand,
       children: [
         const Positioned.fill(child: _CinematicBackground()),
-        // ВАЖНО: НЕ оборачивать это поддерево в Opacity/AnimatedOpacity —
-        // внутри platform view (Unity), и opacity-группа заставляет движок
-        // компоновать регион в оверлей с непрозрачным чёрным фоном
-        // (это и был «чёрный квадрат» за аватаром).
         Positioned.fill(
-          child: Stack(
-            children: [
-              SafeArea(
-                bottom: false,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _CompactHud(
-                      displayName: widget.data.displayName,
-                      character: widget.data.character,
-                      avatar: widget.data.avatar,
-                    ),
-                    const SizedBox(height: 8),
-                    Expanded(
-                      child: Stack(
-                        fit: StackFit.expand,
-                        children: [
-                          // Dim continuation of the wheel's circle drawn UNDER
-                          // the hero — the orbit reads as a ring that passes
-                          // behind the character (reference composition).
-                          const _OrbitBackArc(),
-                          // 3D Unity hero (or placeholder) behind the nodes.
-                          _HeroLayer(
-                            avatar: widget.data.avatar,
-                            level: widget.data.character.level,
-                          ),
-                          _QuestMap(data: widget.data),
-                        ],
-                      ),
-                    ),
-                  ],
+          child: HeroAvatarStage(
+            avatar: widget.data.avatar,
+            level: widget.data.character.level,
+          ),
+        ),
+        Positioned.fill(
+          child: SafeArea(
+            bottom: false,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _CompactHud(
+                  displayName: widget.data.displayName,
+                  character: widget.data.character,
+                  avatar: widget.data.avatar,
                 ),
-              ),
-              _FocusCard(data: widget.data),
-            ],
+                const SizedBox(height: 8),
+                Expanded(child: _QuestMap(data: widget.data)),
+              ],
+            ),
           ),
         ),
       ],
@@ -349,29 +335,6 @@ class _HudBar extends StatelessWidget {
   }
 }
 
-// ── Hero layer (3D Unity avatar / placeholder) ─────────────────────────────
-
-class _HeroLayer extends StatelessWidget {
-  const _HeroLayer({required this.avatar, required this.level});
-  final AvatarConfig avatar;
-  final int level;
-
-  @override
-  Widget build(BuildContext context) {
-    // Референс-композиция: герой меньше и в левой трети экрана, колесо
-    // действий свободно дышит справа. Сдвиг — в долях размера сцены
-    // (FractionalTranslation), чтобы держался на любых диагоналях.
-    return FractionalTranslation(
-      translation: const Offset(-0.15, 0.03),
-      child: Transform.scale(
-        scale: 0.9,
-        alignment: Alignment.topCenter,
-        child: HeroAvatarStage(avatar: avatar, level: level),
-      ),
-    );
-  }
-}
-
 // ── Action wheel ───────────────────────────────────────────────────────────
 
 class _QuestMap extends ConsumerWidget {
@@ -466,162 +429,5 @@ class _QuestMap extends ConsumerWidget {
     // Start with the core loop (Goals…Coach) in the window: the active zone
     // sits between Tasks and Habits.
     return ActionWheel(items: items, centerIndexAtStart: 1.5);
-  }
-}
-
-// ── Back half of the orbit ring (drawn behind the hero) ────────────────────
-
-class _OrbitBackArc extends StatelessWidget {
-  const _OrbitBackArc();
-
-  @override
-  Widget build(BuildContext context) {
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final size = Size(constraints.maxWidth, constraints.maxHeight);
-        final c = Offset(
-          size.width * ActionWheel.cxFactor,
-          size.height * ActionWheel.cyFactor,
-        );
-        final r = size.width * ActionWheel.rFactor;
-
-        // The wheel's bright track spans ±(2.9·detent) around angle 0; the
-        // dim ring continues past it up over the hero's head and down behind
-        // the focus card, so the orbit visually wraps the character.
-        const trackHalf = ActionWheel.detent * 2.9;
-        const gap = ActionWheel.detent * 0.4;
-        const endOverhang = 0.12;
-        const topStart = -math.pi / 2 - endOverhang;
-        const bottomEnd = math.pi / 2 + endOverhang;
-        final dim = const Color(0xFFD4AF37).withValues(alpha: 0.35);
-
-        return IgnorePointer(
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              CustomPaint(
-                painter: QuestArcPainter(
-                  center: c,
-                  radius: r,
-                  startAngle: topStart,
-                  sweepAngle: (-trackHalf - gap) - topStart,
-                  color: dim,
-                ),
-              ),
-              CustomPaint(
-                painter: QuestArcPainter(
-                  center: c,
-                  radius: r,
-                  startAngle: trackHalf + gap,
-                  sweepAngle: bottomEnd - (trackHalf + gap),
-                  color: dim,
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-}
-
-// ── Floating "Today's focus" card ──────────────────────────────────────────
-
-class _FocusCard extends StatelessWidget {
-  const _FocusCard({required this.data});
-  final HomeData data;
-
-  @override
-  Widget build(BuildContext context) {
-    final l = context.l10n;
-    final tasks = data.todayTasks.where((t) => !t.isDone).take(3).toList();
-    final bottomInset = MediaQuery.of(context).padding.bottom;
-
-    return Positioned(
-      left: 16,
-      right: 16,
-      bottom: bottomInset + 8 < 16 ? 16 : bottomInset + 8,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(20),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            decoration: BoxDecoration(
-              color: const Color(0xFF1A1A24).withValues(alpha: 0.88),
-              borderRadius: BorderRadius.circular(20),
-              border: Border.all(
-                color: Colors.white.withValues(alpha: 0.08),
-              ),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  width: 36,
-                  height: 36,
-                  decoration: BoxDecoration(
-                    color: AppColors.accent.withValues(alpha: 0.18),
-                    shape: BoxShape.circle,
-                  ),
-                  child: const Icon(
-                    Icons.flag_rounded,
-                    color: AppColors.accent,
-                    size: 20,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        l.homeFocusTitle,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w700,
-                          fontSize: 14,
-                          color: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        tasks.isEmpty
-                            ? l.homeFocusEmpty
-                            : tasks.map((t) => t.title).join(' · '),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 12,
-                          color: AppColors.textSecondary,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                TextButton(
-                  onPressed: () => context.go('/tasks'),
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 10,
-                      vertical: 4,
-                    ),
-                    minimumSize: Size.zero,
-                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                  ),
-                  child: Text(
-                    l.homeFocusAddTask,
-                    style: const TextStyle(
-                      color: AppColors.accent,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }

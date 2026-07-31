@@ -552,7 +552,7 @@ MonoBehaviour:
   animator: {fileID: 1657145553}
   emoteFallbackSeconds: 1.5
   sceneCamera: {fileID: 330585545}
-  backgroundColor: {r: 0.051, g: 0.051, b: 0.071, a: 1}
+  backgroundColor: {r: 0.051, g: 0.051, b: 0.071, a: 0}
   autoCenter: 1
 --- !u!4 &1279595279
 Transform:
