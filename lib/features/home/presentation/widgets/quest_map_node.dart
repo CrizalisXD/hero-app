@@ -36,6 +36,7 @@ class _QuestMapNodeState extends State<QuestMapNode>
     with SingleTickerProviderStateMixin {
   bool _pressed = false;
   late final AnimationController _glowCtrl;
+  late final CurvedAnimation _glowCurve;
   late final Animation<double> _glowAnim;
 
   @override
@@ -45,26 +46,40 @@ class _QuestMapNodeState extends State<QuestMapNode>
       vsync: this,
       duration: const Duration(milliseconds: 1800),
     );
-    _glowAnim = Tween<double>(begin: 0.6, end: 1.0).animate(
-      CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut),
-    );
-    if (widget.isActive) {
-      _glowCtrl.repeat(reverse: true);
-    }
+    _glowCurve = CurvedAnimation(parent: _glowCtrl, curve: Curves.easeInOut);
+    _glowAnim = Tween<double>(begin: 0.6, end: 1.0).animate(_glowCurve);
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncGlow();
   }
 
   @override
   void didUpdateWidget(QuestMapNode old) {
     super.didUpdateWidget(old);
-    if (widget.isActive && !_glowCtrl.isAnimating) {
+    _syncGlow();
+  }
+
+  /// Пульс крутится, только когда он действительно нужен: нода активна и ОС не
+  /// просит убрать анимации. Пока он идёт, Flutter не уходит в простой и
+  /// вынужден каждый кадр пересобирать оверлеи поверх Unity-платформвью —
+  /// поэтому лишний кадр здесь стоит дороже, чем на обычном экране.
+  void _syncGlow() {
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
+    final shouldAnimate = widget.isActive && !reduceMotion;
+    if (shouldAnimate && !_glowCtrl.isAnimating) {
       _glowCtrl.repeat(reverse: true);
-    } else if (!widget.isActive && _glowCtrl.isAnimating) {
+    } else if (!shouldAnimate && _glowCtrl.isAnimating) {
       _glowCtrl.stop();
+      if (reduceMotion) _glowCtrl.value = 1.0;
     }
   }
 
   @override
   void dispose() {
+    _glowCurve.dispose();
     _glowCtrl.dispose();
     super.dispose();
   }
@@ -92,42 +107,107 @@ class _QuestMapNodeState extends State<QuestMapNode>
             Stack(
               clipBehavior: Clip.none,
               children: [
-                AnimatedBuilder(
-                  animation: _glowAnim,
-                  builder: (_, child) {
-                    return Container(
-                      height: widget.size,
-                      width: widget.size,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: widget.isActive
-                            ? activeColor
-                            : const Color(0xFF16161E).withValues(alpha: 0.88),
-                        border: widget.isActive
-                            ? null
-                            : Border.all(
-                                color: activeColor.withValues(alpha: 0.7),
-                                width: 2.0,
-                              ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: activeColor.withValues(
-                              alpha: widget.isActive
-                                  ? 0.55 * _glowAnim.value
-                                  : 0.25,
+                // Пульсирующее свечение вынесено в ОТДЕЛЬНЫЙ слой под орбом.
+                // Размытие радиусом 34 растеризуется один раз (RepaintBoundary),
+                // а каждый кадр меняется только opacity готового слоя — это
+                // работа GPU, без перерисовки блюра на CPU. Раньше блюр
+                // перерисовывался 60 раз в секунду, и поверх Unity-платформвью
+                // это был самый дорогой элемент экрана.
+                if (widget.isActive)
+                  Positioned.fill(
+                    child: IgnorePointer(
+                      child: RepaintBoundary(
+                        child: FadeTransition(
+                          opacity: _glowAnim,
+                          child: DecoratedBox(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              boxShadow: [
+                                BoxShadow(
+                                  color: activeColor.withValues(alpha: 0.65),
+                                  blurRadius: 34,
+                                  spreadRadius: 6,
+                                ),
+                              ],
                             ),
-                            blurRadius: widget.isActive ? 28 : 14,
-                            spreadRadius: widget.isActive ? 4 : -2,
                           ),
-                        ],
+                        ),
                       ),
-                      child: child,
-                    );
-                  },
+                    ),
+                  ),
+                // Сам орб теперь полностью статичен — ни одного перестроения
+                // за кадр. Свечение активной ноды рисует слой выше.
+                Container(
+                  height: widget.size,
+                  width: widget.size,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    gradient: widget.isActive
+                        ? RadialGradient(
+                            center: const Alignment(-0.35, -0.45),
+                            radius: 1.1,
+                            colors: [
+                              Color.lerp(activeColor, Colors.white, 0.45)!,
+                              activeColor,
+                              Color.lerp(activeColor, Colors.black, 0.30)!,
+                            ],
+                            stops: const [0.0, 0.5, 1.0],
+                          )
+                        : RadialGradient(
+                            center: const Alignment(-0.4, -0.5),
+                            radius: 1.15,
+                            colors: [
+                              Color.lerp(
+                                activeColor,
+                                const Color(0xFF16161E),
+                                0.42,
+                              )!,
+                              const Color(0xFF15151D),
+                              const Color(0xFF0B0B11),
+                            ],
+                            stops: const [0.0, 0.55, 1.0],
+                          ),
+                    border: widget.isActive
+                        ? null
+                        : Border.all(
+                            color: activeColor.withValues(alpha: 0.9),
+                            width: 2.5,
+                          ),
+                    // Активной ноде тень здесь больше не нужна: её рисует
+                    // кэшированный пульсирующий слой под орбом.
+                    boxShadow: widget.isActive
+                        ? null
+                        : [
+                            BoxShadow(
+                              color: activeColor.withValues(alpha: 0.42),
+                              blurRadius: 20,
+                            ),
+                          ],
+                  ),
                   child: Icon(
                     widget.icon,
                     color: widget.isActive ? Colors.white : activeColor,
                     size: widget.size * 0.40,
+                  ),
+                ),
+                // Specular glint — turns the flat disc into a glossy orb.
+                Positioned(
+                  top: widget.size * 0.12,
+                  left: widget.size * 0.22,
+                  child: IgnorePointer(
+                    child: Container(
+                      width: widget.size * 0.56,
+                      height: widget.size * 0.28,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(widget.size),
+                        gradient: RadialGradient(
+                          colors: [
+                            Colors.white.withValues(alpha: 0.30),
+                            Colors.transparent,
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 if (widget.badge != null)

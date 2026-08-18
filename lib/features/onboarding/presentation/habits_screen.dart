@@ -96,7 +96,7 @@ class _HabitsScreenState extends ConsumerState<HabitsScreen> {
 
     return OnboardingShell(
       step: 10,
-      totalSteps: 12,
+      totalSteps: 14,
       title: l.onboardingHabitsTitle,
       subtitle: l.onboardingHabitsSubtitleV2,
       onBack: () => context.go('/onboarding/support-style'),

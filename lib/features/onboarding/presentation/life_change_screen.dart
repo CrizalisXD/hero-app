@@ -77,7 +77,7 @@ class _LifeChangeScreenState extends ConsumerState<LifeChangeScreen> {
 
     return OnboardingShell(
       step: 2,
-      totalSteps: 12,
+      totalSteps: 14,
       title: l.onboardingLifeChangeTitle,
       subtitle: l.onboardingLifeChangeSubtitleV2,
       onBack: () => context.go('/onboarding/name'),

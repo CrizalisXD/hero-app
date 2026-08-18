@@ -68,6 +68,8 @@ class _ActionWheelState extends State<ActionWheel>
 
   late final AnimationController _ctrl;
   Animation<double>? _anim;
+  CurvedAnimation? _animCurve;
+  VoidCallback? _animListener;
 
   double _rotation = 0; // radians; 0 = middle item centred
   double _dragStartTouchAngle = 0;
@@ -89,9 +91,28 @@ class _ActionWheelState extends State<ActionWheel>
 
   @override
   void dispose() {
+    _detachAnim();
     _ctrl.dispose();
     super.dispose();
   }
+
+  /// Снимает листенер с предыдущей анимации и освобождает её [CurvedAnimation].
+  /// Без этого каждый взмах колеса навешивал НОВЫЙ листенер на тот же
+  /// контроллер, а старые оставались жить: после N взмахов один тик прогонял N
+  /// замыканий и N вызовов setState — нагрузка росла линейно от числа
+  /// взаимодействий и падала только при уходе с экрана.
+  void _detachAnim() {
+    final listener = _animListener;
+    if (listener != null) _anim?.removeListener(listener);
+    _animCurve?.dispose();
+    _anim = null;
+    _animCurve = null;
+    _animListener = null;
+  }
+
+  /// Оборачивает орб в [Opacity] только когда он действительно полупрозрачный.
+  static Widget _maybeFade(double opacity, Widget child) =>
+      opacity >= 1.0 ? child : Opacity(opacity: opacity, child: child);
 
   // Centre point of the off-screen circle, in local pixels.
   Offset _centre(Size s) => Offset(s.width * _cxFactor, s.height * _cyFactor);
@@ -113,6 +134,7 @@ class _ActionWheelState extends State<ActionWheel>
 
   void _onPanStart(DragStartDetails d, Size size) {
     _ctrl.stop();
+    _detachAnim();
     final c = _centre(size);
     _dragStartTouchAngle =
         math.atan2(d.localPosition.dy - c.dy, d.localPosition.dx - c.dx);
@@ -144,14 +166,19 @@ class _ActionWheelState extends State<ActionWheel>
   void _animateTo(double target) {
     final from = _rotation;
     final dist = (target - from).abs();
+    _detachAnim();
     _ctrl
       ..duration = Duration(
         milliseconds: (260 + dist / _detent * 90).clamp(220, 700).round(),
       )
       ..reset();
-    _anim = Tween<double>(begin: from, end: target).animate(
-      CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic),
-    )..addListener(() => setState(() => _rotation = _anim!.value));
+    final curve = CurvedAnimation(parent: _ctrl, curve: Curves.easeOutCubic);
+    final anim = Tween<double>(begin: from, end: target).animate(curve);
+    void listener() => setState(() => _rotation = anim.value);
+    anim.addListener(listener);
+    _anim = anim;
+    _animCurve = curve;
+    _animListener = listener;
     _ctrl.forward();
   }
 
@@ -179,14 +206,21 @@ class _ActionWheelState extends State<ActionWheel>
         const fadeEnd = _detent * 2.7;
 
         final children = <Widget>[
-          // Track.
+          // Track. Геометрия дуги зависит только от размера виджета, но не от
+          // поворота колеса, поэтому RepaintBoundary растеризует её один раз.
+          // Без него дорогой MaskFilter.blur(9) по 13-пиксельному штриху
+          // переписывался в общий слой на каждом кадре прокрутки.
           Positioned.fill(
-            child: CustomPaint(
-              painter: QuestArcPainter(
-                center: c,
-                radius: r,
-                startAngle: -trackHalf,
-                sweepAngle: trackHalf * 2,
+            child: RepaintBoundary(
+              child: CustomPaint(
+                isComplex: true,
+                willChange: false,
+                painter: QuestArcPainter(
+                  center: c,
+                  radius: r,
+                  startAngle: -trackHalf,
+                  sweepAngle: trackHalf * 2,
+                ),
               ),
             ),
           ),
@@ -218,18 +252,25 @@ class _ActionWheelState extends State<ActionWheel>
               width: 96,
               child: IgnorePointer(
                 ignoring: opacity < 0.35,
-                child: Opacity(
-                  opacity: opacity,
-                  child: Transform.scale(
-                    scale: scale,
-                    child: QuestMapNode(
-                      icon: item.icon,
-                      label: item.label,
-                      color: item.color,
-                      badge: item.badge,
-                      isActive: item.isActive,
-                      size: orbSize,
-                      onTap: item.onTap,
+                // Opacity ниже 1.0 заводит saveLayer (offscreen-проход), а над
+                // платформвью это ещё и лишний оверлей — поэтому у чётких орбов
+                // (fade == 1.0) слой не создаём вовсе. RepaintBoundary внутри
+                // Transform даёт масштабировать уже растеризованный орб на GPU,
+                // вместо перерисовки градиента и тени каждый кадр прокрутки.
+                child: Transform.scale(
+                  scale: scale,
+                  child: RepaintBoundary(
+                    child: _maybeFade(
+                      opacity,
+                      QuestMapNode(
+                        icon: item.icon,
+                        label: item.label,
+                        color: item.color,
+                        badge: item.badge,
+                        isActive: item.isActive,
+                        size: orbSize,
+                        onTap: item.onTap,
+                      ),
                     ),
                   ),
                 ),

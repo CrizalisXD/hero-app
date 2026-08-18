@@ -1043,5 +1043,21 @@
   },
   "wishlistConvertError": "Не удалось создать задачу.",
   "wishlistEmptyTitle": "Лови идеи на лету",
-  "wishlistEmptyBody": "Керамика, скалодром, новый язык — запиши сюда всё, что когда-нибудь хочется попробовать. Без обязательств."
+  "wishlistEmptyBody": "Керамика, скалодром, новый язык — запиши сюда всё, что когда-нибудь хочется попробовать. Без обязательств.",
+  "onboardingAvatarGenderTitle": "Создай своего героя",
+  "onboardingAvatarGenderSubtitle": "Выбери базовое тело. Всё остальное можно поменять позже.",
+  "onboardingAvatarGenderMale": "Мужской",
+  "onboardingAvatarGenderFemale": "Женский",
+  "onboardingAvatarCreateTitle": "Твой облик",
+  "onboardingAvatarCreateSubtitle": "Быстрый проход — полный гардероб живёт в редакторе персонажа.",
+  "avatarSlotHair": "Волосы",
+  "avatarSlotSkin": "Кожа",
+  "avatarSlotOutfit": "Образ",
+  "avatarSlotTop": "Верх",
+  "avatarSlotBottom": "Низ",
+  "avatarSlotShoes": "Обувь",
+  "avatarNoItemsYet": "Новые предметы на подходе",
+  "avatarNoItemsYetBody": "Пока доступен только базовый облик. Гардероб откроется по мере появления вещей.",
+  "avatarGenderChanged": "Часть вещей не подошла новому телу и была сброшена.",
+  "avatarLocked": "Закрыто"
 }

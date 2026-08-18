@@ -30,24 +30,34 @@ class QuestArcPainter extends CustomPainter {
     if (radius <= 0 || sweepAngle == 0) return;
     final rect = Rect.fromCircle(center: center, radius: radius);
 
-    // One clean, solid glowing line through every node — no dashes, no
-    // gradient (a SweepGradient over a negative start angle was blanking half
-    // the arc). Round caps soften the ends.
+    // Three passes for a bright, "energised" track (no gradient — a
+    // SweepGradient over a negative start angle blanked half the arc). Round
+    // caps soften the ends.
+    //   1. wide soft halo   → the track glows into the background
+    //   2. solid core line  → full-strength, slightly thicker than before
+    //   3. hot inner streak → a near-white highlight so the line reads as lit
     final glow = Paint()
-      ..color = color.withValues(alpha: 0.30)
-      ..strokeWidth = 10
+      ..color = color.withValues(alpha: 0.45)
+      ..strokeWidth = 13
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke
-      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8);
+      ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 9);
 
     final line = Paint()
-      ..color = color.withValues(alpha: 0.9)
-      ..strokeWidth = 3
+      ..color = color
+      ..strokeWidth = 4
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.stroke;
+
+    final core = Paint()
+      ..color = Color.lerp(color, Colors.white, 0.6)!.withValues(alpha: 0.95)
+      ..strokeWidth = 1.6
       ..strokeCap = StrokeCap.round
       ..style = PaintingStyle.stroke;
 
     canvas.drawArc(rect, startAngle, sweepAngle, false, glow);
     canvas.drawArc(rect, startAngle, sweepAngle, false, line);
+    canvas.drawArc(rect, startAngle, sweepAngle, false, core);
   }
 
   @override

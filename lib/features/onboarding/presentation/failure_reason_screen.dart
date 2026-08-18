@@ -63,7 +63,7 @@ class _FailureReasonScreenState extends ConsumerState<FailureReasonScreen> {
 
     return OnboardingShell(
       step: 5,
-      totalSteps: 12,
+      totalSteps: 14,
       title: l.onboardingFailureTitle,
       subtitle: l.onboardingFailureSubtitle,
       onBack: () => context.go('/onboarding/main-obstacle'),

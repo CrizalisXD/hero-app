@@ -44,7 +44,7 @@ class _EnergyLevelScreenState extends ConsumerState<EnergyLevelScreen> {
 
     return OnboardingShell(
       step: 6,
-      totalSteps: 12,
+      totalSteps: 14,
       title: l.onboardingEnergyTitle,
       subtitle: l.onboardingEnergySubtitle,
       onBack: () => context.go('/onboarding/failure-reason'),

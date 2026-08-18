@@ -6,6 +6,7 @@ import '../../../../app/theme/app_radius.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/notifications/local_notifications_service.dart';
 import '../../../../core/widgets/hero_card.dart';
+import '../../../avatar/application/hero_emote_queue.dart';
 import '../../../home/application/home_notifier.dart';
 import '../../../home/presentation/widgets/level_up_overlay.dart';
 import '../../application/routines_notifier.dart';
@@ -44,6 +45,8 @@ class RoutinesScreen extends ConsumerWidget {
       );
     await ref.read(homeNotifierProvider.notifier).silentRefresh();
     if (res.levelsGained > 0 && context.mounted) {
+      // Уровень взят вне Home — эмоция ждёт в очереди до возвращения к герою.
+      celebrateLevelUp(ref);
       await LevelUpOverlay.show(context, newLevel: res.levelAfter);
       await ref.read(homeNotifierProvider.notifier).silentRefresh();
     }

@@ -65,7 +65,7 @@ class _MainObstacleScreenState extends ConsumerState<MainObstacleScreen> {
 
     return OnboardingShell(
       step: 4,
-      totalSteps: 12,
+      totalSteps: 14,
       title: l.onboardingObstacleTitle,
       subtitle: l.onboardingObstacleSubtitle,
       onBack: () => context.go('/onboarding/insight'),

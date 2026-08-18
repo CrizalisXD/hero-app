@@ -60,7 +60,7 @@ class _TimeCommitmentScreenState extends ConsumerState<TimeCommitmentScreen> {
 
     return OnboardingShell(
       step: 7,
-      totalSteps: 12,
+      totalSteps: 14,
       title: l.onboardingTimeTitle,
       subtitle: l.onboardingTimeSubtitle,
       onBack: () => context.go('/onboarding/energy-level'),

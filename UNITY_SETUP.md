@@ -189,6 +189,73 @@ Unity dependency**.
 
 ---
 
+## 8. Modular wardrobe (body + clothes, swapped from the app)
+
+The hero is no longer one baked FBX in the scene. `Avatar.unity` holds only a
+camera, a light and the `AvatarController` object; **the hero is spawned at
+runtime** from `Assets/Resources/Avatar/` and re-dressed whenever Flutter sends
+a config. That means a wardrobe change is a message, not a re-export.
+
+### Asset layout (drop files here, nothing else to click)
+
+```
+Assets/Resources/Avatar/
+  Male/    Body_Male_01.fbx, Top_Male_01..02, Bottom_Male_01..03,
+           Shoes_Male_01..03, Hair_Male_01..03
+  Female/  Body_Female_01.fbx, Top_Female_01..03, Bottom_Female_01..03,
+           Shoes_Female_01..03, Hair_Female_01..03
+  Animations/  anim_idle_male, anim_idle_female, anim_clap, anim_upset
+  Skins/Male|Female/ skin_01..03.png
+```
+
+`Assets/Editor/HeroAvatarImportSettings.cs` sets the import settings by path:
+bodies and animations import as **Humanoid** (so the Mixamo clips retarget onto
+either body), wardrobe pieces as **Generic** with their bone hierarchy intact.
+
+### How a piece ends up on the hero
+
+`AvatarWardrobe` instantiates the item, throws away its private copy of the
+skeleton and re-points every `SkinnedMeshRenderer.bones` at the **body's** bones
+by name. One Animator then drives the hero and everything he wears. Rigid pieces
+(most hair) are parented to the head bone instead.
+
+Ids come from the `avatar_assets` catalogue (`male_top_02`) — the resolver reads
+the trailing number, so a catalogue id, a raw resource name (`Top_Male_02`) and
+`default` (= empty slot) all work.
+
+### The wire contract
+
+`AvatarStageConfig.toJson()` → `AvatarController.SetAvatarConfig`:
+`gender`, `skinColor`, `hairType`, `hairColor`, `outfitType`, `topType`,
+`bottomType`, `shoesType` (plus the old `primaryColor`/`level`). Renaming a
+field on one side silently drops it on the other — change both.
+
+An `outfitType` wins over top/bottom, matching `Avatar.withSlot`. There are no
+`Outfit_*` meshes in the pack yet, so an outfit id currently resolves to the
+top+bottom of the same index; drop `Outfit_{Gender}_{NN}.fbx` into the folder
+and it will be used automatically.
+
+### Rebuild + export
+
+In the editor: **Hero ▸ Avatar ▸ Rebuild Scene**, then **Hero ▸ Avatar ▸ Export
+to Flutter (iOS / Android)**. `Hero ▸ Avatar ▸ Log Wardrobe Contents` prints
+everything Unity can currently load — the fastest way to check an FBX landed.
+
+Headless (Unity must be **closed** — the editor locks the project):
+
+```bash
+UNITY=/Applications/Unity/Hub/Editor/6000.4.7f1/Unity.app/Contents/MacOS/Unity
+PROJ="$PWD/unity/hero_unity"
+"$UNITY" -batchmode -quit -logFile - -projectPath "$PROJ" \
+  -buildTarget iOS -executeMethod HeroAvatarBuilder.CI_ExportIOS
+"$UNITY" -batchmode -quit -logFile - -projectPath "$PROJ" \
+  -buildTarget Android -executeMethod HeroAvatarBuilder.CI_ExportAndroid
+```
+
+Exports land in `ios/UnityLibrary` and `android/unityLibrary` as before.
+
+---
+
 ## Performance notes (the "lags / size" concern)
 
 - **Size**: a stripped IL2CPP Unity export adds ~30–60 MB. Mitigate with

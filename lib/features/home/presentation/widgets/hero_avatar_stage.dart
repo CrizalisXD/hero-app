@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../app/theme/app_colors.dart';
 import '../../../../../core/config/feature_flags.dart';
+import '../../../avatar/application/avatar_notifier.dart';
 import '../../../avatar/unity/avatar_stage_config.dart';
 import '../../../avatar/unity/unity_avatar_view.dart';
 import '../../data/avatar_repository.dart';
@@ -17,7 +19,7 @@ import '../../data/avatar_repository.dart';
 ///
 /// Pick is by feature flag, so enabling Unity is a config switch — no Home
 /// layout changes required.
-class HeroAvatarStage extends StatelessWidget {
+class HeroAvatarStage extends ConsumerWidget {
   const HeroAvatarStage({
     super.key,
     required this.avatar,
@@ -28,7 +30,7 @@ class HeroAvatarStage extends StatelessWidget {
   final int level;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     // Unity is a compile-time capability (the framework is linked into the
     // build or not), so gate it on the build-time flag directly — the
     // `--dart-define=HERO_UNITY_AVATAR_ENABLED=true` is the single switch.
@@ -37,12 +39,19 @@ class HeroAvatarStage extends StatelessWidget {
     // Unity 3D renderer — behind the flag. Falls back to the placeholder until
     // Unity signals ready (the placeholder shows during cold start anyway).
     if (unityOn) {
+      // The full row (gender + wardrobe slots) drives the 3D hero; Home's own
+      // lightweight AvatarConfig only carries the accent colour, which is all
+      // the placeholder ever needed. While the row loads, send that colour
+      // alone — Unity dresses the default hero and re-dresses him on arrival.
+      final stored = ref.watch(avatarNotifierProvider).valueOrNull;
       return UnityAvatarView(
-        config: AvatarStageConfig(
-          primaryColor: avatar.primaryColor,
-          level: level,
-          renderer: 'unity',
-        ),
+        config: stored != null
+            ? AvatarStageConfig.fromAvatar(stored, level: level)
+            : AvatarStageConfig(
+                primaryColor: avatar.primaryColor,
+                level: level,
+                renderer: 'unity',
+              ),
       );
     }
 

@@ -4,6 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../core/l10n/l10n.dart';
+import '../../avatar/application/hero_emote_queue.dart';
+import '../../avatar/unity/avatar_stage_config.dart';
 import '../data/energy_service.dart';
 
 /// Try to spend [amount] energy. On success returns true. On failure
@@ -24,6 +26,12 @@ class EnergyGuard {
     try {
       final res = await ref.read(energyServiceProvider).spend(amount);
       if (res.ok) return true;
+
+      // Отказ по энергии — герой расстраивается. Эмоция кладётся в очередь, а
+      // не играется сразу: отказ ловится на экранах создания, где героя не
+      // видно, поэтому он отыграет её, когда игрок вернётся на Home.
+      ref.read(heroEmoteQueueProvider.notifier).request(AvatarEmote.upset);
+
       if (!context.mounted) return false;
       await _showNotEnoughDialog(context, res.energy, res.needed ?? amount);
       return false;

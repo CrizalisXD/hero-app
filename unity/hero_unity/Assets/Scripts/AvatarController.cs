@@ -2,10 +2,13 @@
 // ────────────────────────────────────────────────────────────────────────────
 // Hero avatar bridge for the Flutter <-> Unity integration.
 //
-// Drop this onto a GameObject named exactly "AvatarController" in your avatar
-// scene. It receives config/emotes from Flutter and reports ready/tap/emote
-// events back. Message strings here MUST match the Dart side
-// (UnityAvatarBridge in UNITY_SETUP.md):
+// Drop this onto a GameObject named exactly "AvatarController" in the avatar
+// scene (HeroAvatarBuilder does it for you). It owns three things:
+//   • the wire protocol with Flutter,
+//   • the wardrobe (which body/clothes are on screen — AvatarWardrobe),
+//   • how the hero is framed by the camera.
+//
+// Message strings MUST match the Dart side (UnityAvatarBridge):
 //   Flutter -> Unity : SetAvatarConfig(json), PlayEmote(name)
 //   Unity  -> Flutter: "avatar:ready", "avatar:tapped",
 //                      "avatar:emote_finished:<name>"
@@ -21,12 +24,24 @@ using UnityEngine.Rendering.Universal;
 [System.Serializable]
 public class AvatarConfig
 {
-    public string primaryColor;   // "#7F77DD"
+    public string primaryColor;   // "#7F77DD" — UI accent, NOT a skin tint
     public int level;
     public string renderer;       // "unity"
+
+    // Wardrobe. Ids are the app's canonical ones ("male_top_02") or plain
+    // resource names ("Top_Male_02"); "default" means "nothing in this slot".
+    public string gender;         // "male" | "female"
     public string bodyType;
     public string faceType;
+    public string skinColor;      // "skin_01".."skin_03"
     public string hairType;
+    public string hairColor;      // "#362419"
+    public string outfitType;     // full-body piece; overrides top/bottom
+    public string topType;
+    public string bottomType;
+    public string shoesType;
+
+    /// DEPRECATED — kept so older app builds keep deserialising.
     public string clothingType;
     public string unityAvatarId;
 }
@@ -35,14 +50,13 @@ public class AvatarConfig
 public class AvatarController : MonoBehaviour
 {
     [Header("Refs")]
-    [Tooltip("Renderer whose material gets tinted by primaryColor.")]
-    [SerializeField] private Renderer tintTarget;
+    [Tooltip("Builds the hero from Resources. Added automatically if missing.")]
+    [SerializeField] private AvatarWardrobe wardrobe;
 
-    [Tooltip("Animator that holds the emote states. Trigger names must match " +
-             "the emote wire names: idle, task_done, level_up, wave.")]
-    [SerializeField] private Animator animator;
+    [Tooltip("Idle loop + emotes. Added automatically if missing.")]
+    [SerializeField] private AvatarAnimation avatarAnimation;
 
-    [Tooltip("Fallback emote length if no Animation Event fires.")]
+    [Tooltip("Fallback emote length if the animation graph can't report back.")]
     [SerializeField] private float emoteFallbackSeconds = 1.5f;
 
     [Header("Scene framing (done in code so it can't drift)")]
@@ -69,19 +83,46 @@ public class AvatarController : MonoBehaviour
              "height (0 = centred, positive = lower).")]
     [SerializeField, Range(-0.5f, 0.5f)] private float shiftDownFrac = 0.14f;
 
-    private static readonly int IdleHash = Animator.StringToHash("idle");
+    [Header("Performance")]
+    [Tooltip("Frame cap for the embedded avatar view. The hero only breathes " +
+             "in idle, so 30 fps is indistinguishable from 60 and halves the " +
+             "engine's per-frame cost — which matters a lot here, because on " +
+             "Home the Unity layer is composited together with the Flutter " +
+             "overlays on every single frame.")]
+    [SerializeField, Range(15, 60)] private int targetFps = 30;
+
+    private bool _framedOnce;
 
     // ── Lifecycle ───────────────────────────────────────────────────────────
 
+    private void Awake()
+    {
+        if (wardrobe == null) wardrobe = GetComponent<AvatarWardrobe>() ?? gameObject.AddComponent<AvatarWardrobe>();
+        if (avatarAnimation == null) avatarAnimation = GetComponent<AvatarAnimation>() ?? gameObject.AddComponent<AvatarAnimation>();
+
+        wardrobe.BodyRebuilt += OnBodyRebuilt;
+    }
+
+    private void OnDestroy()
+    {
+        if (wardrobe != null) wardrobe.BodyRebuilt -= OnBodyRebuilt;
+    }
+
     private void Start()
     {
+        // vSyncCount в QualitySettings стоит 0, а targetFrameRate по умолчанию
+        // -1 — то есть потолка кадров у встроенного плеера не было вообще.
+        Application.targetFrameRate = targetFps;
+
+        // Show the default hero immediately: Flutter's SetAvatarConfig arrives
+        // a beat after the view is created, and an empty stage in between reads
+        // as a broken build.
+        wardrobe.EnsureBuilt();
         ConfigureScene();
-        if (animator != null) animator.SetTrigger(IdleHash);
         Send("avatar:ready");
     }
 
     // Re-aim once more after the first frame, when skinned bounds are final.
-    private bool _framedOnce;
     private void LateUpdate()
     {
         if (_framedOnce) return;
@@ -89,8 +130,74 @@ public class AvatarController : MonoBehaviour
         ConfigureScene();
     }
 
-    /// Force a solid dark background (no skybox) and centre the avatar in frame.
-    /// Done in code so a scene tweak / re-export can't silently undo it.
+    private void OnBodyRebuilt()
+    {
+        avatarAnimation.Bind(wardrobe.Animator, CurrentGender);
+        _framedOnce = false; // bounds changed — re-frame on the next frame
+    }
+
+    private string CurrentGender { get; set; } = "male";
+
+    // ── Flutter -> Unity ─────────────────────────────────────────────────────
+
+    /// Called by Flutter: controller.postJsonMessage("AvatarController",
+    /// "SetAvatarConfig", config.toJson()).
+    public void SetAvatarConfig(string json)
+    {
+        AvatarConfig cfg;
+        try { cfg = JsonUtility.FromJson<AvatarConfig>(json); }
+        catch (System.Exception e)
+        {
+            Debug.LogWarning("[avatar] bad config json: " + e.Message);
+            return;
+        }
+
+        if (cfg == null) return;
+
+        CurrentGender = string.IsNullOrEmpty(cfg.gender) ? CurrentGender : cfg.gender;
+        wardrobe.SetGender(CurrentGender);
+
+        wardrobe.Equip(WardrobeSlot.Hair, cfg.hairType);
+        wardrobe.Equip(WardrobeSlot.Shoes, cfg.shoesType);
+
+        // A full-body outfit replaces the two-piece set — the same exclusivity
+        // the app enforces in Avatar.withSlot.
+        if (!string.IsNullOrEmpty(cfg.outfitType) && cfg.outfitType != AvatarWardrobe.Empty)
+        {
+            wardrobe.EquipOutfit(cfg.outfitType);
+        }
+        else
+        {
+            wardrobe.Equip(WardrobeSlot.Top, cfg.topType);
+            wardrobe.Equip(WardrobeSlot.Bottom, cfg.bottomType);
+        }
+
+        wardrobe.ApplySkin(cfg.skinColor);
+        wardrobe.ApplyHairColor(cfg.hairColor);
+
+        ApplyTint(cfg.primaryColor);
+        ConfigureScene();
+    }
+
+    /// Called by Flutter: controller.postMessage("AvatarController",
+    /// "PlayEmote", "level_up").
+    public void PlayEmote(string emote)
+    {
+        if (string.IsNullOrEmpty(emote)) return;
+
+        StopAllCoroutines();
+        StartCoroutine(EmoteFallback(emote));
+        avatarAnimation.PlayEmote(emote, NotifyEmoteFinished);
+    }
+
+    // Tap on the avatar collider -> Flutter decides what to do with it.
+    private void OnMouseDown() => Send("avatar:tapped");
+
+    // ── Scene ────────────────────────────────────────────────────────────────
+
+    /// Force a solid dark background (no skybox), centre the avatar in frame
+    /// and keep the tap collider on the model. Done in code so a scene tweak /
+    /// re-export can't silently undo it.
     private void ConfigureScene()
     {
         var cam = sceneCamera != null ? sceneCamera : Camera.main;
@@ -113,72 +220,62 @@ public class AvatarController : MonoBehaviour
         }
 
         if (!autoCenter) return;
-        var root = tintTarget != null ? tintTarget.transform.root : transform.root;
-        var rends = root.GetComponentsInChildren<Renderer>();
+
+        var rends = wardrobe.AllRenderers();
         if (rends.Length == 0) return;
+
         var b = rends[0].bounds;
-        for (int i = 1; i < rends.Length; i++) b.Encapsulate(rends[i].bounds);
+        for (var i = 1; i < rends.Length; i++) b.Encapsulate(rends[i].bounds);
 
         // Frame the avatar to fill `frameFill` of the view HEIGHT regardless of
         // the model's real size: pull the camera back along its current view
         // direction (angle preserved) so only the on-screen size changes. This
         // shrinks the MODEL without shrinking the full-screen Unity view.
-        float h = Mathf.Max(b.size.y, 0.01f);
-        float halfFov = cam.fieldOfView * 0.5f * Mathf.Deg2Rad;
-        float dist = (h / Mathf.Max(frameFill, 0.05f)) / (2f * Mathf.Tan(halfFov));
-        Vector3 dir = cam.transform.position - b.center;
-        dir = dir.sqrMagnitude < 0.0001f ? -cam.transform.forward : dir.normalized;
-        cam.transform.position = b.center + dir * dist;
-        cam.transform.LookAt(b.center); // establish base orientation
+        var h = Mathf.Max(b.size.y, 0.01f);
+        var halfFov = cam.fieldOfView * 0.5f * Mathf.Deg2Rad;
+        var dist = (h / Mathf.Max(frameFill, 0.05f)) / (2f * Mathf.Tan(halfFov));
+        // Rebuild the framing from scratch every time instead of nudging the
+        // camera from wherever it currently is: state-derived framing drifts as
+        // soon as the body changes, and a camera that ends up above the hero
+        // looking down makes him read as hunched over on screen.
+        cam.transform.position = b.center + Vector3.forward * dist;
+        cam.transform.rotation = Quaternion.Euler(0f, 180f, 0f); // level, facing the hero
 
-        // Re-aim to slide the MODEL within the frame (screen-space offset).
-        // Aiming to the RIGHT of the avatar makes it appear on the LEFT.
-        float halfH = dist * Mathf.Tan(halfFov);
-        float halfW = halfH * cam.aspect;
-        Vector3 aim = b.center
-            + cam.transform.right * (shiftLeftFrac * 2f * halfW)
-            + cam.transform.up * (shiftDownFrac * 2f * halfH);
-        cam.transform.LookAt(aim);
+        // Never let the clip planes cut the hero out of the frame — a model
+        // that arrives in different units would otherwise sit entirely behind
+        // the far plane and render as nothing at all.
+        cam.nearClipPlane = Mathf.Max(0.01f, dist * 0.01f);
+        cam.farClipPlane = Mathf.Max(30f, dist * 4f);
+
+        // Slide the MODEL within the frame by MOVING the camera, never by
+        // aiming it: a tilted camera foreshortens the figure, a shifted one
+        // only changes where he sits on screen.
+        var halfH = dist * Mathf.Tan(halfFov);
+        var halfW = halfH * cam.aspect;
+        // Moving the camera RIGHT puts the hero on the LEFT of the frame.
+        cam.transform.position += cam.transform.right * (shiftLeftFrac * 2f * halfW)
+                                 + cam.transform.up * (shiftDownFrac * 2f * halfH);
+
+        FitTapCollider(b);
     }
 
-    // Tap on the avatar collider -> open avatar screen in Flutter.
-    private void OnMouseDown()
+    /// The hero is spawned at runtime, so the tap target is sized in code —
+    /// a hand-placed collider in the scene would stop matching the moment the
+    /// body or the clothes change.
+    private void FitTapCollider(Bounds bounds)
     {
-        Send("avatar:tapped");
-    }
-
-    // ── Flutter -> Unity ─────────────────────────────────────────────────────
-
-    /// Called by Flutter: controller.postJsonMessage("AvatarController",
-    /// "SetAvatarConfig", config.toJson()).
-    public void SetAvatarConfig(string json)
-    {
-        AvatarConfig cfg;
-        try { cfg = JsonUtility.FromJson<AvatarConfig>(json); }
-        catch { return; }
-        if (cfg == null) return;
-
-        ApplyTint(cfg.primaryColor);
-        // TODO: swap mesh by cfg.unityAvatarId, apply body/face/hair/clothing.
-        // TODO: scale aura / VFX by cfg.level if desired.
-    }
-
-    /// Called by Flutter: controller.postMessage("AvatarController",
-    /// "PlayEmote", "level_up").
-    public void PlayEmote(string emote)
-    {
-        if (string.IsNullOrEmpty(emote)) return;
-        if (animator != null) animator.SetTrigger(emote);
-        StopAllCoroutines();
-        StartCoroutine(EmoteFallback(emote));
+        if (GetComponent<Collider>() is not BoxCollider box) return;
+        box.center = transform.InverseTransformPoint(bounds.center);
+        box.size = bounds.size;
     }
 
     // ── Helpers ──────────────────────────────────────────────────────────────
 
-    // Call this from an Animation Event at the end of an emote clip for exact
-    // timing; the coroutine below is just a safety fallback.
+    /// Call this from an Animation Event at the end of an emote clip for exact
+    /// timing; the coroutine below is just a safety fallback.
     public void NotifyEmoteFinished(string emote)
     {
+        StopAllCoroutines();
         Send("avatar:emote_finished:" + emote);
     }
 
@@ -186,7 +283,6 @@ public class AvatarController : MonoBehaviour
     {
         yield return new WaitForSeconds(emoteFallbackSeconds);
         Send("avatar:emote_finished:" + emote);
-        if (animator != null) animator.SetTrigger(IdleHash);
     }
 
     private void ApplyTint(string hex)
@@ -197,7 +293,6 @@ public class AvatarController : MonoBehaviour
         // materials (suit, skin), so we must leave them untouched. Kept as a
         // no-op hook: if a dedicated accent renderer (aura/platform/rim) is
         // wired up later, tint THAT here — never the body mesh.
-        return;
     }
 
     private void Send(string message)

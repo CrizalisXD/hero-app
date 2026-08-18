@@ -198,24 +198,29 @@ class _CompactHud extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: [
-                Text(
-                  l.homeLevel(character.level),
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    shadows: [Shadow(color: Colors.black54, blurRadius: 6)],
+                ShaderMask(
+                  shaderCallback: (b) => AppColors.heroGradient.createShader(b),
+                  blendMode: BlendMode.srcIn,
+                  child: Text(
+                    l.homeLevel(character.level),
+                    style: const TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                      shadows: [Shadow(color: Colors.black54, blurRadius: 6)],
+                    ),
                   ),
                 ),
                 const SizedBox(height: 6),
                 _HudBar(
                   progress: character.xpProgress,
-                  gradient: AppColors.xpGradient,
+                  gradient: AppColors.heroGradient,
+                  glowColor: AppColors.neonMagenta,
                   label: l.homeXpProgress(
                     character.xpCurrent,
                     character.xpToNext,
                   ),
-                  height: 8,
+                  height: 9,
                 ),
                 const SizedBox(height: 4),
                 _HudBar(
@@ -266,9 +271,9 @@ class _AvatarCircle extends StatelessWidget {
           gradient: LinearGradient(colors: tierColors),
           boxShadow: [
             BoxShadow(
-              color: tierColors.first.withValues(alpha: 0.5),
-              blurRadius: 10,
-              spreadRadius: 1,
+              color: tierColors.last.withValues(alpha: 0.65),
+              blurRadius: 18,
+              spreadRadius: 2,
             ),
           ],
         ),
@@ -295,6 +300,7 @@ class _HudBar extends StatelessWidget {
     this.height = 8,
     this.leadingIcon,
     this.leadingColor,
+    this.glowColor,
   });
 
   final double progress;
@@ -303,6 +309,7 @@ class _HudBar extends StatelessWidget {
   final double height;
   final IconData? leadingIcon;
   final Color? leadingColor;
+  final Color? glowColor;
 
   @override
   Widget build(BuildContext context) {
@@ -317,6 +324,7 @@ class _HudBar extends StatelessWidget {
             progress: progress,
             height: height,
             gradient: gradient,
+            glowColorOverride: glowColor,
             radius: height,
             duration: const Duration(milliseconds: 700),
           ),

@@ -45,7 +45,7 @@ class InsightScreen extends ConsumerWidget {
 
     return OnboardingShell(
       step: 3,
-      totalSteps: 12,
+      totalSteps: 14,
       title: name.isEmpty
           ? l.onboardingInsightTitle
           : l.onboardingInsightTitleNamed(name),

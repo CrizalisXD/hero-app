@@ -30,7 +30,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
     }
     if (!mounted) return;
     setState(() => _requesting = false);
-    context.go('/onboarding/first-mission');
+    context.go('/onboarding/avatar-gender');
   }
 
   @override
@@ -39,7 +39,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
 
     return OnboardingShell(
       step: 11,
-      totalSteps: 12,
+      totalSteps: 14,
       title: l.onboardingNotifTitle,
       subtitle: l.onboardingNotifSubtitle,
       onBack: () => context.go('/onboarding/habits'),
@@ -47,7 +47,7 @@ class _NotificationsScreenState extends ConsumerState<NotificationsScreen> {
       isLoading: _requesting,
       onContinue: _enable,
       secondaryLabel: l.onboardingNotifLater,
-      onSecondary: () => context.go('/onboarding/first-mission'),
+      onSecondary: () => context.go('/onboarding/avatar-gender'),
       scrollable: false,
       content: Column(
         mainAxisAlignment: MainAxisAlignment.center,

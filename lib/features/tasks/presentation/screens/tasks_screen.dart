@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/l10n/l10n.dart';
 import '../../../../core/widgets/hero_error_view.dart';
+import '../../../avatar/application/hero_emote_queue.dart';
 import '../../../home/application/home_notifier.dart';
 import '../../../home/presentation/widgets/level_up_overlay.dart';
 import '../../../rewards/application/achievements_notifier.dart';
@@ -188,6 +189,8 @@ class _TaskTab extends ConsumerWidget {
     await ref.read(tasksNotifierProvider.notifier).silentRefresh();
 
     if (result.levelsGained > 0 && context.mounted) {
+      // Уровень взят вне Home — эмоция ждёт в очереди до возвращения к герою.
+      celebrateLevelUp(ref);
       await LevelUpOverlay.show(context, newLevel: result.levelAfter);
       await ref.read(homeNotifierProvider.notifier).silentRefresh();
     }

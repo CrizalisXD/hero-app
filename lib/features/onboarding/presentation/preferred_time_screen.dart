@@ -57,7 +57,7 @@ class _PreferredTimeScreenState extends ConsumerState<PreferredTimeScreen> {
 
     return OnboardingShell(
       step: 8,
-      totalSteps: 12,
+      totalSteps: 14,
       title: l.onboardingPreferredTitle,
       subtitle: l.onboardingPreferredSubtitle,
       onBack: () => context.go('/onboarding/time-commitment'),

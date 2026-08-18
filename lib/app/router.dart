@@ -52,6 +52,8 @@ import '../features/onboarding/presentation/habits_screen.dart'
     as onboarding_habits;
 import '../features/onboarding/presentation/life_change_screen.dart';
 import '../features/onboarding/presentation/main_obstacle_screen.dart';
+import '../features/onboarding/presentation/avatar_creator_screen.dart';
+import '../features/onboarding/presentation/avatar_gender_screen.dart';
 import '../features/onboarding/presentation/name_screen.dart';
 import '../features/onboarding/presentation/notifications_screen.dart';
 import '../features/onboarding/presentation/preferred_time_screen.dart';
@@ -342,6 +344,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (_, __) => const NotificationsScreen(),
       ),
       GoRoute(
+        path: '/onboarding/avatar-gender',
+        builder: (_, __) => const AvatarGenderScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
+        path: '/onboarding/avatar-create',
+        builder: (_, __) => const AvatarCreatorScreen(),
+      ),
+      GoRoute(
+        parentNavigatorKey: _rootNavigatorKey,
         path: '/onboarding/first-mission',
         builder: (_, __) => const FirstMissionScreen(),
       ),

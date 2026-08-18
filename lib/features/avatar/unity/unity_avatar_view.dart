@@ -1,9 +1,11 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_unity_widget/flutter_unity_widget.dart';
 
 import '../../../../../app/theme/app_colors.dart';
+import '../application/hero_emote_queue.dart';
 import 'avatar_stage_config.dart';
 import 'unity_avatar_bridge.dart';
 
@@ -14,13 +16,13 @@ import 'unity_avatar_bridge.dart';
 ///     Home never shows a black/empty box while the engine cold-starts;
 ///   • `unloadOnDispose: false` keeps Unity warm across tab switches, so
 ///     returning to Home doesn't re-boot the engine.
-class UnityAvatarView extends StatefulWidget {
+class UnityAvatarView extends ConsumerStatefulWidget {
   const UnityAvatarView({super.key, required this.config});
 
   final AvatarStageConfig config;
 
   @override
-  State<UnityAvatarView> createState() => _UnityAvatarViewState();
+  ConsumerState<UnityAvatarView> createState() => _UnityAvatarViewState();
 }
 
 /// Fraction of the view width to nudge the Unity scene horizontally. The scene
@@ -28,28 +30,41 @@ class UnityAvatarView extends StatefulWidget {
 /// export frames the hero off-centre.
 const double _shiftFraction = 0.0;
 
-class _UnityAvatarViewState extends State<UnityAvatarView> {
+class _UnityAvatarViewState extends ConsumerState<UnityAvatarView> {
   final _bridge = UnityAvatarBridge();
   StreamSubscription<AvatarEvent>? _sub;
   bool _loading = true;
+  bool _ready = false;
 
   @override
   void initState() {
     super.initState();
     _sub = _bridge.events.listen((e) {
       if (e is AvatarReady && mounted) {
+        _ready = true;
         setState(() => _loading = false);
+        // A level-up earned on another screen has been waiting for the hero to
+        // be on stage — play it now that he can actually be seen.
+        _playPendingEmote();
       }
       // Tapping the hero is intentionally a no-op: the avatar screen/route was
       // removed, so a tap no longer navigates anywhere.
     });
   }
 
+  /// Плюс к готовности Unity: эмоция могла прилететь и позже, уже на Home.
+  void _playPendingEmote() {
+    if (!_ready) return;
+    final emote = ref.read(heroEmoteQueueProvider.notifier).take();
+    if (emote != null) _bridge.playEmote(emote);
+  }
+
   @override
   void didUpdateWidget(covariant UnityAvatarView old) {
     super.didUpdateWidget(old);
-    if (old.config.level != widget.config.level ||
-        old.config.primaryColor != widget.config.primaryColor) {
+    // Any field change matters now that the config carries the wardrobe:
+    // swapping a shirt has to reach Unity just like a level-up does.
+    if (old.config != widget.config) {
       _bridge.sendConfig(widget.config);
     }
   }
@@ -63,6 +78,12 @@ class _UnityAvatarViewState extends State<UnityAvatarView> {
 
   @override
   Widget build(BuildContext context) {
+    // Уровень мог подняться, пока герой уже стоял на Home — тогда эмоция
+    // приходит в очередь после avatar:ready, и её надо забрать здесь.
+    ref.listen<AvatarEmote?>(heroEmoteQueueProvider, (_, next) {
+      if (next != null) _playPendingEmote();
+    });
+
     return Stack(
       fit: StackFit.expand,
       children: [

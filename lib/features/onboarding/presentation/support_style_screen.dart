@@ -58,7 +58,7 @@ class _SupportStyleScreenState extends ConsumerState<SupportStyleScreen> {
 
     return OnboardingShell(
       step: 9,
-      totalSteps: 12,
+      totalSteps: 14,
       title: l.onboardingSupportTitle,
       subtitle: l.onboardingSupportSubtitle,
       onBack: () => context.go('/onboarding/preferred-time'),

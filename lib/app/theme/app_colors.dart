@@ -42,6 +42,23 @@ class AppColors {
     colors: [Color(0xFFE74C3C), Color(0xFFF39C12)],
   );
 
+  // ── Neon Arcade (gamified identity — pilot on Home) ──
+  static const Color neonViolet = Color(0xFF8B7BFF);
+  static const Color neonMagenta = Color(0xFFC264FF);
+  static const Color energyAmber = Color(0xFFFF8A3D);
+  static const Color neonCyan = Color(0xFF29E5D4);
+
+  /// Signature brand gradient — the "glue" of the gamified look. Use on
+  /// hero moments: XP bar, level, primary CTAs, active states.
+  static const LinearGradient heroGradient = LinearGradient(
+    begin: Alignment.centerLeft,
+    end: Alignment.centerRight,
+    colors: [Color(0xFF8B7BFF), Color(0xFFC264FF), Color(0xFFFF9A3D)],
+  );
+
+  /// Stronger neon glow for the arcade treatment (vs the subtle accentGlow).
+  static const Color neonGlow = Color(0x558B7BFF);
+
   // ── Rarity tiers (loot/items/streak badges) ──
   static const Color rarityCommon = Color(0xFF8A8A95);
   static const Color rarityRare = Color(0xFF3498DB);
@@ -59,7 +76,7 @@ class AppColors {
     if (level >= 10) {
       return const [Color(0xFF3498DB), Color(0xFF7F77DD)];
     }
-    return const [Color(0xFF7F77DD), Color(0xFF7F77DD)];
+    return const [Color(0xFF8B7BFF), Color(0xFFC264FF)];
   }
 
   // ── Text ──

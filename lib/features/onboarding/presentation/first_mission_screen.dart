@@ -52,14 +52,14 @@ class _FirstMissionScreenState extends ConsumerState<FirstMissionScreen> {
     final name = ref.watch(onboardingControllerProvider).displayName;
 
     return OnboardingShell(
-      step: 12,
-      totalSteps: 12,
+      step: 14,
+      totalSteps: 14,
       title: name.isEmpty
           ? l.onboardingFirstMissionTitle
           : l.onboardingFirstMissionTitleNamed(name),
       continueLabel: l.onboardingFirstMissionCta,
       isLoading: _loading,
-      onBack: () => context.go('/onboarding/notifications'),
+      onBack: () => context.go('/onboarding/avatar-create'),
       onContinue: _submit,
       scrollable: false,
       content: Column(

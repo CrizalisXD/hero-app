@@ -51,7 +51,7 @@ class _NameScreenState extends ConsumerState<NameScreen> {
 
     return OnboardingShell(
       step: 1,
-      totalSteps: 12,
+      totalSteps: 14,
       title: l.onboardingNameTitle,
       subtitle: l.onboardingNameSubtitle,
       continueEnabled: name.isNotEmpty,

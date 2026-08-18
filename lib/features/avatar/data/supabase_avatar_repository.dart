@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/services/supabase_service.dart';
 import '../domain/avatar_repository.dart';
 import '../domain/models/avatar.dart';
+import '../domain/models/avatar_asset.dart';
 
 class SupabaseAvatarRepository implements AvatarRepository {
   SupabaseAvatarRepository(this._client);
@@ -28,6 +29,36 @@ class SupabaseAvatarRepository implements AvatarRepository {
   }
 
   @override
+  Future<AvatarCatalog> fetchCatalog() async {
+    // Выключенные позиции не тянем вовсе: под них нет контента, и в
+    // редакторе они дали бы пустые карточки.
+    final rows = await _client
+        .from('avatar_assets')
+        .select()
+        .eq('is_enabled', true)
+        .order('sort_order');
+    return AvatarCatalog.fromRows(
+      (rows as List).cast<Map<String, dynamic>>(),
+    );
+  }
+
+  @override
+  Future<Avatar> saveConfig(Avatar avatar) async {
+    // Одна RPC вместо шести UPDATE: Save обязан быть атомарным, иначе
+    // оборванная сеть оставит героя собранным наполовину.
+    final raw = await _client.rpc<dynamic>(
+      'save_avatar_config',
+      params: avatar.toRpcParams(),
+    );
+    if (raw is! Map) {
+      throw PostgrestException(
+        message: 'save_avatar_config returned unexpected payload: $raw',
+      );
+    }
+    return Avatar.fromJson(Map<String, dynamic>.from(raw));
+  }
+
+  @override
   Future<Avatar> updatePrimaryColor(String hex) async {
     final row = await _client
         .from('avatars')
@@ -43,4 +74,9 @@ class SupabaseAvatarRepository implements AvatarRepository {
 /// Не трогает существующий avatarRepositoryProvider из home/data/avatar_repository.dart.
 final avatarFullRepositoryProvider = Provider<AvatarRepository>((ref) {
   return SupabaseAvatarRepository(ref.watch(supabaseClientProvider));
+});
+
+/// Каталог меняется только миграциями, поэтому грузится один раз за сессию.
+final avatarCatalogProvider = FutureProvider<AvatarCatalog>((ref) async {
+  return ref.read(avatarFullRepositoryProvider).fetchCatalog();
 });

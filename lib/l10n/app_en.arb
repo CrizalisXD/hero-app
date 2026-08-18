@@ -710,15 +710,27 @@
   "@routineDoneToday": {},
   "routineMinutes": "{count} min",
   "@routineMinutes": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "routineStepsCount": "{count, plural, =1{1 step} other{{count} steps}}",
   "@routineStepsCount": {
-    "placeholders": { "count": { "type": "int" } }
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
   },
   "routineCompletedSnack": "Routine complete! +{xp} XP",
   "@routineCompletedSnack": {
-    "placeholders": { "xp": { "type": "int" } }
+    "placeholders": {
+      "xp": {
+        "type": "int"
+      }
+    }
   },
   "navNotes": "Notes",
   "@navNotes": {},
@@ -1745,5 +1757,37 @@
   },
   "wishlistConvertError": "Couldn't create the task.",
   "wishlistEmptyTitle": "Catch ideas on the fly",
-  "wishlistEmptyBody": "Pottery, climbing, a new language — drop everything you'd like to try someday. No strings attached."
+  "wishlistEmptyBody": "Pottery, climbing, a new language — drop everything you'd like to try someday. No strings attached.",
+  "onboardingAvatarGenderTitle": "Create your hero",
+  "@onboardingAvatarGenderTitle": {},
+  "onboardingAvatarGenderSubtitle": "Pick a base body. You can change everything else later.",
+  "@onboardingAvatarGenderSubtitle": {},
+  "onboardingAvatarGenderMale": "Male",
+  "@onboardingAvatarGenderMale": {},
+  "onboardingAvatarGenderFemale": "Female",
+  "@onboardingAvatarGenderFemale": {},
+  "onboardingAvatarCreateTitle": "Your look",
+  "@onboardingAvatarCreateTitle": {},
+  "onboardingAvatarCreateSubtitle": "A quick pass — the full wardrobe lives in the character editor.",
+  "@onboardingAvatarCreateSubtitle": {},
+  "avatarSlotHair": "Hair",
+  "@avatarSlotHair": {},
+  "avatarSlotSkin": "Skin",
+  "@avatarSlotSkin": {},
+  "avatarSlotOutfit": "Outfit",
+  "@avatarSlotOutfit": {},
+  "avatarSlotTop": "Top",
+  "@avatarSlotTop": {},
+  "avatarSlotBottom": "Bottom",
+  "@avatarSlotBottom": {},
+  "avatarSlotShoes": "Shoes",
+  "@avatarSlotShoes": {},
+  "avatarNoItemsYet": "New items are on the way",
+  "@avatarNoItemsYet": {},
+  "avatarNoItemsYetBody": "Only the base look is available right now. The wardrobe opens up as new gear arrives.",
+  "@avatarNoItemsYetBody": {},
+  "avatarGenderChanged": "Some items didn't fit the new body and were reset.",
+  "@avatarGenderChanged": {},
+  "avatarLocked": "Locked",
+  "@avatarLocked": {}
 }

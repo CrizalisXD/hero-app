@@ -36,4 +36,18 @@ class AvatarNotifier extends _$AvatarNotifier {
       return false;
     }
   }
+
+  /// Сохраняет полную конфигурацию внешности. Без оптимистичного апдейта:
+  /// сервер может заменить несовместимые слоты дефолтами, и показать надо
+  /// именно то, что реально сохранилось, а не то, что отправили.
+  Future<bool> saveConfig(Avatar config) async {
+    final previous = state.value;
+    try {
+      state = AsyncData(await _repo.saveConfig(config));
+      return true;
+    } catch (_) {
+      if (previous != null) state = AsyncData(previous);
+      return false;
+    }
+  }
 }

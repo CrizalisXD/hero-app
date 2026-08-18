@@ -6,6 +6,7 @@ import '../../../../../app/theme/app_colors.dart';
 import '../../../../../core/l10n/l10n.dart';
 import '../../../../../core/widgets/hero_button.dart';
 import '../../../../../core/widgets/hero_card.dart';
+import '../../../avatar/application/hero_emote_queue.dart';
 import '../../../rewards/application/achievements_notifier.dart';
 import '../../../rewards/presentation/widgets/achievement_unlocked_sheet.dart';
 import '../../../tasks/application/tasks_notifier.dart';
@@ -36,6 +37,9 @@ class TodayFocusPanel extends ConsumerWidget {
       await ref.read(homeNotifierProvider.notifier).silentRefresh();
       ref.invalidate(tasksNotifierProvider);
       if (res.levelsGained > 0 && context.mounted) {
+        // Герой хлопает, когда игрок его видит: здесь он уже на Home, так что
+        // эмоция уйдёт в Unity сразу, как только закроется оверлей.
+        celebrateLevelUp(ref);
         await LevelUpOverlay.show(context, newLevel: res.levelAfter);
         await ref.read(homeNotifierProvider.notifier).silentRefresh();
       }
